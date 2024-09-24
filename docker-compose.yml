@@ -1,0 +1,33 @@
+version: "2"
+services:
+  # app:
+  #   image: node:16.17.0
+  #   container_name: app
+  #   restart: always
+  #   build: .
+  #   tty: true
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - D:\\projects\\wb-barcodes\\src:/usr/src/app/src
+  #   command: yarn dev
+  # server:
+  #   image: node:16.17.0
+  #   container_name: server
+  #   restart: always
+  #   build: ./server
+  #   ports:
+  #     - "4000:4000"
+  #   links:
+  #     - mongo
+  #   volumes:
+  #     - D:\\projects\\wb-barcodes\\server:/usr/src/server
+  #   command: node server.js
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./db:/data/db:rw
+      - ./configdb:/data/configdb
+    ports:
+      - "27017:27017"

@@ -1,0 +1,35 @@
+.table {
+  display: grid;
+  width: 100%;
+  grid-template-columns: var(
+    --grid-template-columns,
+    "30px 100px 1fr 100px 1fr 100px 1fr 1fr"
+  );
+  background-color: #fff;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  font-size: 12px;
+  line-height: 12px;
+}
+.column {
+  display: flex;
+  flex-flow: column;
+}
+.cell {
+  padding: 4px 0 4px 4px;
+  height: 40px;
+  cursor: pointer;
+  &.header {
+    background-color: rgba(0, 32, 51, 0.05);
+  }
+  &.content {
+    border-bottom: 2px solid rgba(0, 32, 51, 0.05);
+  }
+  &.text {
+    width: fit-content;
+  }
+  &.active {
+    background-color: #0072f57d;
+  }
+}

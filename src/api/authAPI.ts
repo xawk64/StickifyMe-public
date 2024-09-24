@@ -1,0 +1,19 @@
+import { get, post } from ".";
+import { ApiUrlEnum } from "../utils/enums";
+import { SigninParamsType } from "./models/SigninParamsType";
+import { SigninResponseType } from "./models/SigninResponseType";
+import { SignupParamsType } from "./models/SignupParamsType";
+import { SignupResponseType } from "./models/SignupResponseType";
+import { VerifyEmailParamsType } from "./models/VerifyEmailParamsType";
+import { VerifyEmailResponseType } from "./models/VerifyEmailResponseType";
+
+export default {
+  loadSignup: (params: SignupParamsType): Promise<SignupResponseType> =>
+    post(ApiUrlEnum.authSignup, params),
+  loadSignIn: (params: SigninParamsType): Promise<SigninResponseType> =>
+    post(ApiUrlEnum.authSignin, params),
+  loadAuthMe: (): Promise<SigninResponseType> => get(ApiUrlEnum.authMe),
+  loadVerifyEmail: (
+    params: VerifyEmailParamsType
+  ): Promise<VerifyEmailResponseType> => post(ApiUrlEnum.authVerify, params),
+};

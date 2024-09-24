@@ -1,0 +1,30 @@
+{
+  "name": "auth-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "canvas2pdf": "^1.0.7",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jsbarcode": "^3.11.5",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.20",
+    "nodemailer": "^6.7.8",
+    "nodemon": "^2.0.4",
+    "pdfkit": "^0.13.0",
+    "qrcode": "^1.5.4",
+    "redis": "^3.0.2",
+    "socket.io": "^2.3.0",
+    "svg-to-pdfkit": "^0.1.8",
+    "uuid": "^9.0.0",
+    "xmldom": "^0.6.0"
+  }
+}
