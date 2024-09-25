@@ -19,6 +19,13 @@ const eacIcon = `<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscap
 </g>
 </svg>`;
 
+const fontURL =
+  "server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf";
+
+const truncateText = (text, count = 60) => {
+  return text.substring(0, count) + (text.length < count ? "" : "...");
+};
+
 exports.generateBarcode = async (req, res) => {
   const file = fs.createWriteStream("example.pdf");
   const mode = req.body.mode;
@@ -32,10 +39,7 @@ exports.generateBarcode = async (req, res) => {
   const stickerWidth = 58;
   const stickerHeight = 40;
 
-  const barcodeWidth = 35;
-  const barcodeHeight = 20;
-
-  const coff = mode === 1.96;
+  const coff = mode === "thermo" ? 1.96 : 2.8;
 
   const gapY = 6;
   const gapX = 5;
@@ -54,17 +58,11 @@ exports.generateBarcode = async (req, res) => {
     null
   );
 
-  const count = orders.length;
-
-  const maxX = Math.ceil(count / 3);
-  const maxY = count - (maxX - 1) * 3;
-
   const svgNode = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-  let x = -1;
   console.log(mode, withEac, "info");
 
-  const drawProductSticker = (order) => {
+  const drawProductSticker = (order, coff = 1, offsetX = 0, offsetY = 0) => {
     JsBarcode(svgNode, order.product.barcode, {
       format: "ean13",
       fontSize: 18,
@@ -77,243 +75,205 @@ exports.generateBarcode = async (req, res) => {
 
     const svgText = xmlSerializer.serializeToString(svgNode);
 
-    ctx.doc.addSVG(svgText, 19, 35, {
-      width: 75,
-      height: 50,
+    //штрихкод
+    ctx.doc.addSVG(svgText, 19 * coff + offsetX, 35 * coff + offsetY, {
+      width: 75 * coff,
+      height: 50 * coff,
       preserveAspectRatio: "10",
     });
 
-    ctx.doc.fontSize(6);
+    //цифры под штрихкодом
+    ctx.doc.fontSize(6 * coff);
     ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
-      .text(order.product.barcode[0], 15, 70);
-
-    ctx.doc.fontSize(6);
-    ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
-      .text(order.product.barcode.substring(1, 7), 22, 70, {
-        characterSpacing: 3,
-      });
-
-    ctx.doc.fontSize(6);
-    ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
-      .text(order.product.barcode.substring(7), 58.5, 70, {
-        characterSpacing: 3,
-      });
-
-    ctx.doc.fontSize(6);
-    ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
-      .text(order.product.title, 5, 5);
+      .font(fontURL)
+      .text(order.product.barcode[0], 15 * coff + offsetX, 70 * coff + offsetY);
 
     ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
-      .text(`Цвет: ${order.product.characteristics["Цвет"]?.[0] || ""}`, 5, 18);
-    ctx.doc.fontSize(5);
-    ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
-      .text(`Артикул: ${order.nmId || ""}`, 5, 25);
-
-    ctx.doc.fontSize(5);
-    ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
+      .font(fontURL)
       .text(
-        `Страна: ${order.product.characteristics["Страна производства"]?.[0]}`,
-        5,
-        30
+        order.product.barcode.substring(1, 7),
+        22 * coff + offsetX,
+        70 * coff + offsetY,
+        {
+          characterSpacing: 3 * coff,
+        }
       );
-    ctx.doc.fontSize(5);
-    ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
-      .text(`Производитель: ${order.product.brand || ""}`, 5, 35);
 
-    ctx.doc.fontSize(6);
     ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
-      .text(`${order.bcUp || ""}`, 30, 41);
+      .font(fontURL)
+      .text(
+        order.product.barcode.substring(7),
+        58.5 * coff + offsetX,
+        70 * coff + offsetY,
+        {
+          characterSpacing: 3 * coff,
+        }
+      );
+
+    //наименование товара
     ctx.doc
-      .font(`server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`)
-      .text(`${order.bcDown || ""}`, 65, 41);
+      .font(fontURL)
+      .text(
+        truncateText(order.product.title),
+        5 * coff + offsetX,
+        5 * coff + offsetY,
+        { width: 100 * coff }
+      );
+
+    ctx.doc
+      .font(fontURL)
+      .text(
+        truncateText(
+          `Цвет: ${order.product.characteristics["Цвет"]?.[0] || ""}`,
+          40
+        ),
+        5 * coff + offsetX,
+        18 * coff + offsetY
+      );
+    ctx.doc.fontSize(5 * coff);
+    ctx.doc
+      .font(fontURL)
+      .text(
+        truncateText(`Артикул: ${order.nmId || ""}`, 40),
+        5 * coff + offsetX,
+        25 * coff + offsetY
+      );
+
+    ctx.doc
+      .font(fontURL)
+      .text(
+        truncateText(
+          `Страна: ${order.product.characteristics["Страна производства"]?.[0]}`,
+          40
+        ),
+        5 * coff + offsetX,
+        30 * coff + offsetY
+      );
+
+    ctx.doc
+      .font(fontURL)
+      .text(
+        truncateText(`Производитель: ${order.product.brand || ""}`, 40),
+        5 * coff + offsetX,
+        35 * coff + offsetY
+      );
+
+    ctx.doc.fontSize(6 * coff);
+
+    //шк верх
+    ctx.doc
+      .font(fontURL)
+      .text(`${order.bcUp || ""}`, 30 * coff + offsetX, 41 * coff + offsetY);
+
+    //шк низ
+    ctx.doc
+      .font(fontURL)
+      .text(`${order.bcDown || ""}`, 65 * coff + offsetX, 41 * coff + offsetY);
+
     if (withEac) {
-      ctx.doc.addSVG(eacIcon, 100, 61, {
-        width: 10,
-        height: 10,
+      ctx.doc.addSVG(eacIcon, 100 * coff + offsetX, 61 * coff + offsetY, {
+        width: 10 * coff,
+        height: 10 * coff,
         preserveAspectRatio: "10",
       });
     }
   };
 
-  const drawWbSticker = (wbSvgSticker) => {
-    ctx.doc.addSVG(wbSvgSticker, 0, -18, {
-      width: 114,
-      height: 114,
+  const drawWbSticker = (wbSvgSticker, coff = 1, offsetX = 0, offsetY = 0) => {
+    ctx.doc.addSVG(wbSvgSticker, 0 + offsetX, -18 * coff + offsetY, {
+      width: 114 * coff,
+      height: 114 * coff,
       preserveAspectRatio: "10",
     });
   };
 
   if (mode === "a4") {
+    const count = orders.length * 2;
+
+    const maxX = Math.ceil(count / 3);
+    const maxY = count - (maxX - 1) * 3;
+
+    let x = -1;
+
+    let orderCounter = 0;
+    const pagesInfo = [];
+    let pageInfo = [];
+
     for (let X = 0; X < maxX; X++) {
       x++;
       if (x % 6 === 0 && x !== 0) {
         x = 0;
+        pagesInfo.unshift(pageInfo);
+        pageInfo = [];
+      }
+      for (let Y = 0; Y < (X === maxX - 1 ? maxY : 3); Y++) {
+        const y = Y;
+
+        const isProductSticker = (X + Y) % 2 == 0;
+
+        const order = orders[orderCounter];
+
+        const offsetX =
+          pageOffsetX * coff + y * stickerWidth * coff + y * gapX * coff;
+        const offsetY =
+          pageOffsetY * coff + x * stickerHeight * coff + x * gapY * coff;
+
+        pageInfo.push({
+          offsetX,
+          offsetY,
+          order,
+          isProductSticker,
+        });
+        if (!isProductSticker) {
+          orderCounter++;
+        }
+      }
+    }
+
+    pagesInfo.unshift(pageInfo);
+
+    console.log(pagesInfo.length);
+
+    for (let x = 0; x < pagesInfo.length; x++) {
+      const pageInfo = pagesInfo[x];
+
+      for (let y = 0; y < pageInfo.length; y++) {
+        const { offsetX, offsetY, order, isProductSticker } = pageInfo[y];
+        if (isProductSticker) {
+          drawProductSticker(order, coff / 1.96, offsetX, offsetY);
+          if (withEac) {
+            ctx.doc.addSVG(eacIcon, offsetX + 145, offsetY + 96, {
+              width: 10,
+              height: 10,
+              preserveAspectRatio: "10",
+            });
+          }
+        } else {
+          const wbSvgSticker = Buffer.from(
+            order.barcodeFile,
+            "base64"
+          ).toString();
+          if (wbSvgSticker) {
+            drawWbSticker(wbSvgSticker, coff / 1.96, offsetX, offsetY);
+          }
+        }
+
+        ctx.rect(offsetX, offsetY, stickerWidth * coff, stickerHeight * coff);
+        ctx.stroke();
+      }
+      if (x < pagesInfo.length - 1) {
         ctx.doc.addPage({
           size: "A4",
           margin: 0,
         });
       }
-      for (let Y = 0; Y < (X === maxX - 1 ? maxY : 3); Y++) {
-        const y = Y;
-        const order = orders[X * 3 + y];
-
-        // JsBarcode(svgNode, row[2], {
-        //   format: "ean13",
-        //   fontSize: 18,
-        //   textMargin: 0,
-        //   margin: 0,
-        //   width: 2,
-        //   xmlDocument: document,
-        // });
-
-        // const svgText = xmlSerializer.serializeToString(svgNode);
-
-        // ctx.doc.addSVG(
-        //   svgText,
-        //   pageOffsetX * coff +
-        //     y * stickerWidth * coff +
-        //     y * gapX * coff +
-        //     (stickerWidth - barcodeWidth - 2) * coff,
-        //   pageOffsetY * coff +
-        //     x * stickerHeight * coff +
-        //     x * gapY * coff +
-        //     2 * coff,
-        //   { width: 100, height: 50, preserveAspectRatio: "10" }
-        // );
-
-        if (withEac) {
-          ctx.doc.addSVG(
-            eacIcon,
-            pageOffsetX * coff +
-              y * stickerWidth * coff +
-              y * gapX * coff +
-              145,
-            pageOffsetY * coff +
-              x * stickerHeight * coff +
-              x * gapY * coff +
-              96,
-            {
-              width: 10,
-              height: 10,
-              preserveAspectRatio: "10",
-            }
-          );
-        }
-        ctx.rect(
-          pageOffsetX * coff + y * stickerWidth * coff + y * gapX * coff,
-          pageOffsetY * coff + x * stickerHeight * coff + x * gapY * coff,
-          stickerWidth * coff,
-          stickerHeight * coff
-        );
-
-        ctx.doc.fontSize(6);
-        // if (row[3]) {
-        //   ctx.doc
-        //     .font(
-        //       `server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`
-        //     )
-        //     .text(
-        //       `Артикул: ${row[3]}`,
-        //       pageOffsetX * coff +
-        //         y * stickerWidth * coff +
-        //         y * gapX * coff +
-        //         10,
-        //       pageOffsetY * coff +
-        //         x * stickerHeight * coff +
-        //         x * gapY * coff +
-        //         10
-        //     );
-        // }
-        // if (row[4]) {
-        //   ctx.doc
-        //     .font(
-        //       `server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`
-        //     )
-        //     .text(
-        //       `Цвет: ${row[4]}`,
-        //       pageOffsetX * coff +
-        //         y * stickerWidth * coff +
-        //         y * gapX * coff +
-        //         10,
-        //       pageOffsetY * coff +
-        //         x * stickerHeight * coff +
-        //         x * gapY * coff +
-        //         20
-        //     );
-        // }
-        // if (row[5]) {
-        //   ctx.doc
-        //     .font(
-        //       `server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`
-        //     )
-        //     .text(
-        //       `Размер: ${row[5]}`,
-        //       pageOffsetX * coff +
-        //         y * stickerWidth * coff +
-        //         y * gapX * coff +
-        //         10,
-        //       pageOffsetY * coff +
-        //         x * stickerHeight * coff +
-        //         x * gapY * coff +
-        //         30
-        //     );
-        // }
-        // if (row[6]) {
-        //   ctx.doc
-        //     .font(
-        //       `server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`
-        //     )
-        //     .text(
-        //       `Название товара: ${row[6]}`,
-        //       pageOffsetX * coff +
-        //         y * stickerWidth * coff +
-        //         y * gapX * coff +
-        //         10,
-        //       pageOffsetY * coff +
-        //         x * stickerHeight * coff +
-        //         x * gapY * coff +
-        //         70
-        //     );
-        // }
-        // if (row[7]) {
-        //   ctx.doc
-        //     .font(
-        //       `server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf`
-        //     )
-        //     .text(
-        //       `Наименование продавца: ${row[7]}`,
-        //       pageOffsetX * coff +
-        //         y * stickerWidth * coff +
-        //         y * gapX * coff +
-        //         10,
-        //       pageOffsetY * coff +
-        //         x * stickerHeight * coff +
-        //         x * gapY * coff +
-        //         80
-        //     );
-        // }
-
-        ctx.stroke();
-      }
     }
   } else {
-    for (let i = 0; i < orders.length; i++) {
+    for (let i = orders.length - 1; i >= 0; i--) {
       const order = orders[i];
-
-      drawProductSticker(order);
-
       const wbSvgSticker = Buffer.from(order.barcodeFile, "base64").toString();
-
       if (wbSvgSticker) {
+        drawWbSticker(wbSvgSticker);
         ctx.doc.addPage({
           size:
             mode === "thermo"
@@ -321,10 +281,11 @@ exports.generateBarcode = async (req, res) => {
               : "A4",
           margin: 0,
         });
-        drawWbSticker(wbSvgSticker);
       }
 
-      if (i < orders.length - 1) {
+      drawProductSticker(order);
+
+      if (i > 0) {
         ctx.doc.addPage({
           size: [stickerWidth * coff, stickerHeight * coff],
           margin: 0,
