@@ -292,10 +292,10 @@ exports.generateBarcode = async (req, res) => {
 
   ctx.stream.on("finish", function () {
     file.end();
-    res.set("Content-disposition", "attachment; filename=" + "example.pdf");
+    res.set("Content-disposition", "attachment; filename=" + "stickers.pdf");
     res.set("Content-Type", "text/plain");
 
-    res.download("example.pdf");
+    res.download("stickers.pdf");
   });
   ctx.end();
 };
