@@ -60,8 +60,6 @@ exports.generateBarcode = async (req, res) => {
 
   const svgNode = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-  console.log(mode, withEac, "info");
-
   const drawProductSticker = (order, coff = 1, offsetX = 0, offsetY = 0) => {
     JsBarcode(svgNode, order.product.barcode, {
       format: "ean13",
@@ -180,10 +178,10 @@ exports.generateBarcode = async (req, res) => {
   };
 
   const drawWbSticker = (wbSvgSticker, coff = 1, offsetX = 0, offsetY = 0) => {
-    ctx.doc.addSVG(wbSvgSticker, 0 + offsetX, -18 * coff + offsetY, {
-      width: 114 * coff,
-      height: 114 * coff,
-      preserveAspectRatio: "10",
+    const width = 114 * coff;
+    ctx.doc.image(wbSvgSticker, 0 + offsetX, 0 + offsetY, {
+      width,
+      height: width * (stickerHeight / stickerWidth),
     });
   };
 
@@ -232,8 +230,6 @@ exports.generateBarcode = async (req, res) => {
 
     pagesInfo.unshift(pageInfo);
 
-    console.log(pagesInfo.length);
-
     for (let x = 0; x < pagesInfo.length; x++) {
       const pageInfo = pagesInfo[x];
 
@@ -271,7 +267,7 @@ exports.generateBarcode = async (req, res) => {
   } else {
     for (let i = orders.length - 1; i >= 0; i--) {
       const order = orders[i];
-      const wbSvgSticker = Buffer.from(order.barcodeFile, "base64").toString();
+      const wbSvgSticker = Buffer.from(order.barcodeFile, "base64");
       if (wbSvgSticker) {
         drawWbSticker(wbSvgSticker);
         ctx.doc.addPage({

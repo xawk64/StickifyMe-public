@@ -110,8 +110,8 @@ const Home: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
     const orders = await wbAPI.loadOrders();
     if (orders) {
       barcodesAPI.addBarcodesHistory({
-        withEAC: true,
-        mode: GenerateBarcodeMode.thermo,
+        withEAC,
+        mode: mode.value as GenerateBarcodeMode,
         orders,
       });
 
@@ -181,7 +181,7 @@ const Home: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   return (
     <div className="mx-6">
       <div className="flex justify-between mb-6 mt-2">
-        <h4 className="font-bold">BarcodeBerries</h4>
+        <h4 className="font-bold">StickifyMe</h4>
         {status === RequestStatus.success ? (
           fullName
         ) : status === RequestStatus.pending ? null : (

@@ -5,7 +5,7 @@ import Home from ".";
 const ViewHistory: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  return <Home tabHref="История импортов" viewHistoryId={String(id)} />;
+  return <Home tabHref="История импортов" viewHistoryId={id && String(id)} />;
 };
 
 export default ViewHistory;

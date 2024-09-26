@@ -19,7 +19,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
     <StoreProvider store={store}>
       <NextUIProvider>
         <Head>
-          <title>BarcodeBerries</title>
+          <title>StickifyMe</title>
         </Head>
         <AuthMe />
         <Component {...pageProps} />

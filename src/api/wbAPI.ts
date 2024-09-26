@@ -10,7 +10,7 @@ const wbAPI = {
     ordersIds: number[]
   ): Promise<{ [key: number]: IStickersType }> => {
     const response = await fetch(
-      "https://marketplace-api.wildberries.ru/api/v3/orders/stickers?type=svg&width=58&height=40",
+      "https://marketplace-api.wildberries.ru/api/v3/orders/stickers?type=png&width=58&height=40",
       {
         method: "POST",
         headers: {
@@ -146,7 +146,7 @@ const wbAPI = {
         ({ id }: IOrder) => orderStatusById[String(id)] === "confirm"
       );
 
-      orders = orders.filter((_: any, i: number) => i < 30);
+      orders = orders.filter((_: any, i: number) => i < 3);
 
       ordersIds = orders.map((order: IOrder) => order.id);
 
