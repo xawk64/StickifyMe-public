@@ -1,12 +1,14 @@
-import { makeAutoObservable } from "mobx";
 import { createContext, useContext, FC, ReactNode } from "react";
 import { AuthStore } from "./authStore";
+import { ImportStore } from "./importStore";
 
 class Store {
   authStore: AuthStore;
+  importStore: ImportStore;
 
   constructor() {
     this.authStore = new AuthStore(this);
+    this.importStore = new ImportStore(this);
   }
 }
 

@@ -27,7 +27,7 @@ const truncateText = (text, count = 60) => {
 };
 
 exports.generateBarcode = async (req, res) => {
-  const file = fs.createWriteStream("example.pdf");
+  const file = fs.createWriteStream("stickers.pdf");
   const mode = req.body.mode;
   const withEac = req.body.withEAC;
 
@@ -177,9 +177,9 @@ exports.generateBarcode = async (req, res) => {
     }
   };
 
-  const drawWbSticker = (wbSvgSticker, coff = 1, offsetX = 0, offsetY = 0) => {
+  const drawWbSticker = (wbSticker, coff = 1, offsetX = 0, offsetY = 0) => {
     const width = 114 * coff;
-    ctx.doc.image(wbSvgSticker, 0 + offsetX, 0 + offsetY, {
+    ctx.doc.image(wbSticker, 0 + offsetX, 0 + offsetY, {
       width,
       height: width * (stickerHeight / stickerWidth),
     });
@@ -245,12 +245,9 @@ exports.generateBarcode = async (req, res) => {
             });
           }
         } else {
-          const wbSvgSticker = Buffer.from(
-            order.barcodeFile,
-            "base64"
-          ).toString();
-          if (wbSvgSticker) {
-            drawWbSticker(wbSvgSticker, coff / 1.96, offsetX, offsetY);
+          const wbSticker = Buffer.from(order.barcodeFile, "base64");
+          if (wbSticker) {
+            drawWbSticker(wbSticker, coff / 1.96, offsetX, offsetY);
           }
         }
 
@@ -267,9 +264,9 @@ exports.generateBarcode = async (req, res) => {
   } else {
     for (let i = orders.length - 1; i >= 0; i--) {
       const order = orders[i];
-      const wbSvgSticker = Buffer.from(order.barcodeFile, "base64");
-      if (wbSvgSticker) {
-        drawWbSticker(wbSvgSticker);
+      const wbSticker = Buffer.from(order.barcodeFile, "base64");
+      if (wbSticker) {
+        drawWbSticker(wbSticker);
         ctx.doc.addPage({
           size:
             mode === "thermo"

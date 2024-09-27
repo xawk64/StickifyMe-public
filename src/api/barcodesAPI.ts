@@ -9,7 +9,8 @@ import { IGetHistoryResponse } from "./models/GetHistoryResponseType";
 
 export default {
   loadGenerateBarcode: (params: GenerateBarcodesParams) =>
-    download(ApiUrlEnum.generateBarcode, params),
+    download(ApiUrlEnum.generateBarcode, params, true),
+
   addBarcodesHistory: (params: IAddHistoryParams) =>
     post(`${ApiUrlEnum.addBarcodesHistory}`, params),
   loadBarcodesHistory: (

@@ -50,14 +50,18 @@ const handleResponse = async (res: any) => {
   }
 };
 
-export async function downloadFile(response: any) {
+export async function downloadFile(response: any, print: boolean) {
   localStorage.setItem("status", response.status);
   const status = String(response.status).substring(0, 1);
   if (status === "2") {
     const blob = await response.blob();
 
     // Download the file
-    saveAs(blob, "example.pdf");
+    if (print) {
+      return blob;
+    } else {
+      saveAs(blob, "stickers.pdf");
+    }
   } else {
     return Promise.reject(response);
   }
@@ -93,7 +97,9 @@ export const get = (url: string, location: string = defaultLocation) =>
   fetch(location + url, buildParams("GET"))
     .then(handleResponse)
     .catch(handleError);
-export const download = <T>(url: string, data?: T) =>
+export const download = <T>(url: string, data?: T, print: boolean = false) =>
   fetch(defaultLocation + url, buildParamsPost("POST", data)).then(
-    downloadFile
+    (response) => {
+      return downloadFile(response, print);
+    }
   );

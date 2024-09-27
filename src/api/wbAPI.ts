@@ -1,3 +1,4 @@
+import { maxStickers } from "../utils/constants";
 import { IOrder } from "./models/OrderType";
 import { IProduct } from "./models/ProductType";
 import { IStickersType } from "./models/StickersType";
@@ -146,7 +147,7 @@ const wbAPI = {
         ({ id }: IOrder) => orderStatusById[String(id)] === "confirm"
       );
 
-      orders = orders.filter((_: any, i: number) => i < 3);
+      orders = orders.filter((_: any, i: number) => i < maxStickers);
 
       ordersIds = orders.map((order: IOrder) => order.id);
 

@@ -18,6 +18,9 @@ import wbAPI from "../api/wbAPI";
 import { format } from "date-fns";
 import { IOrder } from "../api/models/OrderType";
 
+// import printJS from "print-js";
+("use client");
+
 const modeItems = [
   { label: "Печать A4", value: GenerateBarcodeMode.a4 as string },
   { label: "Термопринтер", value: GenerateBarcodeMode.thermo as string },
@@ -40,6 +43,8 @@ const Home: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
       state: { fullName, emailVerification },
     },
   } = useStore();
+
+  const printDocument = useRef<(blob: Blob) => void>();
 
   const [tab, setTab] = useState(tabHref || tabItems[0]);
 
@@ -142,6 +147,23 @@ const Home: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   const setTabHandler = (tab: string) => {
     router.push(tab === tabItems[0] ? "/" : "/history");
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const printJS = require("print-js");
+      console.log(window, "window");
+
+      printDocument.current = (blob: Blob) => {
+        console.log(blob, "blob");
+        const pdfUrl = URL.createObjectURL(blob);
+        printJS({
+          printable: pdfUrl,
+          type: "pdf",
+          documentTitle: "Документ для печати",
+        });
+      };
+    }
+  }, []);
 
   useEffect(() => {
     if (viewHistoryId) {
@@ -265,13 +287,14 @@ const Home: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
               />
 
               <Button
-                onClick={() =>
-                  barcodesAPI.loadGenerateBarcode({
+                onClick={async () => {
+                  const blob = await barcodesAPI.loadGenerateBarcode({
                     orders,
                     mode: mode.value as GenerateBarcodeMode,
                     withEAC,
-                  })
-                }
+                  });
+                  if (printDocument.current) printDocument.current(blob);
+                }}
                 label="Скачать этикетки"
               />
             </>
