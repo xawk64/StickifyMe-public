@@ -45,7 +45,7 @@ require("./server-app/routes/barcodesHistory.routes")(app);
 require("./server-app/routes/barcodes.routes")(app);
 
 app.get("/", (req, res) => {
-  res.json({ message: "BarcodeBerries API" });
+  res.json({ message: "StickifyMe API" });
 });
 
 const PORT = process.env.PORT || 4000;

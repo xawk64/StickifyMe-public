@@ -14,7 +14,7 @@ exports.sendEmail = async (email, username, hash) => {
       from: '"Сервис BarcodeBerries" <support@example.com>',
       to: email,
       subject: "Потверждение учетной записи",
-      html: `Добрый день, ${username}! <br />Вы зарегистрировались на сервисе BarcodeBerries. Для подтверждения почты перейдите по ссылке:  <a href="https:/barcodeberries.ru/verify/?hash=${hash}">подтвердить регистрацию</a> или введите вручную в браузере: localhost:3000/verify/?hash=${hash}.Если это делали не Вы, просьба закрыть данное сообщение. `,
+      html: `Добрый день, ${username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке:  <a href="https:/example.com/verify/?hash=${hash}">подтвердить регистрацию</a> или введите вручную в браузере: https:/example.com/verify/?hash=${hash}.Если это делали не Вы, просьба закрыть данное сообщение. `,
     });
     console.log(result);
   } catch (e) {
