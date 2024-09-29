@@ -5,7 +5,7 @@ const Profile = mongoose.model(
   new mongoose.Schema(
     {
       fullName: String,
-      subscriptionDate: String,
+      avatarUrl: String,
     },
     { timestamps: true }
   )
