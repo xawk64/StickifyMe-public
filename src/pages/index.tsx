@@ -1,6 +1,6 @@
 import style from "./index.module.scss";
 import { useStore } from "../store";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import * as XLSX from "xlsx";
 import Button from "../components/ui/Button/Button";
@@ -17,6 +17,7 @@ import HistoryImports from "../components/HistoryImports/HistoryImports";
 import wbAPI from "../api/wbAPI";
 import { format } from "date-fns";
 import { IOrder } from "../api/models/OrderType";
+import dynamic from "next/dynamic";
 
 // import printJS from "print-js";
 ("use client");
@@ -200,6 +201,15 @@ const Home: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
     }
   }, [viewHistoryId]);
 
+  const Map = useMemo(
+    () =>
+      dynamic(() => import("../components/Map"), {
+        loading: () => <p>A map is loading</p>,
+        ssr: false,
+      }),
+    []
+  );
+
   return (
     <div className="mx-6">
       <div className="flex justify-between mb-6 mt-2">
@@ -303,6 +313,7 @@ const Home: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
           )}
         </div>
       </div>
+      <Map />
     </div>
   );
 });
