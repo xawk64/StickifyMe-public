@@ -1,12 +1,45 @@
 import { maxStickers } from "../utils/constants";
+import { ICoordinates } from "./models/GetCoordinatesResponseType";
+import { IWarehouse } from "./models/GetWarehousesResponseType";
 import { IOrder } from "./models/OrderType";
 import { IProduct } from "./models/ProductType";
 import { IStickersType } from "./models/StickersType";
+
+const tgBotToken = "***REMOVED***";
 
 const token =
   "***REMOVED***";
 
 const wbAPI = {
+  loadCoordinates: async (query: string) => {
+    const response = await fetch(`https://photon.komoot.io/api/?q=${query}`, {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        ["Content-Type"]: "application/json",
+        Authorization: token,
+      },
+    });
+    const data: ICoordinates = await response.json();
+
+    return data?.features[0]?.geometry?.coordinates || [0, 0];
+  },
+  loadWarehouses: async () => {
+    const response = await fetch(
+      "https://supplies-api.wildberries.ru/api/v1/warehouses",
+      {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          ["Content-Type"]: "application/json",
+          Authorization: token,
+        },
+      }
+    );
+    const data: IWarehouse[] = await response.json();
+
+    return data;
+  },
   loadBarcodes: async (
     ordersIds: number[]
   ): Promise<{ [key: number]: IStickersType }> => {

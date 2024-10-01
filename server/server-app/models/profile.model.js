@@ -6,6 +6,7 @@ const Profile = mongoose.model(
     {
       fullName: String,
       avatarUrl: String,
+      chatId: Number,
     },
     { timestamps: true }
   )

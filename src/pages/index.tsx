@@ -41,7 +41,7 @@ const Home: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   const {
     authStore: {
       status,
-      state: { fullName, emailVerification },
+      state: { fullName, emailVerification, id: userId },
     },
   } = useStore();
 
@@ -241,6 +241,13 @@ const Home: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
                 onClick={onImportFromWBClick}
                 label="Импорт с Wildberries"
               />
+
+              <a
+                href={`https://t.me/StickifyMe_Bot?start=${userId}`}
+                target="_blank"
+              >
+                Telegram
+              </a>
 
               {rows.length > 0 && (
                 <>

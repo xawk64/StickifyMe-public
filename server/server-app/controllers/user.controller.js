@@ -12,8 +12,7 @@ exports.setProfile = (req, res) => {
     }
 
     const profile = {
-      fullName: req.body.fullName,
-      subscriptionDate: req.body.subscriptionDate,
+      ...req.body,
     };
 
     Profile.updateOne(
