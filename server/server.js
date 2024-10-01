@@ -10,6 +10,11 @@ const controller = require("./server-app/controllers/user.controller");
 const db = require("./server-app/models");
 const Profile = db.profile;
 const User = db.user;
+const Warehouses = db.warehouse;
+const WarehouseSettings = db.warehouseSettings;
+
+const tokenWB =
+  "***REMOVED***";
 
 var corsOptions = {
   origin: "http://localhost:3000",
@@ -48,6 +53,7 @@ require("./server-app/routes/auth.routes")(app);
 require("./server-app/routes/user.routes")(app);
 require("./server-app/routes/barcodesHistory.routes")(app);
 require("./server-app/routes/barcodes.routes")(app);
+require("./server-app/routes/warehouses.routes")(app);
 
 app.get("/", (req, res) => {
   res.json({ message: "StickifyMe API" });
@@ -105,18 +111,104 @@ app.listen(PORT, () => {
     let startIndex = (page - 1) * limit;
     let endIndex = page * limit;
 
-    let result = profiles.slice(startIndex, endIndex);
+    profiles = profiles.slice(startIndex, endIndex);
 
-    console.log(result, "result");
+    profiles.forEach((profile) => {
+      WarehouseSettings.find(
+        { userProfileId: profile._id },
+        async (err, settings) => {
+          if (settings[2]?.items?.length && profile.chatId) {
+            setInterval(() => {
+              Warehouses.find(
+                { userProfileId: profile._id },
+                async (err, warehouses) => {
+                  console.log(warehouses, "warehouses");
+                  const warehouseInfoById = {};
+                  const warehouseSettingsById = {};
+                  console.log(JSON.stringify(settings[2].items), "items");
+                  let warehouseIDs = settings[2].items.map((item) => {
+                    warehouseSettingsById[item.ID] = item;
+                    return `warehouseIDs=${item.ID}`;
+                  });
+                  warehouseIDs = warehouseIDs.join("&");
+                  console.log(warehouseIDs, "warehouseIDs");
+                  const warehousesItemsResponse = await fetch(
+                    `https://supplies-api.wildberries.ru/api/v1/acceptance/coefficients?${warehouseIDs}`,
+                    {
+                      headers: {
+                        accept: "application/json",
+                        ["Content-Type"]: "application/json",
+                        Authorization: tokenWB,
+                      },
+                    }
+                  );
+                  const warehousesItems = await warehousesItemsResponse.json();
 
-    setInterval(
-      () =>
-        result.forEach((profile) => {
-          if (profile.chatId) {
-            bot.sendMessage(profile.chatId, "аххахахаахахах!!!");
+                  console.log(warehousesItems, "warehousesItems");
+                  warehouses[0].items.forEach(
+                    (warehouse) =>
+                      (warehouseInfoById[warehouse.warehouseID] = warehouse)
+                  );
+                  const filteredWarehouseItems = warehousesItems.filter(
+                    (item) => {
+                      const settings = warehouseSettingsById[item.warehouseID];
+                      const oldInfo = warehouseInfoById[item.warehouseID];
+                      return (
+                        item.coefficient > -1 &&
+                        Date(item.date) >= Date(settings.startDate) &&
+                        Date(item.date) <= Date(settings.endDate) &&
+                        settings.boxTypes.includes(item.boxTypeName) &&
+                        item.coefficient <= settings.coeff &&
+                        (oldInfo
+                          ? item.coefficient < oldInfo.coefficient
+                          : true)
+                      );
+                    }
+                  );
+                  const warehouseInfo = {
+                    items: filteredWarehouseItems,
+                    userProfileId: profile.id,
+                  };
+                  filteredWarehouseItems.forEach((item) =>
+                    bot.sendMessage(
+                      profile.chatId,
+                      `Склад ${item.warehouseName}, дата поставки: ${
+                        item.date
+                      }, тип упаковки: ${item.boxTypeName}, коэфициент: ${
+                        item.coefficient === 0
+                          ? "бесплатно"
+                          : `x${item.coefficient}`
+                      }`
+                    )
+                  );
+                  console.log(warehouseInfo, filteredWarehouseItems, "items!");
+
+                  if (filteredWarehouseItems.length) {
+                    Warehouses.updateOne(
+                      { userProfileId: profile.id },
+                      warehouseInfo,
+                      { upsert: false },
+                      (err) => {
+                        if (err) {
+                          res.status(500).send({ message: err });
+                        }
+                      }
+                    );
+                  }
+                }
+              );
+            }, 15000);
           }
-        }),
-      3000
-    );
+        }
+      );
+    });
+  });
+
+  WarehouseSettings.find((err, settings) => {
+    console.log(settings, "settings");
+  });
+
+  db.warehouse.find((err, settings) => {
+    console.log(settings, "warehouse");
   });
 });

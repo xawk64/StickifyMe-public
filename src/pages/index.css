@@ -5,3 +5,7 @@
 .leaflet-control-attribution {
   display: none;
 }
+
+.leaflet-popup {
+  margin-bottom: 60px !important; /* adjust as you see fit */
+}

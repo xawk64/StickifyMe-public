@@ -1,5 +1,4 @@
-import { LatLngExpression } from "leaflet";
-import { ICoordinates } from "./GetCoordinatesResponseType";
+import { LatLngTuple } from "leaflet";
 
 export interface IWarehouse {
   ID: number;
@@ -7,5 +6,10 @@ export interface IWarehouse {
   address: string;
   workTime: string;
   acceptsQR: boolean;
-  coordinates?: LatLngExpression;
+  coordinates?: LatLngTuple;
+  selected?: boolean;
+  boxTypes?: string[];
+  coeff?: number;
+  dateStart?: string;
+  dateEnd?: string;
 }

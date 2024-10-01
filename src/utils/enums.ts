@@ -9,4 +9,5 @@ export enum ApiUrlEnum {
   wbGetProduct = "https://content-api.wildberries.ru/content/v2/get/cards/list?locale=ru",
   wbGetOrders = "https://marketplace-api.wildberries.ru/api/v3/orders?limit=1000&next=0&dateFrom=1726837284&dateTo=",
   wbGetOrdersStatuses = "https://marketplace-api.wildberries.ru/api/v3/orders/status",
+  setWarehousesSettings = "/warehouses/settings",
 }

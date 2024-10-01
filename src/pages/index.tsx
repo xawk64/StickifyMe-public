@@ -19,9 +19,6 @@ import { format } from "date-fns";
 import { IOrder } from "../api/models/OrderType";
 import dynamic from "next/dynamic";
 
-// import printJS from "print-js";
-("use client");
-
 const modeItems = [
   { label: "Печать A4", value: GenerateBarcodeMode.a4 as string },
   { label: "Термопринтер", value: GenerateBarcodeMode.thermo as string },

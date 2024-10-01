@@ -10,5 +10,7 @@ db.profile = require("./profile.model");
 db.barcodesHistory = require("./barcodesHistory.model");
 db.order = require("./order.model");
 db.product = require("./product.model");
+db.warehouse = require("./warehouse.model");
+db.warehouseSettings = require("./warehouseSettings.model");
 
 module.exports = db;

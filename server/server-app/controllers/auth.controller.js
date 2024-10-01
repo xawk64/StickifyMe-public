@@ -2,6 +2,8 @@ const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
 const Profile = db.profile;
+const WarehouseSettings = db.warehouseSettings;
+const Warehouses = db.warehouse;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -29,7 +31,6 @@ exports.signup = (req, res) => {
 
     const profile = new Profile({
       fullName: req.body.username,
-      subscriptionDate: "",
     });
 
     profile.save((err) => {
@@ -39,6 +40,28 @@ exports.signup = (req, res) => {
     });
 
     user.profileId = profile._id;
+
+    const warehouse = new Warehouses({
+      items: [],
+      userProfileId: user.profileId,
+    });
+
+    warehouse.save((err) => {
+      if (err) {
+        res.status(500).send({ message: err });
+      }
+    });
+
+    const warehouseSettings = new WarehouseSettings({
+      items: [],
+      userProfileId: user.profileId,
+    });
+
+    warehouseSettings.save((err) => {
+      if (err) {
+        res.status(500).send({ message: err });
+      }
+    });
 
     user.save((err) => {
       if (err) {

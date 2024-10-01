@@ -5,8 +5,8 @@ import { Table as TableNextGui } from "@nextui-org/react";
 
 interface IComponentProps {
   columns?: string[];
-  rows?: string[][];
-  setRows?: (value: string[][]) => void;
+  rows?: (string | JSX.Element)[][];
+  setRows?: (value: (string | JSX.Element)[][]) => void;
   isEditable?: boolean;
   gridTemplateColumns: string;
   onRowClick?: (index: number) => void;
@@ -106,9 +106,10 @@ const Table: React.FC<IComponentProps> = ({
                   >
                     {isEditable &&
                     editableCell?.index === i &&
-                    editableCell.indexInRow === rowIndex ? (
+                    editableCell.indexInRow === rowIndex &&
+                    typeof row[i] === "string" ? (
                       <EditCellText
-                        defaultValue={rows[rowIndex][i]}
+                        defaultValue={rows[rowIndex][i] as string}
                         onChangeText={(value) =>
                           onChangeCellText(value, rowIndex, i)
                         }
