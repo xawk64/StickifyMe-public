@@ -10,6 +10,6 @@ export interface IWarehouse {
   selected?: boolean;
   boxTypes?: string[];
   coeff?: number;
-  dateStart?: string;
-  dateEnd?: string;
+  dateStart?: Date;
+  dateEnd?: Date;
 }

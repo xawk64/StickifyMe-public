@@ -18,6 +18,7 @@ import wbAPI from "../api/wbAPI";
 import { format } from "date-fns";
 import { IOrder } from "../api/models/OrderType";
 import dynamic from "next/dynamic";
+import { Switch } from "@nextui-org/react";
 
 const modeItems = [
   { label: "Печать A4", value: GenerateBarcodeMode.a4 as string },

@@ -1,62 +1,71 @@
 const db = require("../models");
+const WarehouseCheckerService = require("../services/warehousesMonitoringService");
 const User = db.user;
+const Profile = db.profile;
 const WarehouseSettings = db.warehouseSettings;
-const Warehouse = db.warehouse;
+const Warehouses = db.warehouse;
 
-exports.setSettings = (req, res) => {
+exports.setSettings = async (req, res) => {
   console.log(req.body);
-  User.findById(req.userId, (err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || !user.profileId) {
+      throw new Error("User or profile not found");
     }
 
     const settings = {
       items: req.body.settings.items,
+      enabled: req.body.settings.enabled,
       userProfileId: user.profileId,
     };
 
-    console.log(settings, "settings new!!");
+    await Promise.all([
+      WarehouseSettings.updateOne({ userProfileId: user.profileId }, settings, {
+        upsert: true,
+      }),
+      Warehouses.updateOne(
+        { userProfileId: user.profileId },
+        { items: [], userProfileId: user.profileId },
+        { upsert: true }
+      ),
+    ]);
 
-    // Warehouse.updateOne(
-    //   { userProfileId: user.profileId },
-    //   { items: [], userProfileId: user.profileId },
-    //   { upsert: true },
-    //   (err) => {
-    //     if (err) {
-    //       res.status(500).send({ message: err });
-    //     }
-    //   }
-    // );
+    if (WarehouseCheckerService.isInit) {
+      // Обновляем настройки для пользователя
+      await WarehouseCheckerService.changeSettings(user.profileId, settings);
 
-    // const warehouseSettings = new WarehouseSettings(settings);
+      res.status(200).send({ msg: "Настройки успешно сохранены!" });
+    } else {
+      res.status(400).send({ msg: "Некорректные данные" });
+    }
+  } catch (error) {
+    console.error("Ошибка при сохранении настроек:", error);
+    res.status(500).send({ msg: "Произошла ошибка при обработке запроса" });
+  }
+};
 
-    // warehouseSettings.markModified("items");
-    // warehouseSettings.save((err, settings) =>
-    //   console.log(settings, "crete settings!")
-    // );
+exports.getSettings = (req, res) => {
+  User.findById(req.userId, (err, user) => {
+    if (err) {
+      res.status(500).send({ message: err });
+    }
 
-    WarehouseSettings.updateOne(
-      { userProfileId: user.profileId },
-      settings,
-      { upsert: false },
-      (err) => {
-        if (err) {
-          res.status(500).send({ message: err });
-        }
+    Profile.findById(user.profileId, (err, userProfile) => {
+      if (err) {
+        res.status(500).send({ message: err });
       }
-    );
 
-    Warehouse.updateOne(
-      { userProfileId: user.profileId },
-      { items: [], userProfileId: user.profileId },
-      { upsert: true },
-      (err) => {
-        if (err) {
-          res.status(500).send({ message: err });
+      WarehouseSettings.find(
+        { userProfileId: user.profileId },
+        (err, settings) => {
+          if (err) {
+            res.status(500).send({ message: err });
+          }
+
+          settings = settings[0].items;
+          res.status(200).json(settings);
         }
-      }
-    );
-    res.status(200).send({ msg: "was success!" });
+      );
+    });
   });
 };

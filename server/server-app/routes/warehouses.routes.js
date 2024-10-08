@@ -15,4 +15,9 @@ module.exports = function (app) {
     [authJwt.authAPIverifyToken],
     controller.setSettings
   );
+  app.get(
+    "/api/warehouses/settings/get",
+    [authJwt.authAPIverifyToken],
+    controller.getSettings
+  );
 };

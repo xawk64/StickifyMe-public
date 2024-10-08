@@ -7,7 +7,7 @@ export const warehousesList: IWarehouse[] = [
     address: "г.Алматы, ул. Тимирязева 42 павильон 7а",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [43.2220104, 76.90499923810307],
+    coordinates: [43.189429, 76.864787],
   },
   {
     ID: 204939,
@@ -15,7 +15,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Астана (Нур-Султан), Шоссе Алаш, 69/1",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [51.20090275, 71.4808801418142],
+    coordinates: [51.216201, 71.509418],
   },
   {
     ID: 324108,
@@ -23,24 +23,24 @@ export const warehousesList: IWarehouse[] = [
     address: "Караганда, 91/2",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [49.80300735, 73.04892960000001],
+    coordinates: [51.131711, 71.606867],
   },
   {
     ID: 206236,
     name: "Белые Столбы",
     address:
-      "Московская область, Домодедово, микрорайон Белые Столбы, владение Склады 104, с 4/1 ",
+      "Московская область, Домодедово, микрорайон Белые Столбы, владение Склады 104, с 4/1",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [55.3299874, 37.82130774851824],
+    coordinates: [55.329682, 37.818651],
   },
   {
     ID: 301983,
     name: "Волгоград",
-    address: "Дзержинский район, городской округ Волгоград",
+    address: "Авторемонтная улица, 11В, Волгоград",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [48.755634, 44.471981785208726],
+    coordinates: [48.755514, 44.439941],
   },
   {
     ID: 317470,
@@ -48,7 +48,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Минское шоссе, 43-й километр, вл1к3",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.6515798, 37.2640666],
+    coordinates: [55.607946, 37.021136],
   },
   {
     ID: 1733,
@@ -56,7 +56,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Испытателей, 14Г",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [56.767443, 60.81323183663986],
+    coordinates: [56.767609, 60.81316],
   },
   {
     ID: 300571,
@@ -64,7 +64,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Екатеринбург, Перспективная улица 12/2",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [56.73008725, 60.574028597152335],
+    coordinates: [56.72846, 60.577676],
   },
   {
     ID: 117986,
@@ -73,7 +73,7 @@ export const warehousesList: IWarehouse[] = [
       "Республика Татарстан, Зеленодольск, промышленный парк Зеленодольск, 20",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.861625849999996, 48.7982234],
+    coordinates: [55.848721, 48.842408],
   },
   {
     ID: 507,
@@ -81,7 +81,7 @@ export const warehousesList: IWarehouse[] = [
     address: "дер. Коледино, ул. Троицкая, 20",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [54.117398050000006, 61.56963499938924],
+    coordinates: [55.38617, 37.583832],
   },
   {
     ID: 301809,
@@ -90,7 +90,7 @@ export const warehousesList: IWarehouse[] = [
       "Тамбовская область, муниципальное образование город Котовск, район индустриальный парк Котовск, 3/8",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [41.455595, 52.600492],
+    coordinates: [52.600492, 41.455595],
   },
   {
     ID: 130744,
@@ -98,7 +98,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Тихорецкая, 40с1",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [44.8649128, 38.1946408],
+    coordinates: [45.054455, 39.068855],
   },
   {
     ID: 211622,
@@ -106,7 +106,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Беларусь, Минская обл., Минский р-н, Щомыслицкий с/с, 118/2",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [53.6907205, 26.8555762],
+    coordinates: [53.857778, 27.399092],
   },
   {
     ID: 208277,
@@ -114,7 +114,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Тимирязева 16",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [54.86632835, 69.21769505101497],
+    coordinates: [44.664738, 41.896643],
   },
   {
     ID: 301805,
@@ -123,7 +123,7 @@ export const warehousesList: IWarehouse[] = [
       "Индустриальный парк Новосемейкино, городское поселение Новосемейкино, Красноярский район, Самарская область",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [53.369938, 50.353645],
+    coordinates: [53.38944, 50.333135],
   },
   {
     ID: 686,
@@ -140,7 +140,7 @@ export const warehousesList: IWarehouse[] = [
       "Московская область, Богородский городской округ, рабочий поселок Обухово, территория Атлант-Парк, дом 35",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.822228800000005, 38.24574521219236],
+    coordinates: [55.819929, 38.243276],
   },
   {
     ID: 312617,
@@ -149,7 +149,7 @@ export const warehousesList: IWarehouse[] = [
       "Московская область, Богородский городской округ, рабочий поселок Обухово, территория Атлант-Парк, дом 36",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.822228800000005, 38.24574521219236],
+    coordinates: [55.818635, 38.244471],
   },
   {
     ID: 117501,
@@ -157,7 +157,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Поливановская, 9с5",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [53.6977489, 47.4571155],
+    coordinates: [55.417219, 37.593003],
   },
   {
     ID: 218623,
@@ -165,7 +165,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Московская область, Подольск, Поливановская улица, 9с3",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.4129754, 37.58804590509389],
+    coordinates: [55.411823, 37.589796],
   },
   {
     ID: 301229,
@@ -178,10 +178,10 @@ export const warehousesList: IWarehouse[] = [
   {
     ID: 300169,
     name: "Радумля СГТ",
-    address: "деревня Радумля, с4А\t",
+    address: "деревня Радумля, с4А",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.8392983, 37.6282212],
+    coordinates: [56.084586, 37.158021],
   },
   {
     ID: 301760,
@@ -190,7 +190,7 @@ export const warehousesList: IWarehouse[] = [
       "Индустриальный промышленный парк Рязанский, Тюшевское сельское поселение, Рязанский район",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [54.67927305, 39.58051666301506],
+    coordinates: [54.681706, 39.578271],
   },
   {
     ID: 206298,
@@ -198,7 +198,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Игарская, д. 21г",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [48.7485228, 44.4765172],
+    coordinates: [53.722084, 91.382578],
   },
   {
     ID: 300862,
@@ -206,7 +206,7 @@ export const warehousesList: IWarehouse[] = [
     address: "РФ, Республика Хакасия, г. Абакан, ул. Складская 11 стр.",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [53.721730199999996, 91.38421866144657],
+    coordinates: [53.719708, 91.376873],
   },
   {
     ID: 316879,
@@ -214,7 +214,7 @@ export const warehousesList: IWarehouse[] = [
     address: "г. Актобе, район Астана, Промзона 679/12",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [46.4528391, 30.6407189],
+    coordinates: [50.372855, 57.09612],
   },
   {
     ID: 214951,
@@ -222,7 +222,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Приморский край, г. Артем, ул. Солнечная, д.46",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [43.3502107, 132.1514377],
+    coordinates: [43.355538, 132.123709],
   },
   {
     ID: 302769,
@@ -238,7 +238,7 @@ export const warehousesList: IWarehouse[] = [
     address: "улица Рождественского, 17",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [56.734654500000005, 60.92618999800314],
+    coordinates: [46.311839, 48.056589],
   },
   {
     ID: 302988,
@@ -246,7 +246,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Николаевское шоссе, 2В, пос. пригородный",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [46.3832438, 48.00518240020217],
+    coordinates: [46.383882, 48.004837],
   },
   {
     ID: 215020,
@@ -254,7 +254,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Алм. Обл с Байсерке Султана Бейбарса 1",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [50.984842650000004, 71.35789885],
+    coordinates: [43.448537, 77.031437],
   },
   {
     ID: 302737,
@@ -262,7 +262,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Барнаул, улица Попова, 179Б",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [53.32125945, 83.64195525543835],
+    coordinates: [53.321512, 83.642199],
   },
   {
     ID: 210557,
@@ -278,7 +278,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Абаканская улица, 121 Ленинский район",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [54.78888190000001, 32.00613151122873],
+    coordinates: [42.862734, 74.506629],
   },
   {
     ID: 300363,
@@ -286,7 +286,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Брестская область, Брест, Дубровская улица, 36В",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [47.6915999, 40.1550533],
+    coordinates: [52.126005, 23.64126],
   },
   {
     ID: 302856,
@@ -294,7 +294,7 @@ export const warehousesList: IWarehouse[] = [
     address: "д. Ближние Прудищи 2/1",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.5801287, 37.6984942],
+    coordinates: [55.574925, 37.697576],
   },
   {
     ID: 158751,
@@ -302,7 +302,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Северная Осетия-Алания, с. Михайловское, Бесланское шоссе",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [43.0990409, 44.6263704],
+    coordinates: [44.645329, 43.088755],
   },
   {
     ID: 144649,
@@ -310,7 +310,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Мещерская, 7а",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.3955771, 39.0569651],
+    coordinates: [56.097407, 40.355988],
   },
   {
     ID: 210127,
@@ -318,7 +318,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Поселение Марушкинское, квартал № 8",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [55.58501525, 37.18333532398657],
+    coordinates: [55.587102, 37.221981],
   },
   {
     ID: 203631,
@@ -352,7 +352,7 @@ export const warehousesList: IWarehouse[] = [
       "Липкинское шоссе, 2-й километр, вл1с1, посёлок Вёшки, городской округ Мытищи, Московская область",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [55.928207, 37.66322500946896],
+    coordinates: [55.918313, 37.562209],
   },
   {
     ID: 218402,
@@ -360,7 +360,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Ивановская область, ул. Окружная д. 16",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [57.417218649999995, 42.16459507194159],
+    coordinates: [56.951769, 40.941105],
   },
   {
     ID: 218628,
@@ -384,7 +384,7 @@ export const warehousesList: IWarehouse[] = [
     address: "2-й Академический проезд, 12",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [54.8051903, 31.98744550298627],
+    coordinates: [54.483441, 36.218069],
   },
   {
     ID: 213849,
@@ -409,7 +409,7 @@ export const warehousesList: IWarehouse[] = [
       "Россия, станица Крыловская, Краснодарский край, ул. Орджоникидзе д.161",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [46.32068125, 39.969378899999995],
+    coordinates: [46.312237, 39.946724],
   },
   {
     ID: 302335,
@@ -449,7 +449,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Промышленная, 19",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [49.8140681, 72.64885030602909],
+    coordinates: [68.999114, 33.125556],
   },
   {
     ID: 204952,
@@ -466,7 +466,7 @@ export const warehousesList: IWarehouse[] = [
       "Посёлок Кудьма, логистический комплекс Южный, ул. Индустриальная, 10",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [0, 0],
+    coordinates: [56.169147, 43.895566],
   },
   {
     ID: 211470,
@@ -475,7 +475,7 @@ export const warehousesList: IWarehouse[] = [
       "Свердловская область, г. Нижний Тагил, ул. Индустриальная, д. 30/1",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [57.93043675, 60.035582231298044],
+    coordinates: [57.927544, 59.991148],
   },
   {
     ID: 206708,
@@ -526,7 +526,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Оренбург, Центральная улица, 29",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [51.7030223, 55.1100497],
+    coordinates: [51.705626, 55.109873],
   },
   {
     ID: 218732,
@@ -534,7 +534,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Киргизия, г. Ош, улица Артыкова, д.83",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [47.27696245, 39.743250768247705],
+    coordinates: [40.552514, 72.806388],
   },
   {
     ID: 216566,
@@ -550,7 +550,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Индустриальная, д. 9/1",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [48.334756999999996, 39.95330017090241],
+    coordinates: [57.825596, 28.37946],
   },
   {
     ID: 207743,
@@ -558,7 +558,7 @@ export const warehousesList: IWarehouse[] = [
     address: "М-8 Холмогоры, 33-й километр, 16В, 4 корпус ",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [56.0015709, 37.8808664],
+    coordinates: [55.992382, 37.884228],
   },
   {
     ID: 158311,
@@ -567,7 +567,7 @@ export const warehousesList: IWarehouse[] = [
       " Георгиевское шоссе, 1-й километр, 2, Предгорный муниципальный округ, Ставропольский край",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [44.17287, 42.68125935699549],
+    coordinates: [43.140595, 44.03136],
   },
   {
     ID: 301920,
@@ -575,7 +575,7 @@ export const warehousesList: IWarehouse[] = [
     address: "г Пятигорск район Этока Георгиевское шоссе 4 км. 1",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [60.1258586, 31.0661387],
+    coordinates: [44.034682, 43.171586],
   },
   {
     ID: 218616,
@@ -584,7 +584,7 @@ export const warehousesList: IWarehouse[] = [
       "улица Гайдара, 8 корпус 2, хутор Нижнетемерницкий, Щепкинское сельское поселение, Аксайский район, Ростовская область",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [47.383432049999996, 39.7968709],
+    coordinates: [47.366714, 39.71707],
   },
   {
     ID: 323608,
@@ -592,7 +592,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Каширское шоссе д. 57 к. 2",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.597192, 37.72742854856561],
+    coordinates: [55.637337, 37.696687],
   },
   {
     ID: 117230,
@@ -601,7 +601,7 @@ export const warehousesList: IWarehouse[] = [
       "Самарская область, Волжский район, село Преображенка, ул. Индустриальная, 1Б",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [53.091605349999995, 50.12700049926268],
+    coordinates: [55.122406, 37.545312],
   },
   {
     ID: 303189,
@@ -609,7 +609,7 @@ export const warehousesList: IWarehouse[] = [
     address: "РК, г. Семей, трасса Семей-Алматы 7/1",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [0, 0],
+    coordinates: [50.344218, 80.299307],
   },
   {
     ID: 169537,
@@ -625,7 +625,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Московское шоссе, 12 км",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [53.27827325, 50.269242500000004],
+    coordinates: [45.032611, 34.045997],
   },
   {
     ID: 300987,
@@ -641,7 +641,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Сосновая, 29/12",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [61.2450039, 73.50117914190065],
+    coordinates: [61.244994, 73.501145],
   },
   {
     ID: 209208,
@@ -649,7 +649,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Республика Коми, г.Сыктывкар ул. 1-ая Промышленная д.19",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [61.66388995, 50.896100829543855],
+    coordinates: [61.72876, 50.768971],
   },
   {
     ID: 117866,
@@ -673,7 +673,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Мичурина, 47с14 ",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [43.409963, 77.009545],
+    coordinates: [56.515444, 85.024059],
   },
   {
     ID: 117819,
@@ -681,7 +681,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул.Харьковская, 77с1",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [42.339088, 69.5862597],
+    coordinates: [57.143029, 65.597632],
   },
   {
     ID: 205104,
@@ -689,7 +689,7 @@ export const warehousesList: IWarehouse[] = [
     address: "14 проезд Инженерный, 9в",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [54.354944849999995, 48.60084724872405],
+    coordinates: [54.354892, 48.600743],
   },
   {
     ID: 300711,
@@ -697,15 +697,15 @@ export const warehousesList: IWarehouse[] = [
     address: "РК, г. Уральск, Район ТЭЦ 10/3",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [56.951927600000005, 41.10591182903633],
+    coordinates: [51.224327, 51.425381],
   },
   {
     ID: 149445,
     name: "СЦ Уфа",
-    address: "Мокроусовская улица, 8Г",
+    address: "Мокроусовская улица, 7к1",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [54.5657994, 55.93134864922412],
+    coordinates: [54.565107, 55.932263],
   },
   {
     ID: 218644,
@@ -721,7 +721,7 @@ export const warehousesList: IWarehouse[] = [
     address: "г. Чебоксары, проезд Лапсарский, д. 55, строение 1",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [0, 0],
+    coordinates: [56.072313, 47.231244],
   },
   {
     ID: 218225,
@@ -729,7 +729,7 @@ export const warehousesList: IWarehouse[] = [
     address: "г. Челябинск пр-кт Ленина д. 3",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [55.155069999999995, 61.4724719632009],
+    coordinates: [55.158549, 61.468086],
   },
   {
     ID: 311895,
@@ -761,7 +761,7 @@ export const warehousesList: IWarehouse[] = [
     address: "г. Шымкент микрорайон Самал 3 улица А Шеримкулова 5",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [42.36956085, 69.5369835],
+    coordinates: [42.368691, 69.533869],
   },
   {
     ID: 207404,
@@ -769,7 +769,7 @@ export const warehousesList: IWarehouse[] = [
     address: "ул. Промышленная, 22",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [49.81445965, 72.64850059999999],
+    coordinates: [57.662651, 39.78925],
   },
   {
     ID: 2737,
@@ -778,7 +778,7 @@ export const warehousesList: IWarehouse[] = [
       "Всеволожский р-н, г.п. Свердловское, дер. Новосаратовка, участок № 1 (промзона Уткина Заводь, комплекс МЛП, корпус 4, парадная 4)",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [0, 0],
+    coordinates: [30.522093, 59.868633],
   },
   {
     ID: 217081,
@@ -794,7 +794,7 @@ export const warehousesList: IWarehouse[] = [
     address: "Тульская область, муниципальное образование Алексин, 1",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [58.776344, 40.975246],
+    coordinates: [54.437915, 37.465299],
   },
   {
     ID: 321932,
@@ -803,7 +803,7 @@ export const warehousesList: IWarehouse[] = [
       "Территория Индустриальный парк Чашниково, городской округ Солнечногорск, Московская область",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [56.031983, 37.1680356],
+    coordinates: [56.040289, 37.155048],
   },
   {
     ID: 206968,
@@ -821,7 +821,7 @@ export const warehousesList: IWarehouse[] = [
       "Московская обл. городской округ Чехов. Промышленная зона Новоселки, вл. 11 стр 7",
     workTime: "24/7",
     acceptsQR: false,
-    coordinates: [55.130336, 37.5594284538268],
+    coordinates: [55.122406, 37.545312],
   },
   {
     ID: 120762,
@@ -830,6 +830,6 @@ export const warehousesList: IWarehouse[] = [
       "Московская область, Электросталь, посёлок Случайный, территория Массив 3, 5",
     workTime: "24/7",
     acceptsQR: true,
-    coordinates: [55.7590359, 38.435388],
+    coordinates: [55.74639, 38.417711],
   },
 ];

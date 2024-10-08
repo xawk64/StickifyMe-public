@@ -6,6 +6,16 @@
   "scripts": {
     "dev": "nodemon server.js"
   },
+  "nodemonConfig": {
+    "restartable": "rs",
+    "ignore": [
+      "node_modules/**/node_modules"
+    ],
+    "delay": "2500",
+    "env": {
+      "telegramBotToken": "***REMOVED***"
+    }
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
