@@ -70,6 +70,11 @@ class WarehouseChecker {
 
     const warehousesItems = await warehousesItemsResponse.json();
 
+    if (!Array.isArray(warehousesItems) && warehousesItems?.detail) {
+      console.log("Ошибка получения данных складов: " + warehousesItems.detail);
+      return;
+    }
+
     let isItemInOldWarehouseInfoChanged = false;
     let isNewWarehouseAdded = false;
 
@@ -86,8 +91,8 @@ class WarehouseChecker {
       );
       const condition =
         item.coefficient > -1 &&
-        Date(item.date) >= Date(settingsItem.dateStart) &&
-        Date(item.date) <= Date(settingsItem.dateEnd) &&
+        new Date(item.date) >= new Date(settingsItem.dateStart) &&
+        new Date(item.date) <= new Date(settingsItem.dateEnd) &&
         settingsItem.boxTypes.includes(item.boxTypeName) &&
         item.coefficient <= settingsItem.coeff &&
         (oldInfo ? item.coefficient !== oldInfo.coefficient : true);
@@ -215,8 +220,9 @@ class WarehouseCheckerService {
       return;
     }
 
-    if (!newSettings.enabled && !newSettings.items.length) {
+    if (!newSettings.enabled || !newSettings.items.length) {
       this.removeChecker(profileId);
+      return;
     }
     // Перезапускаем цикл проверок с обновленными настройками
     checker.restartCheckCycle(newSettings);

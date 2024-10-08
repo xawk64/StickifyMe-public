@@ -71,7 +71,7 @@ class TelegramBotService {
   }
 
   async sendMessage(chatId, message) {
-    await this.bot.sendMessage(chatId, message);
+    await this.bot.sendMessage(chatId, message, { parse_mode: "markdown" });
   }
 
   async sendWarehouseInfo(
@@ -85,14 +85,16 @@ class TelegramBotService {
           `${item.warehouseID}${item.date}${item.boxTypeName}`
         ];
 
-      msg += `Склад: ${item.warehouseName}\nДата поставки: ${
-        item.date.split("T")[0]
-      }\nТип упаковки: ${item.boxTypeName}\nКоэфициент: ${
-        item.coefficient === 0 ? "бесплатно" : `x${item.coefficient}`
+      msg += `Склад: ${item.warehouseName}\n🗓: ${item.date
+        .split("T")[0]
+        .split("-")
+        .reverse()
+        .join(".")}\nТип упаковки: ${item.boxTypeName}\nКоэффициент: ${
+        item.coefficient === 0 ? "`бесплатно`" : `x${item.coefficient}`
       }${
         oldCoeff !== undefined
-          ? `\nСтарый коэфициент: ${
-              oldCoeff === 0 ? "бесплатно" : `x${oldCoeff}`
+          ? `\nСтарый коэффициент: ${
+              oldCoeff === 0 ? "`бесплатно`" : `x${oldCoeff}`
             }`
           : ""
       }\n \n`;
