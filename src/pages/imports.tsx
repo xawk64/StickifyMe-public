@@ -41,7 +41,9 @@ const tabItems = [
 const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   const printDocument = useRef<(blob: Blob) => void>();
 
-  const [tab, setTab] = useState(tabHref || tabItems[0]);
+  const [tab, setTab] = useState<{ label: string; href: string }>(
+    tabItems.find((tab) => tab.href === tabHref) || tabItems[0]
+  );
 
   const [columns, setColumns] = useState([
     "№",
@@ -135,9 +137,12 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
     }
   };
 
-  // const setTabHandler = (tab: string) => {
-  //   router.push(tab === tabItems[0] ? "/" : "/history");
-  // };
+  const setTabHandler = (tab: { label: string; href: string } | undefined) => {
+    if (tab) {
+      router.push(tab.href);
+      setTab(tab);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -201,12 +206,8 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         <div className="flex justify-between mb-6 mt-2"></div>
         <div className="flex justify-center">
           <div className={style.container}>
-            <Tabs
-              items={tabItems}
-              // value={tab}
-              // setValue={setTabHandler}
-            />
-            {tab === tabItems[0] && (
+            <Tabs items={tabItems} setValue={setTabHandler} />
+            {tab.href === tabItems[0].href && (
               <>
                 <div>
                   <FilePicker onChange={handleFileChange} />
