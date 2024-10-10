@@ -1,8 +1,8 @@
 import React from "react";
-import Home from ".";
+import Imports from "./imports";
 
 const History: React.FC = () => {
-  return <Home tabHref="История импортов" />;
+  return <Imports tabHref="История импортов" />;
 };
 
 export default History;

@@ -7,6 +7,7 @@ import "./index.css";
 import authAPI from "../api/authAPI";
 import AuthMe from "../components/AuthMe/AuthMe";
 import { NextUIProvider } from "@nextui-org/react";
+import { useRouter } from "next/router";
 
 const store = new Store();
 
@@ -15,9 +16,11 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
     injectStores({ store });
   }, []);
 
+  const router = useRouter();
+
   return (
     <StoreProvider store={store}>
-      <NextUIProvider>
+      <NextUIProvider navigate={router.push}>
         <Head>
           <title>StickifyMe</title>
         </Head>

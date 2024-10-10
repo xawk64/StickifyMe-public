@@ -2,24 +2,24 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-import styles from "./map.module.scss";
+import styles from "./styles.module.scss";
 import { LatLngTuple, LeafletMouseEvent } from "leaflet";
 import { useEffect, useState } from "react";
-import { IWarehouse } from "../../api/models/GetWarehousesResponseType";
+import { IWarehouse } from "../../../api/models/GetWarehousesResponseType";
 import { warehousesList } from "./config";
 import L from "leaflet";
-import iconSelected from "../../assets/place-marker-selected.png";
-import iconMarker from "../../assets/place-marker.png";
-import Table from "../ui/Table/Table";
+import iconSelected from "../../../assets/place-marker-selected.png";
+import iconMarker from "../../../assets/place-marker.png";
+import Table from "../../ui/Table/Table";
 import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
-import Button from "../ui/Button/Button";
-import warehousesAPI from "../../api/warehousesAPI";
-import Select from "../ui/Select/Select";
-import DateRangePicker from "../ui/DateRangePicker/DateRangePicker";
-import { IWarehouseSettings } from "../../api/models/WarehouseSettings";
+import Button from "../../ui/Button/Button";
+import warehousesAPI from "../../../api/warehousesAPI";
+import Select from "../../ui/Select/Select";
+import DateRangePicker from "../../ui/DateRangePicker/DateRangePicker";
+import { IWarehouseSettings } from "../../../api/models/WarehouseSettings";
 import { Switch } from "@nextui-org/react";
 
-interface IMapProps {
+interface IWarehousesMonitoring {
   position?: LatLngTuple;
   zoom?: number;
 }
@@ -51,7 +51,10 @@ const boxTypes = [
 
 const gridTemplateColumns = "30px 200px 400px 200px 230px 200px";
 
-const Map: React.FC<IMapProps> = ({ position = [55.74, 37.61], zoom = 10 }) => {
+const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
+  position = [55.74, 37.61],
+  zoom = 10,
+}) => {
   const [warehouses, setWarehouses] = useState<IWarehouse[]>(warehousesList);
 
   const [enabled, setEnabled] = useState(true);
@@ -282,4 +285,4 @@ const Map: React.FC<IMapProps> = ({ position = [55.74, 37.61], zoom = 10 }) => {
   );
 };
 
-export default Map;
+export default WarehousesMonitoring;

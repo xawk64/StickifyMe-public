@@ -1,4 +1,4 @@
-import { IWarehouse } from "../../api/models/GetWarehousesResponseType";
+import { IWarehouse } from "../../../api/models/GetWarehousesResponseType";
 
 export const warehousesList: IWarehouse[] = [
   {

@@ -1,27 +1,28 @@
+"use client";
 import React from "react";
-import { Navbar, Link } from "@nextui-org/react";
+import {
+  Tabs as TabsComponent,
+  Tab,
+  Card,
+  CardBody,
+  CardHeader,
+} from "@nextui-org/react";
+import { usePathname } from "next/navigation";
 
 interface IComponentProps {
-  items: string[];
+  items: { label: string; href: string }[];
   value: string;
   setValue: (value: string) => void;
 }
 
 const Tabs: React.FC<IComponentProps> = ({ items, value, setValue }) => {
+  const pathname = usePathname();
   return (
-    <Navbar isBordered variant="static" className="flex justify-center">
-      <Navbar>
-        {items.map((item, i) => (
-          <Link
-            key={i}
-            onClick={() => setValue(item)}
-            isActive={item === value}
-          >
-            {item}
-          </Link>
-        ))}
-      </Navbar>
-    </Navbar>
+    <TabsComponent aria-label="Options" selectedKey={pathname}>
+      {items.map((item, i) => (
+        <Tab key={i} title={item.label} href={item.href} />
+      ))}
+    </TabsComponent>
   );
 };
 
