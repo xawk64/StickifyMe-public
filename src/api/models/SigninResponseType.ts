@@ -7,4 +7,5 @@ export interface SigninResponseType {
   accessToken: string;
   fullName: string;
   emailVerification: boolean;
+  avatarUrl?: string;
 }

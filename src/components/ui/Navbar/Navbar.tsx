@@ -7,7 +7,7 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/router"; // Import useRouter hook from next/router
 import Link from "next/link";
-
+import styles from "./styles.module.scss";
 interface MenuItem {
   label: string;
   href: string;
@@ -21,7 +21,6 @@ interface NavbarWrapperProps {
 }
 
 const NavbarWrapper: React.FC<NavbarWrapperProps> = ({
-  className,
   icon,
   menuItems,
   rightSideContent,
@@ -30,7 +29,7 @@ const NavbarWrapper: React.FC<NavbarWrapperProps> = ({
   const currentPath = router.pathname; // Extract pathname from router
 
   return (
-    <Navbar className={className}>
+    <Navbar className={styles.root} isBlurred>
       <NavbarBrand>{icon}</NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {menuItems.map((item, index) => {

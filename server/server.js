@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 const mongodb = require("mongodb");
+const fileUpload = require("express-fileupload");
 
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
@@ -16,7 +17,30 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use(bodyParser.json({ limit: "50mb" }));
+app.use("/uploads", express.static("./uploads"));
+
+app.use(
+  fileUpload({
+    createParentPath: true,
+    limits: {
+      fileSize: 50 * 1024 * 1024, // 50 МБ максимальный размер файла
+    },
+  })
+);
+
+app.use(
+  bodyParser.json({
+    limit: "50mb",
+    verify: (req, res, buf) => {
+      try {
+        JSON.parse(buf);
+      } catch (e) {
+        res.status(400).json({ error: "Invalid JSON" });
+        throw new Error("Invalid JSON");
+      }
+    },
+  })
+);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 

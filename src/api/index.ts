@@ -1,7 +1,7 @@
 import { saveAs } from "file-saver";
 
 const defaultLocation: string =
-  process.env.REACT_APP_API_URL || "http://localhost:4000/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export enum LocalStorageKeysEnum {
   TOKEN = "accessToken",
@@ -13,16 +13,22 @@ export const storageToken = () => {
 
 const buildParamsPost = (met: string, data?: any) => {
   if (data) {
-    const headers = data.headers || {};
+    const headers = data.headers;
 
     return {
       method: met,
-      headers: {
-        ...headers,
-        "Content-Type": "application/json",
-        "x-access-token": String(storageToken()),
-      },
-      body: JSON.stringify(data.headers ? data.body : data),
+      headers:
+        headers === null
+          ? { "x-access-token": String(storageToken()) }
+          : {
+              "Content-Type": "application/json",
+              "x-access-token": String(storageToken()),
+              ...headers,
+            },
+      body:
+        headers === null
+          ? data.body
+          : JSON.stringify(data.headers ? data.body : data),
     };
   }
   return {

@@ -1,5 +1,6 @@
 import { Button as ButtonComponent } from "@nextui-org/react";
 import React from "react";
+import styles from "./styles.module.scss";
 
 interface IComponentProps {
   label: string;
@@ -14,7 +15,12 @@ const Button: React.FC<IComponentProps> = ({
 }) => {
   return (
     <div>
-      <ButtonComponent color={type} size="md" onClick={onClick}>
+      <ButtonComponent
+        color={type}
+        size="lg"
+        onClick={onClick}
+        className={styles[type]}
+      >
         {label}
       </ButtonComponent>
     </div>

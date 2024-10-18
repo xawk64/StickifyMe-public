@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/user.controller");
+const { uploadAvatar } = require("../controllers/user.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -21,4 +22,6 @@ module.exports = function (app) {
     [authJwt.authAPIverifyToken],
     controller.setProfile
   );
+
+  app.post("/api/upload-avatar", [authJwt.authAPIverifyToken], uploadAvatar);
 };

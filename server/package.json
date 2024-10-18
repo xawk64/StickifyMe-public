@@ -13,7 +13,8 @@
     ],
     "delay": "2500",
     "env": {
-      "telegramBotToken": "***REMOVED***"
+      "telegramBotToken": "***REMOVED***",
+      "NEXT_PUBLIC_API_URL": "http://localhost:4000"
     }
   },
   "author": "",

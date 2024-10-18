@@ -1,4 +1,4 @@
-import { User as UserComponent, Link } from "@nextui-org/react";
+import { User as UserComponent } from "@nextui-org/react";
 import React from "react";
 
 interface IUserProps {

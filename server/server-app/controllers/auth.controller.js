@@ -123,6 +123,7 @@ exports.signin = (req, res) => {
         profileId: user.profileId,
         fullName: profile.fullName,
         accessToken: token,
+        avatarUrl: profile.avatarUrl,
       });
     });
   });
@@ -145,6 +146,7 @@ exports.authMe = (req, res) => {
         email: user.email,
         profileId: user.profileId,
         fullName: profile.fullName,
+        avatarUrl: profile.avatarUrl,
       });
     });
   });

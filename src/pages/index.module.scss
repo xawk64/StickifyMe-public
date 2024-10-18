@@ -1,7 +1,19 @@
 .container {
-  width: 1600px;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  gap: 16px;
+  position: relative;
+  .tryButton {
+    position: absolute;
+    bottom: 60px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    p {
+      font-size: 24px;
+      font-weight: 700;
+      color: #000;
+    }
+  }
 }

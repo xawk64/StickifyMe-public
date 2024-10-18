@@ -2,6 +2,9 @@ const db = require("../models");
 const Profile = db.profile;
 const User = db.user;
 const mongoose = require("mongoose");
+const fs = require("fs");
+const path = require("path");
+const { log } = require("console");
 
 exports.setProfile = (req, res) => {
   console.log(req.body);
@@ -90,4 +93,47 @@ exports.getProfiles = (req, res) => {
       res.status(200).json({ profile });
     });
   }
+};
+
+exports.uploadAvatar = async (req, res) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("No files were uploaded.");
+  }
+
+  const avatarFile = req.files.avatar;
+  const userId = req.userId; // Предполагается, что у вас есть middleware для аутентификации
+
+  const uploadPath = path.join(
+    __dirname,
+    "../../uploads/avatars",
+    `${userId}_${avatarFile.name}`
+  );
+
+  avatarFile.mv(uploadPath, function (err) {
+    if (err) {
+      return res.status(500).send(err);
+    }
+
+    const avatarUrl = `/uploads/avatars/${userId}_${avatarFile.name}`;
+
+    User.findById(req.userId, (err, user) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      Profile.updateOne(
+        { _id: user.profileId },
+        { avatarUrl },
+        { upsert: false },
+        (err) => {
+          if (err) {
+            res.status(500).send({ message: err });
+          }
+        }
+      );
+    });
+
+    res.send({ avatarUrl });
+  });
 };
