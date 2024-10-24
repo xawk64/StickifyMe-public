@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  Select as SelectComponent,
-  SelectItem,
-  SharedSelection,
-} from "@nextui-org/react";
+import { Select as SelectComponent, SelectItem } from "@nextui-org/react";
 
 interface IComponentProps {
   initValue: string;
@@ -26,8 +22,6 @@ const Select: React.FC<IComponentProps> = ({
 
   const handleChange = (e: any) => {
     const value = e.target.value;
-
-    console.log(value, "value");
 
     setValue(e.target.value);
 

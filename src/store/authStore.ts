@@ -13,10 +13,10 @@ export class AuthStore {
     fullName: "",
     accessToken: "",
     emailVerification: false,
+    wbApiKey: "",
+    chatId: "",
   };
-  status: RequestStatus = RequestStatus.pending;
-
-  value = true;
+  status: RequestStatus = RequestStatus.idle;
 
   constructor(store: Store) {
     this.Store = store;

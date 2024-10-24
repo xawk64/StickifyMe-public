@@ -8,7 +8,6 @@ const Warehouses = db.warehouse;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 const { sendEmail } = require("../utils/sendEmail");
-var bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 
 exports.signup = (req, res) => {
@@ -69,7 +68,11 @@ exports.signup = (req, res) => {
         return;
       }
 
-      sendEmail(req.body.email, req.body.username, emailVerificationHash);
+      sendEmail(
+        req.body.email,
+        "Потверждение учетной записи",
+        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке:  <a href="https:/example.com/verify/?hash=${hash}">подтвердить регистрацию</a> или введите вручную в браузере: https:/example.com/verify/?hash=${hash}.Если это делали не Вы, просьба закрыть данное сообщение. `
+      );
 
       res.status(200).send({ message: "User was registered successfully!" });
     });
@@ -124,6 +127,8 @@ exports.signin = (req, res) => {
         fullName: profile.fullName,
         accessToken: token,
         avatarUrl: profile.avatarUrl,
+        wbApiKey: profile.wbApiKey,
+        chatId: profile.chatId,
       });
     });
   });
@@ -147,6 +152,8 @@ exports.authMe = (req, res) => {
         profileId: user.profileId,
         fullName: profile.fullName,
         avatarUrl: profile.avatarUrl,
+        wbApiKey: profile.wbApiKey,
+        chatId: profile.chatId,
       });
     });
   });
@@ -174,4 +181,68 @@ exports.verify = (req, res) => {
       emailVerification: true,
     });
   });
+};
+
+exports.resetPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    const profile = await Profile.findOne({ _id: user.profileId });
+    if (!user) {
+      return res
+        .status(404)
+        .send({ message: "Пользователь с таким email не найден." });
+    }
+
+    const resetToken = bcrypt.genSaltSync(10);
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 час
+    await user.save();
+
+    // Отправка email с инструкциями по сбросу пароля
+    await sendEmail(
+      email,
+      "Сброс пароля",
+      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке: https://example.com/reset-password/${resetToken}`
+    );
+
+    res.status(200).send({
+      message: "Инструкции по сбросу пароля отправлены на ваш email.",
+    });
+  } catch (error) {
+    console.error("Ошибка при сбросе пароля:", error);
+    res
+      .status(500)
+      .send({ message: "Произошла ошибка при обработке запроса." });
+  }
+};
+
+exports.confirmResetPassword = async (req, res) => {
+  const { token, password } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .send({ message: "Токен для сброса пароля недействителен или истек." });
+    }
+
+    user.password = bcrypt.hashSync(password, 8);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).send({ message: "Пароль успешно изменен." });
+  } catch (error) {
+    console.error("Ошибка при подтверждении сброса пароля:", error);
+    res
+      .status(500)
+      .send({ message: "Произошла ошибка при обработке запроса." });
+  }
 };

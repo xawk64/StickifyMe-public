@@ -5,9 +5,7 @@ import Imports from "./imports";
 const ViewHistory: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  return (
-    <Imports tabHref="История импортов" viewHistoryId={id && String(id)} />
-  );
+  return <Imports tabHref="/history" viewHistoryId={id && String(id)} />;
 };
 
 export default ViewHistory;

@@ -2,10 +2,11 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import authAPI from "../api/authAPI";
-import Button from "../components/ui/Button/Button";
-import Input from "../components/ui/Input/Input";
-import RadioGroup from "../components/ui/RadioGroup/RadioGroup";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import RadioGroup from "../components/ui/RadioGroup";
 import { useStore } from "../store";
+import Link from "next/link";
 
 enum AuthType {
   signIn = "signIn",
@@ -24,17 +25,25 @@ const Auth: React.FC = observer(() => {
 
   const router = useRouter();
 
+  const { type } = router.query;
+
   const {
     authStore: { state, setAuthState },
   } = useStore();
 
   useEffect(() => {
     if (state.accessToken) {
-      router.push("/");
+      if (state.wbApiKey) {
+        router.push("/imports");
+      } else {
+        router.push("/settings");
+      }
     }
   }, [state]);
 
-  const [authType, setAuthType] = useState(radioItems[1]);
+  const [authType, setAuthType] = useState(
+    radioItems.find((item) => item.value === type) || radioItems[0]
+  );
 
   const onLoginLogoutClick = useCallback(async () => {
     if (authType.value === AuthType.signUp) {
@@ -46,34 +55,37 @@ const Auth: React.FC = observer(() => {
   }, [authType.value, email, username, password]);
 
   return (
-    <div
-      className="my-0
-    mx-auto w-80"
-    >
-      <h1 className="mb-2">Вход или регистрация</h1>
-
-      <div className="mb-4">
-        <RadioGroup
-          items={radioItems}
-          value={authType}
-          onChange={setAuthType}
-        />
-      </div>
-      <div className="max-w-xs">
-        <Input value={username} onChange={setUsername} label="Логин" />
-      </div>
-
-      {authType.value === AuthType.signUp && (
-        <div className="max-w-xs">
-          <Input value={email} onChange={setEmail} label="E-mail" />
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="w-80 flex flex-col items-center">
+        <div className="mb-4">
+          <RadioGroup
+            items={radioItems}
+            value={authType}
+            onChange={setAuthType}
+          />
         </div>
-      )}
+        <div className="flex flex-col gap-4 w-full">
+          <div className="w-full">
+            <Input value={username} onChange={setUsername} label="Логин" />
+          </div>
 
-      <div className="max-w-xs mb-8">
-        <Input value={password} onChange={setPassword} label="Пароль" />
+          {authType.value === AuthType.signUp && (
+            <div className="w-full">
+              <Input value={email} onChange={setEmail} label="E-mail" />
+            </div>
+          )}
+
+          <div className="w-full mb-8">
+            <Input value={password} onChange={setPassword} label="Пароль" />
+          </div>
+        </div>
+
+        <Button onClick={onLoginLogoutClick} label={authType.label} />
+
+        <div className="mt-4 text-center">
+          <Link href="/reset-password-form">Забыли пароль?</Link>
+        </div>
       </div>
-
-      <Button onClick={onLoginLogoutClick} label={authType.label} />
     </div>
   );
 });

@@ -11,3 +11,16 @@
     width: 180px !important;
   }
 }
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding-right: 16px;
+  height: 60px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+}

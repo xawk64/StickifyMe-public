@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import Input from "../Input/Input";
+import React, { useState, useEffect, useRef } from "react";
+import Input from "../Input";
 import styles from "./Table.module.scss";
-import { Table as TableNextGui } from "@nextui-org/react";
+import { Pagination } from "@nextui-org/react";
 
 interface IComponentProps {
   columns?: string[];
@@ -10,6 +10,7 @@ interface IComponentProps {
   isEditable?: boolean;
   gridTemplateColumns: string;
   onRowClick?: (index: number) => void;
+  itemsPerPage?: number;
 }
 
 interface EditCellTextProps {
@@ -44,6 +45,7 @@ const Table: React.FC<IComponentProps> = ({
   isEditable,
   gridTemplateColumns,
   onRowClick,
+  itemsPerPage = 10,
 }) => {
   const [editableCell, setEditableCell] = useState<{
     index: number;
@@ -51,6 +53,13 @@ const Table: React.FC<IComponentProps> = ({
   } | null>(null);
 
   const [currentRowHover, setCurrentRowHover] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = rows
+    ? rows.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
   const onChangeCellText = (
     newValue: string,
@@ -58,8 +67,9 @@ const Table: React.FC<IComponentProps> = ({
     indexInRow: number
   ) => {
     if (rows) {
+      const actualIndex = indexOfFirstItem + index;
       const newRows = rows.map((row, i) => {
-        if (i === index) {
+        if (i === actualIndex) {
           return row.map((value, valueIndex) => {
             if (valueIndex === indexInRow) {
               return newValue;
@@ -73,22 +83,55 @@ const Table: React.FC<IComponentProps> = ({
     }
   };
 
-  return (
+  const tableRef = useRef<HTMLDivElement>(null);
+  const [tableHeight, setTableHeight] = useState("auto");
+
+  useEffect(() => {
+    const updateTableHeight = () => {
+      if (tableRef.current) {
+        const windowHeight = window.innerHeight;
+        const tableTop = tableRef.current.getBoundingClientRect().top;
+        const paginationHeight = 60; // Примерная высота пагинации
+        const newHeight = windowHeight - tableTop - paginationHeight;
+        setTableHeight(`${newHeight}px`);
+      }
+    };
+
+    updateTableHeight();
+    window.addEventListener("resize", updateTableHeight);
+
+    return () => {
+      window.removeEventListener("resize", updateTableHeight);
+    };
+  }, []);
+
+  const totalPages = Math.ceil((rows?.length || 0) / itemsPerPage);
+
+  return rows && rows.length > 0 ? (
     <div
-      className={styles.table}
-      style={{ ["--grid-template-columns" as any]: gridTemplateColumns }}
+      className={styles.tableContainer}
+      style={{
+        overflowY: "auto",
+      }}
     >
-      {columns &&
-        columns.length > 0 &&
-        columns.map((column, i) => {
-          return (
-            <div key={i} className={styles.column}>
-              <div className={`${styles.cell} ${styles.header}`}>
-                <div className={`${styles.cell} ${styles.text}`}>{column}</div>
-              </div>
-              {rows &&
-                rows.length > 0 &&
-                rows.map((row, rowIndex) => (
+      <div
+        ref={tableRef}
+        className={styles.table}
+        style={{
+          ["--grid-template-columns" as any]: gridTemplateColumns,
+        }}
+      >
+        {columns &&
+          columns.length > 0 &&
+          columns.map((column, i) => {
+            return (
+              <div key={i} className={styles.column}>
+                <div className={`${styles.cell} ${styles.header}`}>
+                  <div className={`${styles.cell} ${styles.text}`}>
+                    {column}
+                  </div>
+                </div>
+                {currentItems.map((row, rowIndex) => (
                   <div
                     key={rowIndex}
                     className={`${styles.cell} ${styles.content} ${
@@ -99,7 +142,7 @@ const Table: React.FC<IComponentProps> = ({
                         index: i,
                         indexInRow: rowIndex,
                       });
-                      onRowClick && onRowClick(rowIndex);
+                      onRowClick && onRowClick(indexOfFirstItem + rowIndex);
                     }}
                     onMouseMove={() => setCurrentRowHover(rowIndex)}
                     onMouseLeave={() => setCurrentRowHover(null)}
@@ -109,7 +152,7 @@ const Table: React.FC<IComponentProps> = ({
                     editableCell.indexInRow === rowIndex &&
                     typeof row[i] === "string" ? (
                       <EditCellText
-                        defaultValue={rows[rowIndex][i] as string}
+                        defaultValue={row[i] as string}
                         onChangeText={(value) =>
                           onChangeCellText(value, rowIndex, i)
                         }
@@ -117,16 +160,26 @@ const Table: React.FC<IComponentProps> = ({
                       />
                     ) : (
                       <div className={`${styles.cell} ${styles.text}`}>
-                        {rows[rowIndex][i]}
+                        {row[i]}
                       </div>
-                    )}{" "}
+                    )}
                   </div>
                 ))}
-            </div>
-          );
-        })}
+              </div>
+            );
+          })}
+      </div>
+      {rows && totalPages > 1 && (
+        <div className={styles.paginationContainer}>
+          <Pagination
+            total={totalPages}
+            page={currentPage}
+            onChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+      )}
     </div>
-  );
+  ) : null;
 };
 
 export default Table;

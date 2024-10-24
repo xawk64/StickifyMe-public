@@ -6,8 +6,7 @@ const BarcodesHistory = mongoose.model(
   new mongoose.Schema(
     {
       orders: [Order.schema],
-      withEAC: Boolean,
-      mode: String,
+      type: String,
       ordersCount: Number,
       userId: String,
     },

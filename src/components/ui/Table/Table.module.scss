@@ -1,4 +1,11 @@
+.tableContainer {
+  display: flex;
+  flex-direction: column;
+}
+
 .table {
+  flex-grow: 1;
+  overflow-y: auto;
   display: grid;
   width: 100%;
   grid-template-columns: var(
@@ -6,27 +13,36 @@
     "30px 100px 1fr 100px 1fr 100px 1fr 1fr"
   );
   background-color: #fff;
-  overflow: hidden;
+  overflow: overlay;
   position: relative;
   height: 100%;
   font-size: 12px;
   line-height: 12px;
+  max-height: calc(100vh - 255px);
 }
+
 .column {
   display: flex;
   flex-flow: column;
+  border-left: 1px solid rgb(230 234 236);
+  height: fit-content;
 }
+
 .cell {
   display: flex;
   align-items: center;
   padding: 4px 0 4px 4px;
   height: 60px;
   cursor: pointer;
+
   &.header {
-    background-color: rgba(0, 32, 51, 0.05);
+    position: sticky;
+    top: 0;
+    background-color: rgb(242 244 245);
+    border-bottom: 2px solid rgb(230 234 236);
   }
   &.content {
-    border-bottom: 2px solid rgba(0, 32, 51, 0.05);
+    border-bottom: 2px solid rgb(230 234 236);
   }
   &.text {
     width: 100%;
@@ -34,4 +50,10 @@
   &.active {
     background-color: #0072f57d;
   }
+}
+
+.paginationContainer {
+  padding: 1rem;
+  background-color: #fff; // Или любой другой цвет фона
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); // Тень сверху для визуального отделения
 }

@@ -1,14 +1,11 @@
 const db = require("../models");
 const Profile = db.profile;
 const User = db.user;
-const mongoose = require("mongoose");
-const fs = require("fs");
 const path = require("path");
-const { log } = require("console");
 
-exports.setProfile = (req, res) => {
+exports.setProfile = async (req, res) => {
   console.log(req.body);
-  User.findById(req.userId, (err, user) => {
+  User.findById(req.userId, async (err, user) => {
     if (err) {
       res.status(500).send({ message: err });
       return;
@@ -18,17 +15,22 @@ exports.setProfile = (req, res) => {
       ...req.body,
     };
 
-    Profile.updateOne(
-      { _id: user.profileId },
-      profile,
-      { upsert: false },
-      (err) => {
-        if (err) {
-          res.status(500).send({ message: err });
+    try {
+      await Profile.updateOne(
+        { _id: user.profileId },
+        profile,
+        { upsert: false },
+        (err) => {
+          if (err) {
+            res.status(500).send({ message: err });
+          }
         }
-      }
-    );
-    res.status(200).send("was success!");
+      );
+
+      res.status(200).send({ message: "was success!" });
+    } catch (err) {
+      res.status(500).send({ message: err });
+    }
   });
 };
 

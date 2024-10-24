@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-exports.sendEmail = async (email, username, hash) => {
+exports.sendEmail = async (email, subject, htmlMessage) => {
   let transporter = nodemailer.createTransport({
     service: "Mail.ru",
     auth: {
@@ -11,10 +11,10 @@ exports.sendEmail = async (email, username, hash) => {
 
   try {
     let result = await transporter.sendMail({
-      from: '"Сервис BarcodeBerries" <support@example.com>',
+      from: '"Сервис example.com" <support@example.com>',
       to: email,
-      subject: "Потверждение учетной записи",
-      html: `Добрый день, ${username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке:  <a href="https:/example.com/verify/?hash=${hash}">подтвердить регистрацию</a> или введите вручную в браузере: https:/example.com/verify/?hash=${hash}.Если это делали не Вы, просьба закрыть данное сообщение. `,
+      subject: subject,
+      html: htmlMessage,
     });
     console.log(result);
   } catch (e) {

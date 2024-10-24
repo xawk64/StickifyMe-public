@@ -10,14 +10,16 @@ import { warehousesList } from "./config";
 import L from "leaflet";
 import iconSelected from "../../../assets/place-marker-selected.png";
 import iconMarker from "../../../assets/place-marker.png";
-import Table from "../../ui/Table/Table";
+import Table from "../../ui/Table";
 import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
-import Button from "../../ui/Button/Button";
+import Button from "../../ui/Button";
 import warehousesAPI from "../../../api/warehousesAPI";
-import Select from "../../ui/Select/Select";
-import DateRangePicker from "../../ui/DateRangePicker/DateRangePicker";
+import Select from "../../ui/Select";
+import DateRangePicker from "../../ui/DateRangePicker";
 import { IWarehouseSettings } from "../../../api/models/WarehouseSettings";
-import { Switch } from "@nextui-org/react";
+import Switch from "../../ui/Switch";
+import { useStore } from "../../../store";
+import { toast } from "react-toastify";
 
 interface IWarehousesMonitoring {
   position?: LatLngTuple;
@@ -56,22 +58,22 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
   zoom = 10,
 }) => {
   const [warehouses, setWarehouses] = useState<IWarehouse[]>(warehousesList);
+  7;
 
   const [enabled, setEnabled] = useState(true);
   const [rows, setRows] = useState<(string | JSX.Element)[][]>([]);
   useEffect(() => {
     (async () => {
-      const settings: IWarehouseSettings[] =
+      const settings: IWarehouseSettings =
         await warehousesAPI.getWarehousesSettings();
 
+      setEnabled(settings.enabled);
       setWarehouses((prev) => {
         return prev.map((warehouse) => {
-          const warehouseSettings = settings.find(
+          const warehouseSettings = settings.items.find(
             ({ ID }) => ID === warehouse.ID
           );
           if (warehouseSettings) {
-            console.log(warehouseSettings, "warehouseSettings");
-
             return {
               ...warehouse,
               ...warehouseSettings,
@@ -83,7 +85,6 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
           return warehouse;
         });
       });
-      console.log(warehouses, "warehouses new!!!!");
     })();
   }, []);
 
@@ -208,30 +209,35 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
     setWarehouses(newWarehouses);
   };
 
-  const onSaveWarehousesSettings = () => {
-    warehousesAPI.setWarehousesSettings({
-      settings: {
-        items: warehouses
-          .filter((warehouse) => warehouse.selected)
-          .map((warehouse) => ({
-            ID: warehouse.ID,
-            dateStart: warehouse.dateStart,
-            dateEnd: warehouse.dateEnd,
-            coeff: warehouse.coeff,
-            boxTypes: warehouse.boxTypes,
-          })),
-        enabled,
-      },
-    });
+  const onSaveWarehousesSettings = async () => {
+    try {
+      await warehousesAPI.setWarehousesSettings({
+        settings: {
+          items: warehouses
+            .filter((warehouse) => warehouse.selected)
+            .map((warehouse) => ({
+              ID: warehouse.ID,
+              dateStart: warehouse.dateStart,
+              dateEnd: warehouse.dateEnd,
+              coeff: warehouse.coeff,
+              boxTypes: warehouse.boxTypes,
+            })),
+          enabled,
+        },
+      });
+      toast.success("Настройки успешно сохранены");
+    } catch (error) {
+      toast.error("Ошибка при сохранении настроек");
+    }
   };
 
-  console.log(warehouses, "warehouses");
-
   return (
-    <>
-      <Switch isSelected={enabled} onValueChange={setEnabled}>
-        Airplane mode
-      </Switch>
+    <div className="flex flex-col gap-4">
+      <Switch
+        isSelected={enabled}
+        onValueChange={setEnabled}
+        label="Включить мониторинг"
+      />
       <div className={styles.root}>
         <MapContainer
           center={position}
@@ -275,13 +281,15 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
             gridTemplateColumns={gridTemplateColumns}
             isEditable
           />
-          <Button
-            onClick={onSaveWarehousesSettings}
-            label="Сохранить настройки"
-          />
         </div>
       </div>
-    </>
+      <div className={styles.footer}>
+        <Button
+          onClick={onSaveWarehousesSettings}
+          label="Сохранить настройки"
+        />
+      </div>
+    </div>
   );
 };
 

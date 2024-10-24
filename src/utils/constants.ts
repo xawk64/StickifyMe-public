@@ -1,1 +1,2 @@
-export const maxStickers = 5;
+export const maxStickers = 50;
+export const getStickersDelay = 60000;

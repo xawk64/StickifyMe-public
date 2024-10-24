@@ -21,6 +21,7 @@ interface NavbarWrapperProps {
 }
 
 const NavbarWrapper: React.FC<NavbarWrapperProps> = ({
+  className,
   icon,
   menuItems,
   rightSideContent,
@@ -29,7 +30,7 @@ const NavbarWrapper: React.FC<NavbarWrapperProps> = ({
   const currentPath = router.pathname; // Extract pathname from router
 
   return (
-    <Navbar className={styles.root} isBlurred>
+    <Navbar className={styles.root + " " + className} isBlurred>
       <NavbarBrand>{icon}</NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {menuItems.map((item, index) => {

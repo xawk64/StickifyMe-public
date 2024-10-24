@@ -4,10 +4,11 @@ import { AppProps } from "next/dist/shared/lib/router/router";
 import { Store, StoreProvider } from "../store";
 import { injectStores } from "@mobx-devtools/tools";
 import "./index.css";
-import authAPI from "../api/authAPI";
 import AuthMe from "../components/AuthMe/AuthMe";
 import { NextUIProvider } from "@nextui-org/react";
 import { useRouter } from "next/router";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const store = new Store();
 
@@ -23,9 +24,11 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
       <NextUIProvider navigate={router.push}>
         <Head>
           <title>StickifyMe</title>
+          <link rel="icon" type="image/png" href="/favicon.png" />
         </Head>
         <AuthMe />
         <Component {...pageProps} />
+        <ToastContainer position="bottom-left" />
       </NextUIProvider>
     </StoreProvider>
   );

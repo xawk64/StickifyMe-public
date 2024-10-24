@@ -103,7 +103,7 @@ export const get = (url: string, location: string = defaultLocation) =>
   fetch(location + url, buildParams("GET"))
     .then(handleResponse)
     .catch(handleError);
-export const download = <T>(url: string, data?: T, print: boolean = false) =>
+export const download = <T>(url: string, data?: T, print = false) =>
   fetch(defaultLocation + url, buildParamsPost("POST", data)).then(
     (response) => {
       return downloadFile(response, print);

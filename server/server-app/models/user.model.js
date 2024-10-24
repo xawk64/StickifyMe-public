@@ -11,6 +11,8 @@ const User = mongoose.model(
       subscriptionId: String,
       emailVerification: Boolean,
       emailVerificationHash: String,
+      resetPasswordToken: String,
+      resetPasswordExpires: Date,
     },
     { timestamps: true }
   )

@@ -62,7 +62,7 @@ exports.getSettings = (req, res) => {
             res.status(500).send({ message: err });
           }
 
-          settings = settings[0].items;
+          settings = settings[0];
           res.status(200).json(settings);
         }
       );

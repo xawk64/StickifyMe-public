@@ -1,4 +1,5 @@
 import { useStore } from "../../../store";
+import Button from "../../ui/Button";
 
 export const TelegramBot: React.FC = () => {
   const {
@@ -8,8 +9,12 @@ export const TelegramBot: React.FC = () => {
   } = useStore();
 
   return (
-    <a href={`https://t.me/StickifyMe_Bot?start=${userId}`} target="_blank">
-      Telegram
-    </a>
+    <div className="flex flex-col items-center justify-center">
+      <Button
+        href={`https://t.me/StickifyMe_Bot?start=${userId}`}
+        label="Подключить Telegram бота"
+        target="_blank"
+      ></Button>
+    </div>
   );
 };

@@ -1,8 +1,17 @@
-import { IAddHistoryParams } from "./AddHistoryParamsType";
+import { IOrder } from "./OrderType";
 
 export enum GenerateBarcodeMode {
   thermo = "thermo",
   a4 = "a4",
 }
 
-export type GenerateBarcodesParams = IAddHistoryParams;
+export enum ImportBarcodeMode {
+  excel = "excel",
+  wb = "wb",
+}
+
+export type GenerateBarcodesParams = {
+  orders: IOrder[];
+  mode: GenerateBarcodeMode;
+  withEAC: boolean;
+};

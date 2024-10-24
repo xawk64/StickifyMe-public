@@ -22,4 +22,8 @@ module.exports = function (app) {
   app.post("/api/auth/verify", controller.verify);
 
   app.get("/api/auth/me", [authJwt.authAPIverifyToken], controller.authMe);
+
+  app.post("/api/auth/reset-password", controller.resetPassword);
+
+  app.post("/api/auth/confirm-reset-password", controller.confirmResetPassword);
 };

@@ -1,6 +1,5 @@
 export interface IGetHistoryResponse {
-  withEAC: boolean;
-  mode: string;
+  type: string;
   ordersCount: number;
   createdAt: string;
   updatedAt: string;

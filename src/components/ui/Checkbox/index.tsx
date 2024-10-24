@@ -1,4 +1,5 @@
 import React from "react";
+import { Checkbox as NextUICheckbox } from "@nextui-org/react";
 
 interface IComponentProps {
   value: boolean;
@@ -8,10 +9,9 @@ interface IComponentProps {
 
 const Checkbox: React.FC<IComponentProps> = ({ value, setValue, label }) => {
   return (
-    <div className="flex gap-1">
-      <input type="checkbox" checked={value} onClick={() => setValue(!value)} />
-      {label && <span>{label}</span>}
-    </div>
+    <NextUICheckbox isSelected={value} onValueChange={setValue}>
+      {label}
+    </NextUICheckbox>
   );
 };
 

@@ -7,6 +7,7 @@ import { SignupResponseType } from "./models/SignupResponseType";
 import { VerifyEmailParamsType } from "./models/VerifyEmailParamsType";
 import { VerifyEmailResponseType } from "./models/VerifyEmailResponseType";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   loadSignup: (params: SignupParamsType): Promise<SignupResponseType> =>
     post(ApiUrlEnum.authSignup, params),
@@ -16,4 +17,11 @@ export default {
   loadVerifyEmail: (
     params: VerifyEmailParamsType
   ): Promise<VerifyEmailResponseType> => post(ApiUrlEnum.authVerify, params),
+  resetPassword: (params: { email: string }): Promise<{ message: string }> =>
+    post(ApiUrlEnum.authResetPassword, params),
+  confirmResetPassword: (params: {
+    token: string;
+    password: string;
+  }): Promise<{ message: string }> =>
+    post(ApiUrlEnum.authConfirmResetPassword, params),
 };

@@ -14,8 +14,7 @@ exports.addBarcodes = (req, res) => {
     if (req.userId) {
       const history = new BarcodesHistory({
         orders: req.body.orders,
-        withEAC: req.body.withEAC,
-        mode: req.body.mode,
+        type: req.body.type,
         userId: req.userId,
         ordersCount: req.body.orders.length,
       });

@@ -1,14 +1,17 @@
 import { useRef, useState } from "react";
 import styles from "./styles.module.scss";
+import Button from "../Button";
 
 interface IFilePickerProps {
   label?: string;
+  accept?: string;
   onChange?: (file: File | null) => void;
   showSelectedFile?: boolean;
 }
 
 const FilePicker: React.FC<IFilePickerProps> = ({
-  label = "Выберите файл .xlsx",
+  label = "Импорт из файла .xlsx",
+  accept = ".xlsx",
   onChange,
   showSelectedFile = false,
 }) => {
@@ -40,10 +43,10 @@ const FilePicker: React.FC<IFilePickerProps> = ({
           className={styles.hiddenInput}
           onChange={handleFileChange}
           ref={fileInputRef}
+          accept={accept}
         />
-        <button className={styles.button} onClick={handleButtonClick}>
-          {label}
-        </button>
+        <Button label={label} onClick={handleButtonClick} />
+
         {showSelectedFile && selectedFileName && (
           <span className={styles.selectedFile}>{selectedFileName}</span>
         )}

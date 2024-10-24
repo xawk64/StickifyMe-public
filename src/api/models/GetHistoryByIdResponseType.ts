@@ -2,8 +2,7 @@ import { IOrderResponse } from "./OrderResponseType";
 
 export interface IGetHistoryByIdResponse {
   orders: IOrderResponse[];
-  withEAC: boolean;
-  mode: string;
+  type: string;
   ordersCount: number;
   createdAt: string;
   updatedAt: string;

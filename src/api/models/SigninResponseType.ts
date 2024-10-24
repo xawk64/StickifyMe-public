@@ -8,4 +8,6 @@ export interface SigninResponseType {
   fullName: string;
   emailVerification: boolean;
   avatarUrl?: string;
+  wbApiKey?: string;
+  chatId?: string;
 }

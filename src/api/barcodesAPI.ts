@@ -7,9 +7,10 @@ import { IGetHistoryByIdResponse } from "./models/GetHistoryByIdResponseType";
 import { IGetHistoryParams } from "./models/GetHistoryParamsType";
 import { IGetHistoryResponse } from "./models/GetHistoryResponseType";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  loadGenerateBarcode: (params: GenerateBarcodesParams) =>
-    download(ApiUrlEnum.generateBarcode, params, true),
+  loadGenerateBarcode: (params: GenerateBarcodesParams, print: boolean) =>
+    download(ApiUrlEnum.generateBarcode, params, print),
 
   addBarcodesHistory: (params: IAddHistoryParams) =>
     post(`${ApiUrlEnum.addBarcodesHistory}`, params),
