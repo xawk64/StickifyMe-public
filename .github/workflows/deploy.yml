@@ -17,7 +17,9 @@ jobs:
         with:
           key: ${{ secrets.SERVER_SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          name: id_rsa # Это имя файла для ключа
+          if_key_exists: replace # Заменить существующий ключ, если он есть
 
       - name: Deploy to VPS
         run: |
-          ssh -v -o StrictHostKeyChecking=no root@***REMOVED*** 'cd /var/www/stickifyme && git pull origin master && docker-compose up -d --build'
+          ssh -v -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@***REMOVED*** 'cd /var/www/stickifyme && git pull origin master && docker-compose up -d --build'
