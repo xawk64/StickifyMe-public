@@ -9,20 +9,33 @@
 
 .container {
   position: relative;
+  display: flex;
+  justify-content: center;
+
   .tryButton {
     position: absolute;
-    bottom: 60px;
+    bottom: 4vw;
     display: flex;
     justify-content: center;
     width: 100%;
     flex-direction: column;
-    align-items: center;
     gap: 16px;
 
     p {
-      font-size: 24px;
+      margin-left: 22vw;
+      font-size: 2vw;
       font-weight: 700;
       color: #000;
+      font-family: "Inglobal", sans-serif;
+    }
+    a {
+      margin-left: 40vw;
+      font-size: 1.2vw;
     }
   }
+}
+
+.layoutMenu {
+  justify-content: flex-end !important;
+  flex-grow: 5;
 }

@@ -1,4 +1,4 @@
-import NavbarWrapper from "../ui/Navbar";
+import NavbarWrapper, { MenuItem } from "../ui/Navbar";
 import { useStore } from "../../store";
 import { RequestStatus } from "../../store/enums";
 import User from "../ui/User";
@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import styles from "./styles.module.scss";
 
-const menuItemsDefault = [
+const menuItemsDefault: MenuItem[] = [
   { label: "Импорт", href: "/imports" },
   { label: "Телеграм бот", href: "/telegram-bot" },
   { label: "Настройки", href: "/settings" },
@@ -21,13 +21,20 @@ const menuItemsDefault = [
 
 interface LayoutProps {
   children: React.ReactNode;
-  menuItems?: { label: string; href: string }[];
+  menuItems?: MenuItem[];
+  menuClassName?: string;
   headerClassName?: string;
   contentClassName?: string;
 }
 
 const Layout: React.FC<LayoutProps> = observer(
-  ({ children, contentClassName, menuItems, headerClassName }) => {
+  ({
+    children,
+    contentClassName,
+    menuItems,
+    headerClassName,
+    menuClassName,
+  }) => {
     const {
       authStore: {
         status,
@@ -62,7 +69,7 @@ const Layout: React.FC<LayoutProps> = observer(
             { label: "Поддержка", href: "/support" },
           ]
         : menuItems || menuItemsDefault
-      : [];
+      : menuItems || [];
 
     return (
       <>
@@ -74,6 +81,7 @@ const Layout: React.FC<LayoutProps> = observer(
             </Link>
           }
           menuItems={menuItems}
+          menuClassName={menuClassName}
           rightSideContent={
             status === RequestStatus.success ? (
               <User

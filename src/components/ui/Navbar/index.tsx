@@ -8,15 +8,19 @@ import {
 import { useRouter } from "next/router"; // Import useRouter hook from next/router
 import Link from "next/link";
 import styles from "./styles.module.scss";
-interface MenuItem {
+import Image, { StaticImageData } from "next/image";
+export interface MenuItem {
   label: string;
   href: string;
+  iconHref?: StaticImageData;
+  target?: string;
 }
 
 interface NavbarWrapperProps {
   className?: string;
   icon?: React.ReactElement;
   menuItems: MenuItem[];
+  menuClassName?: string;
   rightSideContent?: React.ReactNode;
 }
 
@@ -24,6 +28,7 @@ const NavbarWrapper: React.FC<NavbarWrapperProps> = ({
   className,
   icon,
   menuItems,
+  menuClassName,
   rightSideContent,
 }) => {
   const router = useRouter(); // Get Next.js router
@@ -32,7 +37,10 @@ const NavbarWrapper: React.FC<NavbarWrapperProps> = ({
   return (
     <Navbar className={styles.root + " " + className} isBlurred>
       <NavbarBrand>{icon}</NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent
+        className={`hidden sm:flex gap-4 ${menuClassName}`}
+        justify="center"
+      >
         {menuItems.map((item, index) => {
           const isActive = item.href === currentPath;
           return (
@@ -40,8 +48,18 @@ const NavbarWrapper: React.FC<NavbarWrapperProps> = ({
               <Link
                 color="foreground"
                 href={item.href}
+                target={item.target}
                 aria-current={isActive ? "page" : undefined}
+                className="flex gap-2 items-center"
               >
+                {item.iconHref && (
+                  <Image
+                    src={item.iconHref}
+                    alt={item.label}
+                    width={32}
+                    height={32}
+                  />
+                )}
                 {item.label}
               </Link>
             </NavbarItem>

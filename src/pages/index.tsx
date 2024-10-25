@@ -4,13 +4,22 @@ import Image from "next/image";
 import firstBackgroundLanding from "../assets/first-background-landing.png";
 import styles from "./index.module.scss";
 import Button from "../components/ui/Button";
+import telegramLogo from "../assets/telegram-logo.png";
 
 const Landing: React.FC = () => {
   return (
     <Layout
       headerClassName={styles.layoutHeader}
       contentClassName={styles.layoutContent}
-      menuItems={[]}
+      menuItems={[
+        {
+          label: "НАПИСАТЬ НАМ",
+          href: "https://t.me/print_etiketok",
+          iconHref: telegramLogo,
+          target: "_blank",
+        },
+      ]}
+      menuClassName={styles.layoutMenu}
     >
       <div className={styles.container}>
         <Image
@@ -18,6 +27,7 @@ const Landing: React.FC = () => {
           alt="firstBackgroundLanding"
           width={1920}
           height={924}
+          className={styles.background}
         />
         <div className={styles.tryButton}>
           <p>
