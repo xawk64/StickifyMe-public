@@ -5,6 +5,7 @@ import firstBackgroundLanding from "../assets/first-background-landing.png";
 import styles from "./index.module.scss";
 import Button from "../components/ui/Button";
 import telegramLogo from "../assets/telegram-logo.png";
+import OurAdvantages from "../components/Landing/OurAdvantages";
 
 const Landing: React.FC = () => {
   return (
@@ -36,6 +37,7 @@ const Landing: React.FC = () => {
           <Button label="ПОПРОБОВАТЬ БЕСПЛАТНО" size="lg" href="/auth" />
         </div>
       </div>
+      <OurAdvantages />
     </Layout>
   );
 };
