@@ -32,6 +32,7 @@ const NavbarWrapper: React.FC<NavbarWrapperProps> = ({
   rightSideContent,
 }) => {
   const router = useRouter(); // Get Next.js router
+
   const currentPath = router.pathname; // Extract pathname from router
 
   return (
