@@ -71,7 +71,7 @@ exports.signup = (req, res) => {
       sendEmail(
         req.body.email,
         "Потверждение учетной записи",
-        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке:  <a href="https:/example.com/verify/?hash=${hash}">подтвердить регистрацию</a> или введите вручную в браузере: https:/example.com/verify/?hash=${hash}.Если это делали не Вы, просьба закрыть данное сообщение. `
+        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке:  <a href="https:/example.com/verify/?hash=${emailVerificationHash}">подтвердить регистрацию</a> или введите вручную в браузере: https:/example.com/verify/?hash=${emailVerificationHash}.Если это делали не Вы, просьба закрыть данное сообщение. `
       );
 
       res.status(200).send({ message: "User was registered successfully!" });

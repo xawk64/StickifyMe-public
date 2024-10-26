@@ -8,9 +8,6 @@ const fileUpload = require("express-fileupload");
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
 
-const tokenWB =
-  "***REMOVED***";
-
 var corsOptions = {
   origin: "http://localhost:3000",
 };
@@ -46,7 +43,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const client = mongodb.MongoClient;
 
-client.connect("mongodb://localhost:27017/auth", function (err, db) {
+client.connect(process.env.MONGO_URI, function (err, db) {
   if (err) {
     console.log("database is not connected");
   } else {
@@ -55,7 +52,7 @@ client.connect("mongodb://localhost:27017/auth", function (err, db) {
 });
 
 db.mongoose
-  .connect(`mongodb://localhost:27017/auth`, {
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

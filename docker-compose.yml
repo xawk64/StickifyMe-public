@@ -12,6 +12,8 @@ services:
       - NODE_ENV=production
     depends_on:
       - server
+    networks:
+      - app-network
 
   server:
     build:
@@ -24,8 +26,11 @@ services:
     environment:
       - NODE_ENV=production
       - MONGO_URI=mongodb://mongo:27017/auth
+      - telegramBotToken=***REMOVED***
     depends_on:
       - mongo
+    networks:
+      - app-network
 
   mongo:
     container_name: mongo
@@ -35,3 +40,9 @@ services:
       - ./data/configdb:/data/configdb
     ports:
       - "27017:27017"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
