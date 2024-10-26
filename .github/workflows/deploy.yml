@@ -19,7 +19,7 @@ jobs:
         env:
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
-          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@***REMOVED*** '
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@***REMOVED***'
             cd /var/www/StickifyMe && 
             git config core.sshCommand "ssh -i /root/.ssh/id_ed25519 -F /dev/null" &&
             git pull origin master && 
