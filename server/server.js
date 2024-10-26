@@ -9,7 +9,8 @@ const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
 
 var corsOptions = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "http://***REMOVED***:3000"],
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
