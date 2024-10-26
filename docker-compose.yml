@@ -27,6 +27,7 @@ services:
       - NODE_ENV=production
       - MONGO_URI=mongodb://mongo:27017/auth
       - telegramBotToken=***REMOVED***
+      - jwtSecret=***REMOVED***
     depends_on:
       - mongo
     networks:

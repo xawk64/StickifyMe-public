@@ -101,7 +101,7 @@ exports.signin = (req, res) => {
       });
     }
 
-    let token = jwt.sign({ id: user.id }, config.secret, {
+    let token = jwt.sign({ id: user.id }, process.env.jwtSecret, {
       expiresIn: 2592000, // 30 days
     });
     console.log(user.profileId);
