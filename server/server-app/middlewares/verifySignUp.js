@@ -1,7 +1,7 @@
 const db = require("../models");
 const User = db.user;
 
-checkDuplicateUsernameOrEmail = (req, res, next) => {
+const checkDuplicateUsernameOrEmail = (req, res, next) => {
   // Username
   console.log(req.body);
   User.findOne({
@@ -15,7 +15,7 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
     if (user) {
       console.log(user);
 
-      res.status(400).send({ error: "Failed! Username is already in use!" });
+      res.status(400).send({ error: "Имя пользователя уже используется!" });
       return;
     }
 
@@ -32,7 +32,7 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
         User.deleteOne({ email: user.email }).exec((err, user) => {
           console.log("esdsadsa", user, err);
         });
-        res.status(400).send({ error: "Failed! Email is already in use! " });
+        res.status(400).send({ error: "Email уже используется!" });
 
         return;
       }

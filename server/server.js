@@ -33,7 +33,7 @@ app.use(
       try {
         JSON.parse(buf);
       } catch (e) {
-        res.status(400).json({ error: "Invalid JSON" });
+        res.status(400).json({ error: "Ошибка JSON" });
         throw new Error("Invalid JSON");
       }
     },
@@ -42,23 +42,32 @@ app.use(
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const MONGO_USERNAME = process.env.MONGO_USERNAME;
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
+
+console.log(MONGO_USERNAME, MONGO_PASSWORD, "auth");
+
+// Construct your MongoDB URI using the environment variables
+const MONGO_URI = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@localhost:27017/stickifyme?authSource=admin`;
+
 const client = mongodb.MongoClient;
 
-client.connect(process.env.MONGO_URI, function (err, db) {
+client.connect(MONGO_URI, function (err, db) {
   if (err) {
     console.log("database is not connected");
+    console.error(err);
   } else {
     console.log("connected!!");
   }
 });
 
 db.mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Successfully connect to MongoDB.");
+    console.log("Successfully connect to MongoDB. ");
   })
   .catch((err) => {
     console.error("Connection error", err);

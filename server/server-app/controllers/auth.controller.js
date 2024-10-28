@@ -74,7 +74,9 @@ exports.signup = (req, res) => {
         `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке:  <a href="https:/example.com/verify/?hash=${emailVerificationHash}">подтвердить регистрацию</a> или введите вручную в браузере: https:/example.com/verify/?hash=${emailVerificationHash}.Если это делали не Вы, просьба закрыть данное сообщение. `
       );
 
-      res.status(200).send({ message: "User was registered successfully!" });
+      res
+        .status(200)
+        .send({ message: "Пользователь успешно зарегистрирован!" });
     });
   });
 };
@@ -89,7 +91,7 @@ exports.signin = (req, res) => {
     }
 
     if (!user) {
-      return res.status(404).send({ error: "User Not found." });
+      return res.status(404).send({ error: "Пользователь не найден." });
     }
 
     let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
@@ -101,7 +103,7 @@ exports.signin = (req, res) => {
       });
     }
 
-    let token = jwt.sign({ id: user.id }, process.env.jwtSecret, {
+    let token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: 2592000, // 30 days
     });
     console.log(user.profileId);
@@ -204,7 +206,7 @@ exports.resetPassword = async (req, res) => {
     await sendEmail(
       email,
       "Сброс пароля",
-      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке: https://example.com/reset-password/${resetToken}`
+      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке: https://example.com/reset-password?token=${resetToken}`
     );
 
     res.status(200).send({

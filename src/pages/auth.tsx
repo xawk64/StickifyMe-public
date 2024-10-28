@@ -7,6 +7,7 @@ import Input from "../components/ui/Input";
 import RadioGroup from "../components/ui/RadioGroup";
 import { useStore } from "../store";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 enum AuthType {
   signIn = "signIn",
@@ -45,12 +46,22 @@ const Auth: React.FC = observer(() => {
     radioItems.find((item) => item.value === type) || radioItems[0]
   );
 
-  const onLoginLogoutClick = useCallback(async () => {
+  const onSignInSignUpClick = useCallback(async () => {
     if (authType.value === AuthType.signUp) {
-      await authAPI.loadSignup({ email, username, password });
-      setAuthState(await authAPI.loadSignIn({ username, password }));
+      try {
+        await authAPI.loadSignup({ email, username, password });
+        const signInData = await authAPI.loadSignIn({ username, password });
+        setAuthState(signInData);
+      } catch (e) {
+        toast.error("Ошибка авторизации: " + e);
+      }
     } else {
-      setAuthState(await authAPI.loadSignIn({ username, password }));
+      try {
+        const signInData = await authAPI.loadSignIn({ username, password });
+        setAuthState(signInData);
+      } catch (e) {
+        toast.error("Ошибка регистрации: " + e);
+      }
     }
   }, [authType.value, email, username, password]);
 
@@ -80,7 +91,7 @@ const Auth: React.FC = observer(() => {
           </div>
         </div>
 
-        <Button onClick={onLoginLogoutClick} label={authType.label} />
+        <Button onClick={onSignInSignUpClick} label={authType.label} />
 
         <div className="mt-4 text-center">
           <Link href="/reset-password-form">Забыли пароль?</Link>

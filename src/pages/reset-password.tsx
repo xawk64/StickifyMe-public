@@ -1,22 +1,23 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import authAPI from "../../api/authAPI";
-import Input from "../../components/ui/Input";
-import Button from "../../components/ui/Button";
-import Layout from "../../components/Layout/Layout";
+import authAPI from "../api/authAPI";
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
+import Layout from "../components/Layout/Layout";
 import { toast } from "react-toastify";
+import { useSearchParams } from "next/navigation";
 
 const ResetPassword: React.FC = observer(() => {
   const router = useRouter();
-  const { token } = router.query;
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
 
   const handleResetPassword = async () => {
     if (password !== confirmPassword) {
-      setMessage("Пароли не совпадают");
+      toast.error("Пароли не совпадают");
       return;
     }
 

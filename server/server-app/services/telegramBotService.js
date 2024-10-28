@@ -105,4 +105,4 @@ class TelegramBotService {
   }
 }
 
-module.exports = new TelegramBotService(process.env.telegramBotToken);
+module.exports = new TelegramBotService(process.env.TELEGRAM_BOT_TOKEN);
