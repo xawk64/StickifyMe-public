@@ -20,6 +20,8 @@ jobs:
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
           MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
           MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@***REMOVED*** '
             cd /var/www/StickifyMe && 
@@ -33,6 +35,6 @@ jobs:
             export MONGO_PASSWORD=$MONGO_PASSWORD
             export TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
             export JWT_SECRET=$JWT_SECRET
-            
+
             docker-compose up -d --build
           '
