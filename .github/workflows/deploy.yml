@@ -30,11 +30,15 @@ jobs:
             docker-compose down --volumes --remove-orphans &&
             docker system prune -a &&
 
-            # Use environment variables directly in the docker-compose command
-            MONGO_USERNAME=${{ secrets.MONGO_USERNAME }} \
-            MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} \
-            TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
-            JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            # Create a temporary .env file
+            echo "MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}" > .env
+            echo "MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}" >> .env
+            echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
-            docker-compose up -d --build
+            # Use the .env file with docker-compose
+            docker-compose --env-file .env up -d --build
+
+            # Remove the temporary .env file
+            rm .env
           '
