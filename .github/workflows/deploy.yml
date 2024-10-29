@@ -30,11 +30,11 @@ jobs:
             docker-compose down --volumes --remove-orphans &&
             docker system prune -a &&
 
-            # Set environment variables for docker-compose
-            export MONGO_USERNAME=$MONGO_USERNAME
-            export MONGO_PASSWORD=$MONGO_PASSWORD
-            export TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
-            export JWT_SECRET=$JWT_SECRET
+            # Use environment variables directly in the docker-compose command
+            MONGO_USERNAME=${{ secrets.MONGO_USERNAME }} \
+            MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} \
+            TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
+            JWT_SECRET=${{ secrets.JWT_SECRET }} \
 
             docker-compose up -d --build
           '
