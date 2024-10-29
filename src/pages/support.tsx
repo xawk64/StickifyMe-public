@@ -13,7 +13,7 @@ const Support: React.FC = () => {
         </span>
         <span>
           или в{" "}
-          <a href="https://t.me/example" className="text-blue-500">
+          <a href="https://t.me/example.com" className="text-blue-500">
             телеграм
           </a>
         </span>
