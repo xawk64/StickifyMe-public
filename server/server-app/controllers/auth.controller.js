@@ -74,9 +74,10 @@ exports.signup = (req, res) => {
         `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке:  <a href="https:/example.com/verify/?hash=${emailVerificationHash}">подтвердить регистрацию</a> или введите вручную в браузере: https:/example.com/verify/?hash=${emailVerificationHash}.Если это делали не Вы, просьба закрыть данное сообщение. `
       );
 
-      res
-        .status(200)
-        .send({ message: "Пользователь успешно зарегистрирован!" });
+      res.status(200).send({
+        message:
+          "Пользователь успешно зарегистрирован! Информация для подтверждения отправлена на ваш email!",
+      });
     });
   });
 };
@@ -86,12 +87,12 @@ exports.signin = (req, res) => {
     username: req.body.username,
   }).exec((err, user) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({ message: err });
       return;
     }
 
     if (!user) {
-      return res.status(404).send({ error: "Пользователь не найден." });
+      return res.status(404).send({ message: "Пользователь не найден." });
     }
 
     let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
@@ -99,7 +100,7 @@ exports.signin = (req, res) => {
     if (!passwordIsValid) {
       return res.status(401).send({
         accessToken: null,
-        error: "Invalid Password!",
+        message: "Неправильный пароль!",
       });
     }
 
@@ -140,6 +141,10 @@ exports.authMe = (req, res) => {
   User.findById(req.userId, (err, user) => {
     if (err) {
       res.status(200).send({ message: err });
+    }
+
+    if (!user) {
+      return res.status(404).send({ message: "Пользователь не найден." });
     }
 
     Profile.findOne({ _id: user.profileId }).exec((err, profile) => {

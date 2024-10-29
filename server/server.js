@@ -9,7 +9,7 @@ const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
 
 var corsOptions = {
-  origin: ["http://localhost:3000", "http://***REMOVED***:3000"],
+  origin: ["http://localhost:3000", "https://example.com:403"],
   credentials: true,
 };
 
@@ -33,7 +33,7 @@ app.use(
       try {
         JSON.parse(buf);
       } catch (e) {
-        res.status(400).json({ error: "Ошибка JSON" });
+        res.status(400).json({ message: "Ошибка JSON" });
         throw new Error("Invalid JSON");
       }
     },

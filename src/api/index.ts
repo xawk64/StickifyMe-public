@@ -1,4 +1,5 @@
 import { saveAs } from "file-saver";
+import { IServerMessageResponse } from "./models/ServerMessageResponseType";
 
 const defaultLocation: string =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -75,7 +76,7 @@ export async function downloadFile(response: any, print: boolean) {
 
 const handleError = async (res: any) => {
   console.log(res);
-  const data = (await res.json()) as Promise<any>;
+  const data: IServerMessageResponse = await res.json();
   const status = String(res.status).substring(0, 1);
   if (res.status === 401) {
     // localStorage.clear();

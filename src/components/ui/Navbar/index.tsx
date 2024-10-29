@@ -36,7 +36,11 @@ const NavbarWrapper: React.FC<NavbarWrapperProps> = ({
   const currentPath = router.pathname; // Extract pathname from router
 
   return (
-    <Navbar className={styles.root + " " + className} isBlurred>
+    <Navbar
+      className={styles.root + " " + className}
+      isBlurred
+      disableAnimation={true}
+    >
       <NavbarBrand>{icon}</NavbarBrand>
       <NavbarContent
         className={`hidden sm:flex gap-4 ${menuClassName}`}

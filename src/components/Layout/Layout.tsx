@@ -46,7 +46,7 @@ const Layout: React.FC<LayoutProps> = observer(
 
     useEffect(() => {
       if (
-        status === RequestStatus.success &&
+        (status === RequestStatus.success || status === RequestStatus.error) &&
         !userId &&
         PROTECTED_PAGES.includes(router.pathname)
       ) {

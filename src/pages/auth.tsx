@@ -8,6 +8,7 @@ import RadioGroup from "../components/ui/RadioGroup";
 import { useStore } from "../store";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { IServerMessageResponse } from "../api/models/ServerMessageResponseType";
 
 enum AuthType {
   signIn = "signIn",
@@ -49,18 +50,28 @@ const Auth: React.FC = observer(() => {
   const onSignInSignUpClick = useCallback(async () => {
     if (authType.value === AuthType.signUp) {
       try {
-        await authAPI.loadSignup({ email, username, password });
+        const signUpData: IServerMessageResponse = await authAPI.loadSignup({
+          email,
+          username,
+          password,
+        });
         const signInData = await authAPI.loadSignIn({ username, password });
         setAuthState(signInData);
+        toast.success(signUpData.message);
       } catch (e) {
-        toast.error("Ошибка авторизации: " + e);
+        toast.error(
+          "Ошибка регистрации: " + (e as IServerMessageResponse).message
+        );
       }
     } else {
       try {
         const signInData = await authAPI.loadSignIn({ username, password });
         setAuthState(signInData);
+        toast.success("Вход выполнен успешно!");
       } catch (e) {
-        toast.error("Ошибка регистрации: " + e);
+        toast.error(
+          "Ошибка авторизации: " + (e as IServerMessageResponse).message
+        );
       }
     }
   }, [authType.value, email, username, password]);

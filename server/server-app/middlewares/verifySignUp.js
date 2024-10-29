@@ -15,7 +15,7 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
     if (user) {
       console.log(user);
 
-      res.status(400).send({ error: "Имя пользователя уже используется!" });
+      res.status(400).send({ message: "Имя пользователя уже используется!" });
       return;
     }
 
@@ -29,10 +29,7 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
       }
 
       if (user) {
-        User.deleteOne({ email: user.email }).exec((err, user) => {
-          console.log("esdsadsa", user, err);
-        });
-        res.status(400).send({ error: "Email уже используется!" });
+        res.status(400).send({ message: "Email уже используется!" });
 
         return;
       }
