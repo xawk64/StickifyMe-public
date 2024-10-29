@@ -30,6 +30,7 @@ services:
       - MONGO_PASSWORD=${MONGO_PASSWORD}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - JWT_SECRET=${JWT_SECRET}
+      - MONGO_URI=${MONGO_URI}
     depends_on:
       - mongo
     networks:

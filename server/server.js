@@ -47,8 +47,7 @@ const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 
 console.log(MONGO_USERNAME, MONGO_PASSWORD, "auth");
 
-// Construct your MongoDB URI using the environment variables
-const MONGO_URI = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@localhost:27017/stickifyme?authSource=admin`;
+const MONGO_URI = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${process.env.MONGO_URI}:27017/stickifyme?authSource=admin`;
 
 const client = mongodb.MongoClient;
 

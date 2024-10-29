@@ -20,6 +20,7 @@ jobs:
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
           MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
           MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          MONGO_URI: ${{ secrets.MONGO_URI }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
@@ -28,11 +29,11 @@ jobs:
             git config core.sshCommand "ssh -i /root/.ssh/id_ed25519 -F /dev/null" &&
             git pull origin master && 
             docker-compose down --volumes --remove-orphans &&
-            docker system prune -a &&
 
             # Create a temporary .env file
             echo "MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}" > .env
             echo "MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}" >> .env
+            echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
             echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
