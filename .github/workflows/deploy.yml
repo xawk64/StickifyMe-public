@@ -37,9 +37,6 @@ jobs:
             echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
-            # # Use the .env file with docker-compose
-            # docker-compose --env-file .env up -d --build
-
-            # # Remove the temporary .env file
-            # rm .env
+            # Use the .env file with docker-compose
+            docker-compose --env-file .env up -d --build
           '
