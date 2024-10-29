@@ -8,6 +8,30 @@ const fileUpload = require("express-fileupload");
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
 
+// Error handling for uncaught exceptions
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+  sendEmail(
+    "admin@example.com",
+    "Uncaught Exception in Server",
+    `An uncaught exception occurred: ${error.stack}`
+  );
+  console.error(error.message); // This will be captured as the error message in start.sh
+  process.exit(1);
+});
+
+// Error handling for unhandled promise rejections
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  sendEmail(
+    "admin@example.com",
+    "Unhandled Rejection in Server",
+    `An unhandled rejection occurred: ${reason}`
+  );
+  console.error(reason instanceof Error ? reason.message : reason); // This will be captured as the error message in start.sh
+  process.exit(1);
+});
+
 var corsOptions = {
   origin: ["http://localhost:3000", "https://example.com:403"],
   credentials: true,
@@ -44,8 +68,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME;
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
-
-console.log(MONGO_USERNAME, MONGO_PASSWORD, "auth");
 
 const MONGO_URI = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${process.env.MONGO_URI}:27017/stickifyme?authSource=admin`;
 

@@ -48,7 +48,10 @@ jobs:
 
             # Copy Nginx configuration
             cp nginx.conf /etc/nginx/sites-available/example.com
-            ln -sf /etc/nginx/sites-available/example.com/etc/nginx/sites-enabled/
+            ln -sf /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/
+
+            # Remove default Nginx configuration
+            # rm -f /etc/nginx/sites-enabled/default
 
             # Test Nginx configuration
             nginx -t
