@@ -26,6 +26,9 @@ const AuthMe: React.FC = observer(() => {
         }
       })();
     }
+    if (!token) {
+      setRequestStatus(RequestStatus.error);
+    }
   }, []);
   return <div></div>;
 });

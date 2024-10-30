@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input as NextUIInput } from "@nextui-org/react";
+import { UnLockIcon } from "../Icons/UnlockIcon";
+import { LockIcon } from "../Icons/LockIcon";
 
 interface IComponentProps {
   label?: string;
   value: string;
   onChange: (value: string) => void;
-  type?: string; // Добавьте это свойство
+  type?: string;
   className?: string;
   onBlur?: () => void;
   autoFocus?: boolean;
   isInvalid?: boolean;
   errorMessage?: string;
+  placeholder?: string;
 }
 
 const Input: React.FC<IComponentProps> = ({
@@ -21,9 +24,30 @@ const Input: React.FC<IComponentProps> = ({
   autoFocus = false,
   className,
   type = "text",
-  isInvalid = false,
+  isInvalid,
   errorMessage,
+  placeholder,
 }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const endContent = type === "password" && (
+    <button
+      className="focus:outline-none"
+      type="button"
+      onClick={togglePasswordVisibility}
+    >
+      {!showPassword ? (
+        <UnLockIcon fill="currentColor" />
+      ) : (
+        <LockIcon fill="currentColor" />
+      )}
+    </button>
+  );
+
   return (
     <NextUIInput
       value={value}
@@ -32,9 +56,11 @@ const Input: React.FC<IComponentProps> = ({
       onBlur={onBlur}
       autoFocus={autoFocus}
       className={className}
-      type={type}
-      isInvalid={isInvalid}
+      type={type === "password" && showPassword ? "text" : type}
+      isInvalid={isInvalid !== undefined ? isInvalid : !!errorMessage}
       errorMessage={errorMessage}
+      placeholder={placeholder}
+      endContent={endContent}
     />
   );
 };

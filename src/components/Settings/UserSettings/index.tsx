@@ -10,7 +10,7 @@ import { observer } from "mobx-react-lite";
 
 const UserSettings: React.FC = observer(() => {
   const { authStore } = useStore();
-  const [fullName, setFullName] = useState(authStore.state.fullName);
+  const [fullName, setFullName] = useState(authStore.state.fullName || "");
   const [wbApiKey, setWbApiKey] = useState(authStore.state.wbApiKey || "");
 
   useEffect(() => {

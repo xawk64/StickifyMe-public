@@ -191,6 +191,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         ])
       );
       setOrders(orders);
+      toast.success("Заказы успешно импортированы из Wildberries!");
     };
   };
 
@@ -240,6 +241,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         ])
       );
       setOrders(orders);
+      toast.success("Заказы успешно импортированы из Wildberries!");
     }
     setImportInProgress(false);
   };

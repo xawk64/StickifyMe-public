@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import authAPI from "../api/authAPI";
 import { useStore } from "../store";
+import { toast } from "react-toastify";
+import { IServerMessageResponse } from "../api/models/ServerMessageResponseType";
 
 const VerifyEmail: React.FC = observer(() => {
   const router = useRouter();
@@ -16,19 +18,26 @@ const VerifyEmail: React.FC = observer(() => {
   useEffect(() => {
     if (hash) {
       (async () => {
-        const { emailVerification } = await authAPI.loadVerifyEmail({
-          hash: String(hash),
-        });
-        setEmailVerification(emailVerification);
+        try {
+          const { emailVerification } = await authAPI.loadVerifyEmail({
+            hash: String(hash),
+          });
+          setEmailVerification(emailVerification);
 
-        setAuthState({ ...state, emailVerification });
+          setAuthState({ ...state, emailVerification });
+          toast.success(
+            "Вы успешно подтвердили email. Теперь вы имеете доступ ко всем возможностям сервиса!"
+          );
+        } catch (error) {
+          toast.error((error as IServerMessageResponse).message);
+        }
       })();
     }
   }, [hash]);
 
   useEffect(() => {
     if (emailVerification) {
-      router.push("/");
+      router.push("/settings");
     }
   }, [emailVerification]);
 

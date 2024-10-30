@@ -71,7 +71,7 @@ exports.signup = (req, res) => {
       sendEmail(
         req.body.email,
         "Потверждение учетной записи",
-        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке:  <a href="https:/example.com/verify/?hash=${emailVerificationHash}">подтвердить регистрацию</a> или введите вручную в браузере: https:/example.com/verify/?hash=${emailVerificationHash}.Если это делали не Вы, просьба закрыть данное сообщение. `
+        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе example.com. Для подтверждения почты перейдите по ссылке: https:/example.com/verify/?hash=${emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение. `
       );
 
       res.status(200).send({
@@ -171,7 +171,11 @@ exports.verify = (req, res) => {
     if (err) {
       res.status(200).send({ emailVerification: false });
     }
-    console.log(user.username);
+    if (!user) {
+      return res
+        .status(404)
+        .send({ message: "Пользователь для подтверждения пароля не найден." });
+    }
 
     User.updateOne(
       { _id: user._id },
@@ -195,6 +199,13 @@ exports.resetPassword = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(404)
+        .send({ message: "Пользователь с таким email не найден." });
+    }
+
     const profile = await Profile.findOne({ _id: user.profileId });
     if (!user) {
       return res
@@ -202,7 +213,7 @@ exports.resetPassword = async (req, res) => {
         .send({ message: "Пользователь с таким email не найден." });
     }
 
-    const resetToken = bcrypt.genSaltSync(10);
+    const resetToken = uuidv4();
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 час
     await user.save();
@@ -211,7 +222,7 @@ exports.resetPassword = async (req, res) => {
     await sendEmail(
       email,
       "Сброс пароля",
-      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке: https://example.com/reset-password?token=${resetToken}`
+      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке:  https://example.com/reset-password?token=${resetToken}`
     );
 
     res.status(200).send({

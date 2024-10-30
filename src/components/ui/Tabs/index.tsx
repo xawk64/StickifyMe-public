@@ -3,9 +3,14 @@ import React from "react";
 import { Tabs as TabsComponent, Tab } from "@nextui-org/react";
 import { usePathname } from "next/navigation";
 
+export interface ITabItem {
+  label: string;
+  href: string;
+}
+
 interface IComponentProps {
-  items: { label: string; href: string }[];
-  setValue: (value: { label: string; href: string } | undefined) => void;
+  items: ITabItem[];
+  setValue: (value: ITabItem | undefined) => void;
 }
 
 const Tabs: React.FC<IComponentProps> = ({ items, setValue }) => {

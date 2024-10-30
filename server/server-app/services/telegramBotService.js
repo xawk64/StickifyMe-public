@@ -4,8 +4,16 @@ const Profile = require("../models/profile.model");
 
 class TelegramBotService {
   constructor(token) {
-    this.bot = new TelegramBot(token, { polling: true });
-    this.initializeHandlers();
+    if (!token) {
+      console.error("Error initializing Telegram bot: no token provided!");
+      return;
+    }
+    try {
+      this.bot = new TelegramBot(token, { polling: true });
+      this.initializeHandlers();
+    } catch (error) {
+      console.error("Error initializing Telegram bot:", error);
+    }
   }
 
   initializeHandlers() {
@@ -90,11 +98,19 @@ class TelegramBotService {
         .split("-")
         .reverse()
         .join(".")}\nТип упаковки: ${item.boxTypeName}\nКоэффициент: ${
-        item.coefficient === 0 ? "`бесплатно`" : `x${item.coefficient}`
+        item.coefficient === 0
+          ? "`бесплатно`"
+          : item.coefficient === -1
+          ? "нет приёмки"
+          : `x${item.coefficient}`
       }${
         oldCoeff !== undefined
-          ? `\nСтарый коэффициент: ${
-              oldCoeff === 0 ? "`бесплатно`" : `x${oldCoeff}`
+          ? `\nПрошлый коэффициент: ${
+              oldCoeff === 0
+                ? "`бесплатно`"
+                : oldCoeff === -1
+                ? "нет приёмки"
+                : `x${oldCoeff}`
             }`
           : ""
       }\n \n`;
