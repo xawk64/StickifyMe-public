@@ -61,18 +61,6 @@ function gracefulShutdown(exitCode) {
   }, 10000);
 }
 
-// ... rest of the existing code ...
-
-// Redirect console.log and console.error to also write to files
-const originalConsoleLog = console.log;
-console.log = function () {
-  fs.appendFileSync(
-    "/tmp/server.log",
-    util.format.apply(null, arguments) + "\n"
-  );
-  originalConsoleLog.apply(console, arguments);
-};
-
 var corsOptions = {
   origin: ["http://localhost:3000", "https://example.com:403"],
   credentials: true,
