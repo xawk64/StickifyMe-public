@@ -4,6 +4,7 @@ const cors = require("cors");
 const app = express();
 const mongodb = require("mongodb");
 const fileUpload = require("express-fileupload");
+const fs = require("fs");
 
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
