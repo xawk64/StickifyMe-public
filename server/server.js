@@ -72,15 +72,6 @@ console.log = function () {
   originalConsoleLog.apply(console, arguments);
 };
 
-const originalConsoleError = console.error;
-console.error = function () {
-  fs.appendFileSync(
-    "/tmp/server_error.log",
-    util.format.apply(null, arguments) + "\n"
-  );
-  originalConsoleError.apply(console, arguments);
-};
-
 var corsOptions = {
   origin: ["http://localhost:3000", "https://example.com:403"],
   credentials: true,
