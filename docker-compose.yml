@@ -36,6 +36,8 @@ services:
       - app-network
     expose:
       - "4000"
+    volumes:
+      - .server/uploads/avatars:/server/uploads/avatars
 
   mongo:
     container_name: mongo

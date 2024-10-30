@@ -2,3 +2,5 @@
 /test.js
 ./stickers.pdf
 .env.local
+uploads/avatars/*
+!uploads/avatars/default_avatar.jpg
