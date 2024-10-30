@@ -1,5 +1,9 @@
 #!/bin/bash
 
+MAX_RESTARTS=5
+RESTART_DELAY=60
+restart_count=0
+
 # Function to send email
 send_email() {
     local exit_code=$1
@@ -9,15 +13,16 @@ send_email() {
     sendEmail(
         'admin@example.com',
         'Server Crash Notification',
-        \`The server has crashed and is being restarted.
+        \`The server has crashed.
         Exit Code: ${exit_code}
-        Error Message: ${error_message}\`
+        Error Message: ${error_message}
+        Restart Count: ${restart_count}/${MAX_RESTARTS}\`
     );
     "
 }
 
 # Loop to restart the server
-while true; do
+while [ $restart_count -lt $MAX_RESTARTS ]; do
     node server.js &
     server_pid=$!
 
@@ -26,14 +31,26 @@ while true; do
     exit_code=$?
 
     if [ $exit_code -ne 0 ]; then
-        echo "Server crashed with exit code $exit_code. Restarting..."
+        restart_count=$((restart_count + 1))
+        echo "Server crashed with exit code $exit_code. Restart attempt $restart_count of $MAX_RESTARTS."
         error_message=$(tail -n 1 /tmp/server_error.log)
         send_email "$exit_code" "$error_message"
-        echo "" > /tmp/server_error.log  # Clear the error log
+        
+        if [ $restart_count -lt $MAX_RESTARTS ]; then
+            echo "Waiting for $RESTART_DELAY seconds before restarting..."
+            sleep $RESTART_DELAY
+        else
+            echo "Maximum restart attempts reached. Exiting."
+            send_email "$exit_code" "Maximum restart attempts reached. Server will not be restarted automatically."
+            break
+        fi
     else
         echo "Server stopped normally. Exiting."
         break
     fi
-
-    sleep 5
 done
+
+if [ $restart_count -eq $MAX_RESTARTS ]; then
+    echo "Server repeatedly crashed. Please check the logs and resolve the issue."
+    echo "You can manually restart the container once the issue is resolved."
+fi

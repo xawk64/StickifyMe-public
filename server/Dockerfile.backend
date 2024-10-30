@@ -10,8 +10,9 @@ COPY . .
 # Make the start script executable
 RUN chmod +x start.sh
 
-# Create log files
-RUN touch /tmp/server.log /tmp/server_error.log
+# Ensure the app can write to the log files
+RUN touch /tmp/server.log /tmp/server_error.log && \
+    chmod 666 /tmp/server.log /tmp/server_error.log
 
 # Use the start script as the entry point
 CMD ["./start.sh"]

@@ -22,7 +22,7 @@ process.on("uncaughtException", (error) => {
     "Uncaught Exception in Server",
     `An uncaught exception occurred: ${error.stack}`
   );
-  process.exit(1);
+  gracefulShutdown(1);
 });
 
 // Error handling for unhandled promise rejections
@@ -35,8 +35,29 @@ process.on("unhandledRejection", (reason, promise) => {
     "Unhandled Rejection in Server",
     `An unhandled rejection occurred: ${reason}`
   );
-  process.exit(1);
+  gracefulShutdown(1);
 });
+
+// Graceful shutdown function
+function gracefulShutdown(exitCode) {
+  console.log("Shutting down gracefully...");
+  // Close database connections, stop services, etc.
+  WarehouseCheckerService.stopAllChecks();
+
+  // Close the Express server
+  server.close(() => {
+    console.log("Server closed");
+    process.exit(exitCode);
+  });
+
+  // If server hasn't closed in 10 seconds, force shutdown
+  setTimeout(() => {
+    console.error(
+      "Could not close connections in time, forcefully shutting down"
+    );
+    process.exit(exitCode);
+  }, 10000);
+}
 
 // ... rest of the existing code ...
 
@@ -139,7 +160,5 @@ app.listen(PORT, () => {
   WarehouseCheckerService.initialize();
 });
 
-process.on("SIGINT", () => {
-  WarehouseCheckerService.stopAllChecks();
-  process.exit(0);
-});
+process.on("SIGTERM", () => gracefulShutdown(0));
+process.on("SIGINT", () => gracefulShutdown(0));
