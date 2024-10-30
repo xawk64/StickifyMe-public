@@ -63,6 +63,8 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
   const [warehouses, setWarehouses] = useState<IWarehouse[]>(warehousesList);
   7;
 
+  const [isToSave, setIsToSave] = useState(false);
+
   const [enabled, setEnabled] = useState(true);
   const [rows, setRows] = useState<(string | JSX.Element)[][]>([]);
   useEffect(() => {
@@ -121,29 +123,6 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
               );
             }}
           />,
-          // <Select
-          //   key={newWarehouse.ID}
-          //   placeholder="Выберите тип коробки"
-          //   selectionMode="multiple"
-          //   className={styles.input}
-          //   onChange={(e) => {
-          //     setWarehouses((prev) =>
-          //       prev.map((warehouse) => {
-          //         if (warehouse.ID === newWarehouse.ID) {
-          //           return {
-          //             ...warehouse,
-          //             boxTypes: e.target.value.split(","),
-          //           };
-          //         }
-          //         return warehouse;
-          //       })
-          //     );
-          //   }}
-          // >
-          //   {boxTypes.map((boxType) => (
-          //     <SelectItem key={boxType.key}>{boxType.label}</SelectItem>
-          //   ))}
-          // </Select>,
           <DateRangePicker
             initValue={
               newWarehouse.dateStart && newWarehouse.dateEnd
@@ -199,6 +178,7 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
   }, [warehouses]);
 
   const handleClickByMarker = (e: LeafletMouseEvent) => {
+    setIsToSave(true);
     const newWarehouses = warehouses.map((warehouse) => {
       if (
         warehouse.coordinates?.[0] === e.latlng.lat &&
@@ -229,16 +209,22 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
         },
       });
       toast.success("Настройки успешно сохранены");
+      setIsToSave(false);
     } catch (error) {
       toast.error("Ошибка при сохранении настроек");
     }
+  };
+
+  const handleChangeEnabled = (value: boolean) => {
+    setIsToSave(true);
+    setEnabled(value);
   };
 
   return (
     <div className="flex flex-col gap-4">
       <Switch
         isSelected={enabled}
-        onValueChange={setEnabled}
+        onValueChange={handleChangeEnabled}
         label="Включить мониторинг"
       />
       <div className={styles.root}>
@@ -290,6 +276,7 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
         <Button
           onClick={onSaveWarehousesSettings}
           label="Сохранить настройки"
+          disabled={!isToSave}
         />
       </div>
     </div>
