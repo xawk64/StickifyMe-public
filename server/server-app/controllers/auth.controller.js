@@ -54,6 +54,7 @@ exports.signup = (req, res) => {
     const warehouseSettings = new WarehouseSettings({
       items: [],
       userProfileId: user.profileId,
+      enabled: true,
     });
 
     warehouseSettings.save((err) => {
