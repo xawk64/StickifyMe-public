@@ -42,6 +42,9 @@ const coeffs = [
   { key: "3", label: "x3" },
   { key: "4", label: "x4" },
   { key: "5", label: "x5" },
+  { key: "6", label: "x6" },
+  { key: "7", label: "x7" },
+  { key: "8", label: "x8" },
 ];
 
 const boxTypes = [
