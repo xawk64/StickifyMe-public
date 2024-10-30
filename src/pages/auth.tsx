@@ -77,7 +77,7 @@ const Auth: React.FC = observer(() => {
       if (password.length < 8) {
         newErrors.password = "Пароль должен содержать не менее 8 символов";
       } else if (
-        !/^(?=.*[A-Za-z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]).*$/.test(
+        !/^(?=.*[A-Za-z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/.test(
           password
         )
       ) {
