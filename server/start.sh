@@ -16,39 +16,24 @@ send_email() {
     "
 }
 
-# Maximum number of restart attempts
-MAX_RESTARTS=5
-
-# Current restart count
-restart_count=0
-
+# Loop to restart the server
 while true; do
-    # Capture both stdout and stderr
-    output=$(node server.js 2>&1)
+    node server.js &
+    server_pid=$!
+
+    # Wait for the server to exit
+    wait $server_pid
     exit_code=$?
 
     if [ $exit_code -ne 0 ]; then
         echo "Server crashed with exit code $exit_code. Restarting..."
-        
-        # Get the last line of output as the error message
-        error_message=$(echo "$output" | tail -n 1)
-        
+        error_message=$(tail -n 1 /tmp/server_error.log)
         send_email "$exit_code" "$error_message"
-        
-        # Increment restart count
-        ((restart_count++))
-        
-        if [ $restart_count -ge $MAX_RESTARTS ]; then
-            echo "Max restarts reached. Exiting."
-            break
-        fi
-        
-        sleep 60  # Increased sleep interval to reduce load
+        echo "" > /tmp/server_error.log  # Clear the error log
     else
         echo "Server stopped normally. Exiting."
         break
     fi
-    
-    # Log the restart attempt
-    echo "$(date) Server restarted ($restart_count/$MAX_RESTARTS)" >> server_restarts.log
+
+    sleep 5
 done

@@ -8,29 +8,56 @@ const fileUpload = require("express-fileupload");
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
 
+// Function to log errors
+function logError(message) {
+  console.error(message);
+  fs.appendFileSync("/tmp/server_error.log", message + "\n");
+}
+
 // Error handling for uncaught exceptions
 process.on("uncaughtException", (error) => {
-  console.error("Uncaught Exception:", error);
+  logError(`Uncaught Exception: ${error.stack}`);
   sendEmail(
     "admin@example.com",
     "Uncaught Exception in Server",
     `An uncaught exception occurred: ${error.stack}`
   );
-  console.error(error.message); // This will be captured as the error message in start.sh
   process.exit(1);
 });
 
 // Error handling for unhandled promise rejections
 process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  logError(
+    `Unhandled Rejection at: ${util.inspect(promise)}\nReason: ${reason}`
+  );
   sendEmail(
     "admin@example.com",
     "Unhandled Rejection in Server",
     `An unhandled rejection occurred: ${reason}`
   );
-  console.error(reason instanceof Error ? reason.message : reason); // This will be captured as the error message in start.sh
   process.exit(1);
 });
+
+// ... rest of the existing code ...
+
+// Redirect console.log and console.error to also write to files
+const originalConsoleLog = console.log;
+console.log = function () {
+  fs.appendFileSync(
+    "/tmp/server.log",
+    util.format.apply(null, arguments) + "\n"
+  );
+  originalConsoleLog.apply(console, arguments);
+};
+
+const originalConsoleError = console.error;
+console.error = function () {
+  fs.appendFileSync(
+    "/tmp/server_error.log",
+    util.format.apply(null, arguments) + "\n"
+  );
+  originalConsoleError.apply(console, arguments);
+};
 
 var corsOptions = {
   origin: ["http://localhost:3000", "https://example.com:403"],
