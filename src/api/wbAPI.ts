@@ -7,44 +7,57 @@ import { IStickersType } from "./models/StickersType";
 
 const wbAPI = {
   checkApiKey: async (apiKey: string) => {
-    const response = await fetch(`https://content-api.wildberries.ru/ping`, {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        ["Content-Type"]: "application/json",
-        Authorization: apiKey,
-      },
-    });
-    return response.ok;
+    try {
+      const response = await fetch(`https://content-api.wildberries.ru/ping`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          ["Content-Type"]: "application/json",
+          Authorization: apiKey,
+        },
+      });
+      return response.ok;
+    } catch (error) {
+      console.error("Error checking API key:", error);
+      return false;
+    }
   },
   loadCoordinates: async (query: string, token: string) => {
-    const response = await fetch(`https://photon.komoot.io/api/?q=${query}`, {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        ["Content-Type"]: "application/json",
-        Authorization: token,
-      },
-    });
-    const data: ICoordinates = await response.json();
-
-    return data?.features[0]?.geometry?.coordinates || [0, 0];
-  },
-  loadWarehouses: async (token: string) => {
-    const response = await fetch(
-      "https://supplies-api.wildberries.ru/api/v1/warehouses",
-      {
+    try {
+      const response = await fetch(`https://photon.komoot.io/api/?q=${query}`, {
         method: "GET",
         headers: {
           accept: "application/json",
           ["Content-Type"]: "application/json",
           Authorization: token,
         },
-      }
-    );
-    const data: IWarehouse[] = await response.json();
-
-    return data;
+      });
+      const data: ICoordinates = await response.json();
+      return data?.features[0]?.geometry?.coordinates || [0, 0];
+    } catch (error) {
+      console.error("Error loading coordinates:", error);
+      return [0, 0];
+    }
+  },
+  loadWarehouses: async (token: string) => {
+    try {
+      const response = await fetch(
+        "https://supplies-api.wildberries.ru/api/v1/warehouses",
+        {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            ["Content-Type"]: "application/json",
+            Authorization: token,
+          },
+        }
+      );
+      const data: IWarehouse[] = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error loading warehouses:", error);
+      return [];
+    }
   },
   loadBarcodes: async (
     ordersIds: number[],

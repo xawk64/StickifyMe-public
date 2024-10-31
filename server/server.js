@@ -9,6 +9,9 @@ const sendEmail = require("./server-app/utils/sendEmail");
 
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
+const {
+  initializeSubscriptionPlans,
+} = require("./server-app/services/subscriptionService");
 
 // Function to log errors
 function logError(message) {
@@ -29,9 +32,7 @@ process.on("uncaughtException", (error) => {
 
 // Error handling for unhandled promise rejections
 process.on("unhandledRejection", (reason, promise) => {
-  logError(
-    `Unhandled Rejection at: ${util.inspect(promise)}\nReason: ${reason}`
-  );
+  logError(`Unhandled Rejection at: ${reason}`);
   sendEmail(
     "admin@example.com",
     "Unhandled Rejection in Server",
@@ -118,6 +119,10 @@ db.mongoose
   })
   .then(() => {
     console.log("Successfully connect to MongoDB. ");
+    // Initialize subscription plans after successful DB connection
+    initializeSubscriptionPlans();
+    // Initialize warehouse checker service
+    WarehouseCheckerService.initialize();
   })
   .catch((err) => {
     console.error("Connection error", err);
@@ -130,6 +135,8 @@ require("./server-app/routes/barcodesHistory.routes")(app);
 require("./server-app/routes/barcodes.routes")(app);
 require("./server-app/routes/warehouses.routes")(app);
 require("./server-app/routes/support.routes")(app);
+//require("./server-app/routes/subscription.routes")(app);
+//require("./server-app/routes/payment.routes")(app);
 
 app.get("/", (req, res) => {
   res.json({ message: "StickifyMe API" });

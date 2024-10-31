@@ -1,0 +1,42 @@
+.planCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.marketplace {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+.duration {
+  font-size: 1.1rem;
+}
+
+.discount {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.price {
+  margin: 1rem 0;
+
+  .monthly {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .total {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1976d2;
+  }
+}

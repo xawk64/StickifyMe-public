@@ -4,22 +4,15 @@ import React, { useCallback, useEffect, useState } from "react";
 import authAPI from "../api/authAPI";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
-import RadioGroup from "../components/ui/RadioGroup";
 import { useStore } from "../store";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { IServerMessageResponse } from "../api/models/ServerMessageResponseType";
 import Tabs, { ITabItem } from "../components/ui/Tabs";
-import { setEngine } from "crypto";
 
 enum AuthType {
   signIn = "/auth?type=signIn",
   signUp = "/auth?type=signUp",
-}
-
-interface IRadioItem {
-  label: string;
-  value: string;
 }
 
 const tabsItems: ITabItem[] = [

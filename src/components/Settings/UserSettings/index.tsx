@@ -7,6 +7,7 @@ import profileAPI from "../../../api/profileAPI";
 import { toast } from "react-toastify";
 import wbAPI from "../../../api/wbAPI";
 import { observer } from "mobx-react-lite";
+import ApiKeyHelp from "./ApiKeyHelp";
 
 const UserSettings: React.FC = observer(() => {
   const { authStore } = useStore();
@@ -69,13 +70,15 @@ const UserSettings: React.FC = observer(() => {
         onChange={(value) => setWbApiKey(value)}
         className="max-w-[400px]"
         isInvalid={!wbApiKey}
-        errorMessage="Поле обязательно для заполнения"
+        errorMessage="Для работы сервиса необходим ключ API"
       />
-            {!authStore.state.emailVerification && (
+      <ApiKeyHelp />
+      {!authStore.state.emailVerification && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 w-full max-w-[400px]">
           <p>
-            Ваша почта не подтверждена. Пожалуйста, проверьте почту и папку спам для подтверждения email. 
-            Это необходимо для получения полного доступа к сервису.
+            Ваша почта не подтверждена. Пожалуйста, проверьте почту и папку спам
+            для подтверждения email. Это необходимо для получения полного
+            доступа к сервису.
           </p>
         </div>
       )}

@@ -1,0 +1,203 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 200px); // Учитываем высоту header и footer
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #1a1a1a;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+}
+
+.content {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.section {
+  margin-bottom: 3rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eef2f7;
+
+    @media (max-width: 768px) {
+      font-size: 1.25rem;
+    }
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #4a5568;
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    li {
+      position: relative;
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+      color: #4a5568;
+
+      &:before {
+        content: "•";
+        color: #3182ce;
+        font-weight: bold;
+        position: absolute;
+        left: -1.5rem;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  strong {
+    font-weight: 600;
+    color: #2d3748;
+  }
+}
+
+// Дополнительные стили для выделения важной информации
+.important {
+  background-color: #fff5f5;
+  border-left: 4px solid #fc8181;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+
+  p {
+    color: #c53030;
+    margin: 0;
+  }
+}
+
+// Стили для ссылок
+.link {
+  color: #3182ce;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #2c5282;
+    text-decoration: underline;
+  }
+}
+
+// Стили для таблиц (если понадобятся)
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+
+  th,
+  td {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f7fafc;
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9fafb;
+  }
+}
+
+// Адаптивные стили для мобильных устройств
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .content {
+    padding: 1rem 0.5rem;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 0.95rem;
+    }
+
+    ul {
+      padding-left: 1rem;
+
+      li {
+        font-size: 0.95rem;
+
+        &:before {
+          left: -1rem;
+        }
+      }
+    }
+  }
+}
+
+// Стили для печати
+@media print {
+  .container {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .content {
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .section {
+    page-break-inside: avoid;
+  }
+}

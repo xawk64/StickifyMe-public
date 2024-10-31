@@ -1,5 +1,31 @@
 import React from "react";
 import Image from "next/image";
+import image1 from "../../../assets/1.png";
+import image2 from "../../../assets/2.png";
+import image3 from "../../../assets/3.png";
+import image4 from "../../../assets/4.png";
+import image5 from "../../../assets/5.png";
+import image6 from "../../../assets/6.png";
+import image7 from "../../../assets/7.png";
+import image8 from "../../../assets/8.png";
+import image9 from "../../../assets/9.png";
+import image10 from "../../../assets/10.png";
+import ourAdvantagesBackground from "../../../assets/our_advantages_background.png";
+import ourAdvantagesRightImage from "../../../assets/our_advantages_right.png";
+import styles from "./styles.module.scss";
+
+const images: { [key: number]: any } = {
+  1: image1,
+  2: image2,
+  3: image3,
+  4: image4,
+  5: image5,
+  6: image6,
+  7: image7,
+  8: image8,
+  9: image9,
+  10: image10,
+};
 
 interface Advantage {
   id: number;
@@ -71,51 +97,77 @@ const advantages: Advantage[] = [
 
 export default function OurAdvantages() {
   return (
-    <section className="bg-gray-100 py-12">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8 text-center">
-          НАШИ ПРЕИМУЩЕСТВА
-        </h2>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            {advantages.slice(0, 5).map((advantage) => (
-              <div key={advantage.id} className="flex items-start">
-                <div className="flex-shrink-0 w-12 h-12 bg-green-500 text-white flex items-center justify-center text-xl font-bold rounded-lg mr-4">
-                  {advantage.id}
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    {advantage.title}
-                  </h3>
+    <section className="bg-gray-100 relative">
+      <Image
+        src={ourAdvantagesBackground}
+        alt="ourAdvantagesBackground"
+        width={1709}
+        height={1080}
+        loading="eager"
+        className="absolute top-0 left-0 w-full h-full z-[-1]"
+      />
+      <div className="w-full h-full">
+        <div className="mx-auto p-8">
+          <h2 className="text-3xl font-bold mb-8 text-center">
+            НАШИ ПРЕИМУЩЕСТВА
+          </h2>
+          <div className={styles.container}>
+            <div className="space-y-6">
+              {advantages.slice(0, 5).map((advantage) => (
+                <div key={advantage.id} className="flex flex-col items-start">
+                  <div className="flex items-center">
+                    <Image
+                      src={images[advantage.id]}
+                      alt={advantage.title}
+                      width={40}
+                      height={40}
+                      loading="eager"
+                      className="mr-4 min-w-[40px]"
+                    />
+
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">
+                        {advantage.title}
+                      </h3>
+                    </div>
+                  </div>
                   <p className="text-gray-600">{advantage.description}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div className="space-y-6">
-            {advantages.slice(5).map((advantage) => (
-              <div key={advantage.id} className="flex items-start">
-                <div className="flex-shrink-0 w-12 h-12 bg-green-500 text-white flex items-center justify-center text-xl font-bold rounded-lg mr-4">
-                  {advantage.id}
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    {advantage.title}
-                  </h3>
+              ))}
+            </div>
+            <div className="space-y-6">
+              {advantages.slice(5).map((advantage) => (
+                <div key={advantage.id} className="flex flex-col items-start">
+                  <div className="flex items-center">
+                    <Image
+                      src={images[advantage.id]}
+                      alt={advantage.title}
+                      width={40}
+                      height={40}
+                      loading="eager"
+                      className="mr-4 min-w-[40px]"
+                    />
+
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">
+                        {advantage.title}
+                      </h3>
+                    </div>
+                  </div>
                   <p className="text-gray-600">{advantage.description}</p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <div className={styles.rightImage}>
+              <Image
+                src={ourAdvantagesRightImage}
+                alt="ourAdvantagesRightImage"
+                width={712}
+                height={678}
+                loading="eager"
+              />
+            </div>
           </div>
-        </div>
-        <div className="mt-12 text-center">
-          <Image
-            src="/placeholder.svg?height=300&width=400"
-            alt="Hands placing a label on a white box"
-            width={400}
-            height={300}
-            className="mx-auto rounded-lg"
-          />
         </div>
       </div>
     </section>

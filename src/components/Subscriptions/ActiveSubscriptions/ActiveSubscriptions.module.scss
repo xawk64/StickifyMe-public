@@ -1,0 +1,35 @@
+.subscriptions {
+  display: grid;
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.marketplace {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.dates {
+  color: #666;
+}
+
+.status {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.empty {
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+}

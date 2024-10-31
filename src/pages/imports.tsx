@@ -196,26 +196,33 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   };
 
   const onImportFromWBClick = async () => {
-    if (!token) {
-      toast.error("Не найден ключ API для Wildberries");
-      return;
-    }
-    setImportType(ImportBarcodeMode.wb);
-    setImportInProgress(true);
-    setIsLoadingModalOpen(true);
-    let orders = await wbAPI.loadOrders(
-      token,
-      setLoadingProgress,
-      setRemainingTime
-    );
-    orders = orders?.sort((a, b) => {
-      if (a.product.title !== b.product.title) {
-        return a.product.title.localeCompare(b.product.title);
+    try {
+      if (!token) {
+        toast.error("Не найден ключ API для Wildberries");
+        return;
       }
-      return a.nmId - b.nmId;
-    });
-    if (orders) {
-      barcodesAPI.addBarcodesHistory({
+      setImportType(ImportBarcodeMode.wb);
+      setImportInProgress(true);
+      setIsLoadingModalOpen(true);
+
+      let orders = await wbAPI.loadOrders(
+        token,
+        setLoadingProgress,
+        setRemainingTime
+      );
+
+      if (!orders) {
+        throw new Error("Не удалось загрузить заказы");
+      }
+
+      orders = orders.sort((a, b) => {
+        if (a.product.title !== b.product.title) {
+          return a.product.title.localeCompare(b.product.title);
+        }
+        return a.nmId - b.nmId;
+      });
+
+      await barcodesAPI.addBarcodesHistory({
         type: importType,
         orders,
       });
@@ -242,8 +249,12 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
       );
       setOrders(orders);
       toast.success("Заказы успешно импортированы из Wildberries!");
+    } catch (error) {
+      console.error("Error importing from WB:", error);
+      toast.error("Произошла ошибка при импорте заказов");
+    } finally {
+      setImportInProgress(false);
     }
-    setImportInProgress(false);
   };
 
   const setTabHandler = (tab: { label: string; href: string } | undefined) => {

@@ -6,7 +6,6 @@ import styles from "./index.module.scss";
 import Button from "../components/ui/Button";
 import telegramLogo from "../assets/telegram-logo.png";
 import OurAdvantages from "../components/Landing/OurAdvantages";
-import Reviews from "../components/Landing/Reviews";
 import Footer from "../components/Landing/Footer";
 
 const Landing: React.FC = () => {
@@ -31,6 +30,8 @@ const Landing: React.FC = () => {
           width={1920}
           height={924}
           className={styles.background}
+          loading="eager"
+          style={{ objectFit: "cover" }}
         />
         <div className={styles.tryButton}>
           <p>
@@ -38,7 +39,7 @@ const Landing: React.FC = () => {
           </p>
           <Button label="ПОПРОБОВАТЬ БЕСПЛАТНО" size="lg" href="/auth" />
         </div>
-      </div>  
+      </div>
       <OurAdvantages />
       {/* <Reviews /> */}
       <Footer />
