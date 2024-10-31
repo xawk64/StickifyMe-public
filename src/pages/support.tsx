@@ -43,12 +43,17 @@ const Support: React.FC = () => {
     <Layout>
       <div className="flex flex-col items-center justify-center max-w-2xl mx-auto gap-6">
         <h1 className="text-2xl font-bold">Обратная связь</h1>
-        
+
         <div className="w-full">
           <Select
             label="Тип обращения"
             initValue={type.key}
-            onChange={(value) => setType(feedbackTypes.find(item => item.key === value[0]) || feedbackTypes[0])}
+            onChange={(value) =>
+              setType(
+                feedbackTypes.find((item) => item.key === value[0]) ||
+                  feedbackTypes[0]
+              )
+            }
             items={feedbackTypes}
             placeholder="Выберите тип обращения"
           />
@@ -76,7 +81,10 @@ const Support: React.FC = () => {
             <a href="mailto:support@example.com" className="text-blue-500">
               По электронной почте
             </a>
-            <a href="https://t.me/example.com" className="text-blue-500">
+            <a
+              href="https://telegram.me/example.com"
+              className="text-blue-500"
+            >
               В Telegram
             </a>
           </div>
