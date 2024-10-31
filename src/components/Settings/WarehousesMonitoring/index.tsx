@@ -126,6 +126,7 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = observer(({
             }
             placeholder="Выберите тип коробки"
             onChange={(value) => {
+              setIsToSave(true);
               setWarehouses((prev) =>
                 prev.map((warehouse) => {
                   if (warehouse.ID === newWarehouse.ID) {
@@ -155,7 +156,9 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = observer(({
             key={newWarehouse.ID}
             minValue={today(getLocalTimeZone())}
             maxValue={today(getLocalTimeZone()).add({ days: 13 })}
+            
             onChange={(value) => {
+              setIsToSave(true);
               setWarehouses((prev) =>
                 prev.map((warehouse) => {
                   if (warehouse.ID === newWarehouse.ID) {
@@ -176,6 +179,7 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = observer(({
             initValue={String(newWarehouse.coeff)}
             placeholder="Выберите коэффициент"
             onChange={(value) => {
+              setIsToSave(true);
               setWarehouses((prev) =>
                 prev.map((warehouse) => {
                   if (warehouse.ID === newWarehouse.ID) {

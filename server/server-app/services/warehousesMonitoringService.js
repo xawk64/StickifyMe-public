@@ -6,7 +6,7 @@ const WarehouseSettings = require("../models/warehouseSettings.model");
 const Warehouses = require("../models/warehouse.model");
 const TelegramBotService = require("./telegramBotService");
 
-const timeoutInterval = 15000; //15 секунд
+const timeoutInterval = 17000; //17 секунд
 
 class WarehouseChecker {
   constructor(profile, settings, warehouses) {
@@ -168,7 +168,6 @@ class WarehouseCheckerService {
     const settings = await WarehouseSettings.findOne({
       userProfileId: profileId,
     });
-    console.log(profile, settings);
 
     if (!settings.enabled || !profile.chatId) {
       return;

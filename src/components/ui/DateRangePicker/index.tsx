@@ -4,6 +4,7 @@ import {
   DateValue,
   RangeValue,
 } from "@nextui-org/react";
+import styles from "./styles.module.scss";
 
 interface IComponentProps {
   initValue: RangeValue<DateValue> | null;
@@ -33,6 +34,10 @@ const DateRangePicker: React.FC<IComponentProps> = ({
       maxValue={maxValue}
       labelPlacement="outside-left"
       onChange={handleChange}
+      isInvalid={false}
+      className={
+        styles.root
+      }
     />
   );
 };

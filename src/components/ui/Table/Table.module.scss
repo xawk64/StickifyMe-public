@@ -5,7 +5,7 @@
 
 .table {
   flex-grow: 1;
-  overflow-y: auto;
+  overflow: auto;
   display: grid;
   width: 100%;
   grid-template-columns: var(
@@ -19,6 +19,7 @@
   font-size: 12px;
   line-height: 12px;
   max-height: calc(100vh - 255px);
+  max-width: 95vw;
 }
 
 .column {
@@ -57,3 +58,19 @@
   background-color: #fff; // Или любой другой цвет фона
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); // Тень сверху для визуального отделения
 }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  gap: 16px;
+  .cardItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+

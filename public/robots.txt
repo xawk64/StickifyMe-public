@@ -1,6 +1,7 @@
 # *
 User-agent: *
-Allow: /
+Allow: /$
+Disallow: /
 
 # Host
 Host: https://stickify.ru

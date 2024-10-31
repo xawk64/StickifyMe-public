@@ -22,6 +22,7 @@ const ApiKeyHelp = () => {
         onClose={handleClose}
         title="Как подключится к Wildberries"
         footer={<Button label="Понятно" onClick={handleClose} />}
+        className={styles.modal}
       >
         <div className={styles.content}>
           <div className={styles.instructions}>

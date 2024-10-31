@@ -11,6 +11,8 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  max-height: 75vh;
+  overflow-y: auto;
 }
 
 .instructions {
@@ -25,7 +27,7 @@
 }
 
 .image {
-  width: 100%;
+  width: 350px;
   height: auto;
   max-width: 100%;
   display: block;
@@ -36,3 +38,9 @@
   color: blue;
   text-decoration: underline;
 }
+
+.modal {
+  width: 700px;
+  max-width: 700px;
+}
+

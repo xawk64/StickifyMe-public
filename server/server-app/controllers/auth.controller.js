@@ -70,6 +70,15 @@ exports.signup = (req, res) => {
       }
 
       sendEmail(
+        "admin@example.com",
+        "Новая регистрация на example.com",
+        `Зарегистрирован новый пользователь:<br/>
+         Email: ${req.body.email}<br/>
+         Username: ${req.body.username}<br/>
+         Дата: ${new Date().toLocaleString()}`
+      );
+
+      sendEmail(
         req.body.email,
         "Потверждение учетной записи",
         `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе example.com. Для подтверждения почты перейдите по ссылке: https:/example.com/verify/?hash=${emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение. `

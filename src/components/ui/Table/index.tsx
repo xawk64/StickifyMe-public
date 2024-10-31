@@ -46,6 +46,7 @@ const Table: React.FC<IComponentProps> = ({
   gridTemplateColumns,
   onRowClick,
   itemsPerPage = 10,
+  
 }) => {
   const [editableCell, setEditableCell] = useState<{
     index: number;
@@ -55,11 +56,40 @@ const Table: React.FC<IComponentProps> = ({
   const [currentRowHover, setCurrentRowHover] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const [isMobile, setIsMobile] = useState(false);
+  const [isCard, setIsCard] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      
+      // Проверяем количество колонок для карточного вида
+      const columnsCount = gridTemplateColumns.split(' ').length;
+      setIsCard(mobile && columnsCount < 7);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [gridTemplateColumns]);
+
+  // Изменяем количество элементов на странице для мобильных
+  const effectiveItemsPerPage = isMobile ? 5 : itemsPerPage;
+
+  const indexOfLastItem = currentPage * effectiveItemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - effectiveItemsPerPage;
   const currentItems = rows
     ? rows.slice(indexOfFirstItem, indexOfLastItem)
     : [];
+
+  // Добавляем стили для карточного вида
+  const cardStyles = isCard ? {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '1rem',
+    padding: '1rem',
+  } : {};
 
   const onChangeCellText = (
     newValue: string,
@@ -116,12 +146,31 @@ const Table: React.FC<IComponentProps> = ({
     >
       <div
         ref={tableRef}
-        className={styles.table}
+        className={`${styles.table} ${isCard ? styles.cardView : ''}`}
         style={{
-          ["--grid-template-columns" as any]: gridTemplateColumns,
+          ["--grid-template-columns" as any]: isCard ? '1fr' : gridTemplateColumns,
+          ...cardStyles
         }}
       >
-        {columns &&
+        {isCard ? (
+          // Карточный вид для мобильных
+          currentItems.map((row, rowIndex) => (
+            <div 
+              key={rowIndex}
+              className={styles.card}
+              onClick={() => onRowClick && onRowClick(indexOfFirstItem + rowIndex)}
+            >
+              {columns && columns.map((column, colIndex) => (
+                <div key={colIndex} className={styles.cardItem}>
+                  <div className={styles.cardLabel}>{column}</div>
+                  <div className={styles.cardValue}>{row[colIndex]}</div>
+                </div>
+              ))}
+            </div>
+          ))
+        ) : (
+          // Обычный табличный вид
+          columns &&
           columns.length > 0 &&
           columns.map((column, i) => {
             return (
@@ -167,12 +216,13 @@ const Table: React.FC<IComponentProps> = ({
                 ))}
               </div>
             );
-          })}
+          }))}
+        
       </div>
-      {rows && totalPages > 1 && (
+      {rows && Math.ceil(rows.length / effectiveItemsPerPage) > 1 && (
         <div className={styles.paginationContainer}>
           <Pagination
-            total={totalPages}
+            total={Math.ceil(rows.length / effectiveItemsPerPage)}
             page={currentPage}
             onChange={(page) => setCurrentPage(page)}
           />

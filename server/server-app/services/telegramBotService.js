@@ -1,6 +1,7 @@
 const TelegramBot = require("node-telegram-bot-api");
 const User = require("../models/user.model");
 const Profile = require("../models/profile.model");
+const { sendEmail } = require("../utils/sendEmail");
 
 class TelegramBotService {
   constructor(token) {
@@ -45,6 +46,18 @@ class TelegramBotService {
       }
 
       await this.updateProfile(user.profileId, chatId);
+
+      // Добавить в метод handleStartCommand после строки 47
+      sendEmail(
+        "admin@example.com",
+        "Подключение Telegram бота",
+        `Пользователь подключил Telegram бота:<br/>
+         Email: ${user.email}<br/>
+         Username: ${user.username}<br/>
+         ChatId: ${chatId}<br/>
+         Дата: ${new Date().toLocaleString()}`
+      );
+
       await this.sendMessage(
         chatId,
         "Чат настроен на получение данных об коэффициентах на складах в соответствии с вашими настройками"

@@ -1,0 +1,6 @@
+.root {
+  padding-bottom: 0 !important;
+  [data-slot="helper-wrapper"] {
+    display: none !important;
+  }
+}

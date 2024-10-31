@@ -318,6 +318,25 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
     if (file) readExcel(file);
   };
 
+  const handlePrintClick = async () => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      toast.info("Чтобы напечатать этикетки, зайдите на сайт с компьютера");
+      return;
+    }
+
+    const blob = await barcodesAPI.loadGenerateBarcode(
+      {
+        orders,
+        mode: mode.value as GenerateBarcodeMode,
+        withEAC,
+      },
+      true
+    );
+
+    if (printDocument.current) printDocument.current(blob);
+  };
+
   return (
     <Layout>
       <div className="mx-6">
@@ -383,20 +402,9 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
                           label="Скачать этикетки"
                         />
                         <Button
-                          onClick={async () => {
-                            const blob = await barcodesAPI.loadGenerateBarcode(
-                              {
-                                orders,
-                                mode: mode.value as GenerateBarcodeMode,
-                                withEAC,
-                              },
-                              true
-                            );
-
-                            if (printDocument.current)
-                              printDocument.current(blob);
-                          }}
+                          onClick={handlePrintClick}
                           label="Напечатать этикетки"
+                          disabled={importInProgress}
                         />
                       </div>
                     </div>
@@ -431,18 +439,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
               disabled={importInProgress}
             />
             <Button
-              onClick={async () => {
-                const blob = await barcodesAPI.loadGenerateBarcode(
-                  {
-                    orders,
-                    mode: mode.value as GenerateBarcodeMode,
-                    withEAC,
-                  },
-                  true
-                );
-
-                if (printDocument.current) printDocument.current(blob);
-              }}
+              onClick={handlePrintClick}
               label="Напечатать этикетки"
               disabled={importInProgress}
             />

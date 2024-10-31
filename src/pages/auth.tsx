@@ -9,6 +9,7 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import { IServerMessageResponse } from "../api/models/ServerMessageResponseType";
 import Tabs, { ITabItem } from "../components/ui/Tabs";
+import Layout from "../components/Layout/Layout";
 
 enum AuthType {
   signIn = "/auth?type=signIn",
@@ -128,8 +129,9 @@ const Auth: React.FC = observer(() => {
   }, [authType.href, email, username, password, confirmPassword]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="w-[350px] p-6 flex flex-col items-center shadow-lg bg-stone-300 rounded-md">
+    <Layout>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-[350px] p-6 flex flex-col items-center shadow-lg bg-stone-300 rounded-md">
         <div className="mb-4">
           <Tabs items={tabsItems} setValue={handleAuthTypeChange} />
         </div>
@@ -192,7 +194,8 @@ const Auth: React.FC = observer(() => {
           <Link href="/reset-password-form">Забыли пароль?</Link>
         </div>
       </div>
-    </div>
+      </div>
+    </Layout>
   );
 });
 
