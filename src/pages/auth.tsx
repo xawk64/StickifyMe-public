@@ -188,7 +188,7 @@ const Auth: React.FC = observer(() => {
           }
         />
 
-        <div className="mt-4 text-center text-blue-600">
+        <div className="mt-4 text-center text-green-800">
           <Link href="/reset-password-form">Забыли пароль?</Link>
         </div>
       </div>

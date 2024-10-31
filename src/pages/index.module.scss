@@ -50,6 +50,20 @@
         font-size: 1.2vw;
       }
     }
+    @media (min-width: 1920px) {
+      bottom: 100px;
+      width: 100%;
+
+      p {
+        margin-left: 380px;
+        font-size: 44px;
+        font-weight: 700;
+      }
+      a {
+        margin-left: 700px;
+        font-size: 26px;
+      }
+    }
   }
 }
 

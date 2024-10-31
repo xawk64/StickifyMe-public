@@ -96,10 +96,8 @@ const User: React.FC<IUserProps> = observer(
       },
     ].filter((item) => !item.hidden);
 
-
-
     return (
-      <Dropdown placement="bottom-end" trigger="press">
+      <Dropdown placement="bottom-start" trigger="press">
         <DropdownTrigger>
           <UserComponent
             as="button"

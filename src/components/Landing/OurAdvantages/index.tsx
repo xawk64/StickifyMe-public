@@ -104,7 +104,9 @@ export default function OurAdvantages() {
         width={1709}
         height={1080}
         loading="eager"
-        className="absolute top-0 left-0 w-full h-full z-[-1]"
+        className="absolute top-0 left-0 w-full h-full "
+        unoptimized={true}
+        priority={true}
       />
       <div className="w-full h-full">
         <div className="mx-auto p-8">

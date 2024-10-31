@@ -16,3 +16,9 @@
   font-weight: bold;
   font-style: normal;
 }
+
+body {
+  max-width: 1920px;
+  margin: 0 auto !important;
+  position: relative;
+}
