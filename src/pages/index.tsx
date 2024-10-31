@@ -16,7 +16,7 @@ const Landing: React.FC = () => {
       menuItems={[
         {
           label: "НАПИСАТЬ НАМ",
-          href: "https://telegram.me/example.com",
+          href: "https://t.me/Stickifyme",
           iconHref: telegramLogo,
           target: "_blank",
         },

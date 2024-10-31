@@ -82,7 +82,7 @@ const Support: React.FC = () => {
               По электронной почте
             </a>
             <a
-              href="https://telegram.me/example.com"
+              href="https://t.me/Stickifyme"
               className="text-blue-500"
               target="_blank"
               rel="noreferrer"

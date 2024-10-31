@@ -47,7 +47,7 @@ export default function Footer() {
                 <span className="sr-only">VK</span>
               </Link> */}
                 <Link
-                  href="https://telegram.me/example.com"
+                  href="https://t.me/Stickifyme"
                   target="_blank"
                   rel="noreferrer"
                 >
