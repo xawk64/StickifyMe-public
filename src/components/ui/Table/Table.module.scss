@@ -20,6 +20,9 @@
   line-height: 12px;
   max-height: calc(100vh - 255px);
   max-width: 95vw;
+  @media (max-width: 600px) {
+    margin-bottom: 150px;
+  }
 }
 
 .column {
