@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://stickify.ru
+
+# Sitemaps
+Sitemap: https://stickify.ru/sitemap.xml

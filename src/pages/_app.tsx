@@ -40,14 +40,27 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
             `,
             }}
           />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                name: "Stickify",
+                url: "https://stickify.ru",
+                description:
+                  "Сервис для печати этикеток Wildberries. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре, поддержка термопринтера и формата А4.",
+              }),
+            }}
+          />
           <title>
             StickifyMe - Печать этикеток для продавцов WB, в одном месте!
           </title>
+          <meta name="yandex-verification" content="da50e1fc89f38446" />
           <meta
             name="description"
             content="Сервис для печати этикеток Wildberries. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре, поддержка термопринтера и формата А4."
           />
-
           {/* Open Graph / Facebook */}
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://example.com/" />
@@ -60,7 +73,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
             content="Сервис для печати этикеток Wildberries. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре."
           />
           <meta property="og:image" content="/og-image.jpg" />
-
           {/* Twitter */}
           <meta property="twitter:card" content="summary_large_image" />
           <meta property="twitter:url" content="https://example.com/" />
@@ -73,7 +85,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
             content="Сервис для печати этикеток Wildberries. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре."
           />
           <meta property="twitter:image" content="/og-image.jpg" />
-
           {/* Дополнительные мета-теги */}
           <meta
             name="keywords"
