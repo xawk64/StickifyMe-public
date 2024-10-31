@@ -3,7 +3,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import styles from "./styles.module.scss";
-import { LatLngTuple, LeafletMouseEvent } from "leaflet";
+import { LatLngExpression, LatLngTuple, LeafletMouseEvent } from "leaflet";
 import { useEffect, useState } from "react";
 import { IWarehouse } from "../../../api/models/GetWarehousesResponseType";
 import { warehousesList } from "./config";
@@ -260,7 +260,7 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = observer(({
       />
       <div className={styles.root}>
         <MapContainer
-          center={position}
+          center={position as LatLngExpression}
           zoom={zoom}
           scrollWheelZoom={false}
           className={styles.map}

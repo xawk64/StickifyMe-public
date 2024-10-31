@@ -1,5 +1,5 @@
-import { Star } from "lucide-react"
-import Image from "next/image"
+import { Star } from "lucide-react";
+import Image from "next/image";
 
 interface Review {
   id: number
@@ -56,7 +56,7 @@ export default function Reviews({ reviews = defaultReviews }: { reviews?: Review
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 const defaultReviews: Review[] = [
@@ -81,4 +81,4 @@ const defaultReviews: Review[] = [
     text: "Всегда довольны качеством услуг",
     rating: 5,
   },
-]
+];
