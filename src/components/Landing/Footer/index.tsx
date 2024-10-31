@@ -46,7 +46,11 @@ export default function Footer() {
                 </svg>
                 <span className="sr-only">VK</span>
               </Link> */}
-                <Link href="https://telegram.me/example.com">
+                <Link
+                  href="https://telegram.me/example.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <Image
                     src={telegramLogo}
                     alt="telegramLogo"

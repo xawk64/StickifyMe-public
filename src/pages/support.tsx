@@ -84,6 +84,8 @@ const Support: React.FC = () => {
             <a
               href="https://telegram.me/example.com"
               className="text-blue-500"
+              target="_blank"
+              rel="noreferrer"
             >
               В Telegram
             </a>
