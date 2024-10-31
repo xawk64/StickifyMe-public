@@ -56,6 +56,11 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
           <title>
             StickifyMe - Печать этикеток для продавцов WB, в одном месте!
           </title>
+          <meta
+            name="google-site-verification"
+            content="JhKAOXbBwexhob9oBks0P-CukqCasArynmbW7nem27E"
+          />
+
           <meta name="yandex-verification" content="da50e1fc89f38446" />
           <meta
             name="description"
