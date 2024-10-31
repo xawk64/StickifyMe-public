@@ -23,7 +23,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
     <StoreProvider store={store}>
       <NextUIProvider navigate={router.push}>
         <Head>
-          {/* <script
+          <script
             dangerouslySetInnerHTML={{
               __html: `
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -39,7 +39,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
    });
             `,
             }}
-          /> */}
+          />
           <title>
             StickifyMe - Печать этикеток для продавцов WB, в одном месте!
           </title>
