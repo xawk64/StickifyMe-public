@@ -6,6 +6,8 @@ import styles from "./index.module.scss";
 import Button from "../components/ui/Button";
 import telegramLogo from "../assets/telegram-logo.png";
 import OurAdvantages from "../components/Landing/OurAdvantages";
+import Reviews from "../components/Landing/Reviews";
+import Footer from "../components/Landing/Footer";
 
 const Landing: React.FC = () => {
   return (
@@ -36,8 +38,10 @@ const Landing: React.FC = () => {
           </p>
           <Button label="ПОПРОБОВАТЬ БЕСПЛАТНО" size="lg" href="/auth" />
         </div>
-      </div>
+      </div>  
       <OurAdvantages />
+      {/* <Reviews /> */}
+      <Footer />
     </Layout>
   );
 };

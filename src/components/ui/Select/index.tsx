@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Select as SelectComponent, SelectItem } from "@nextui-org/react";
 
 interface IComponentProps {
+  label?: string;
   initValue: string;
   onChange: (value: string[]) => void;
   placeholder: string;
@@ -10,6 +11,7 @@ interface IComponentProps {
 }
 
 const Select: React.FC<IComponentProps> = ({
+  label,
   initValue,
   onChange,
   items,
@@ -30,12 +32,13 @@ const Select: React.FC<IComponentProps> = ({
 
   return (
     <SelectComponent
+      label={label}
       isOpen={isOpen}
       selectionMode={multiple ? "multiple" : "single"}
       placeholder={placeholder}
       selectedKeys={value.split(",")}
       onChange={handleChange}
-      onOpenChange={(open) => {
+      onOpenChange={(open: boolean) => {
         open !== isOpen && setIsOpen(open);
       }}
     >

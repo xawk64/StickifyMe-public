@@ -12,5 +12,6 @@ db.order = require("./order.model");
 db.product = require("./product.model");
 db.warehouse = require("./warehouse.model");
 db.warehouseSettings = require("./warehouseSettings.model");
+db.feedback = require("./feedback.model");
 
 module.exports = db;

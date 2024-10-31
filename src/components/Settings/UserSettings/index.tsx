@@ -71,6 +71,14 @@ const UserSettings: React.FC = observer(() => {
         isInvalid={!wbApiKey}
         errorMessage="Поле обязательно для заполнения"
       />
+            {!authStore.state.emailVerification && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 w-full max-w-[400px]">
+          <p>
+            Ваша почта не подтверждена. Пожалуйста, проверьте почту и папку спам для подтверждения email. 
+            Это необходимо для получения полного доступа к сервису.
+          </p>
+        </div>
+      )}
       <Button
         onClick={handleSaveSettings}
         label="Сохранить настройки"

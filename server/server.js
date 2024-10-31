@@ -129,6 +129,7 @@ require("./server-app/routes/user.routes")(app);
 require("./server-app/routes/barcodesHistory.routes")(app);
 require("./server-app/routes/barcodes.routes")(app);
 require("./server-app/routes/warehouses.routes")(app);
+require("./server-app/routes/support.routes")(app);
 
 app.get("/", (req, res) => {
   res.json({ message: "StickifyMe API" });

@@ -162,6 +162,7 @@ exports.authMe = (req, res) => {
         avatarUrl: profile.avatarUrl,
         wbApiKey: profile.wbApiKey,
         chatId: profile.chatId,
+        emailVerification: user.emailVerification,
       });
     });
   });

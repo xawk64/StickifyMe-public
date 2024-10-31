@@ -20,6 +20,8 @@ import { IWarehouseSettings } from "../../../api/models/WarehouseSettings";
 import Switch from "../../ui/Switch";
 import { useStore } from "../../../store";
 import { toast } from "react-toastify";
+import { useRouter } from 'next/router';
+import { observer } from "mobx-react-lite";
 
 interface IWarehousesMonitoring {
   position?: LatLngTuple;
@@ -56,10 +58,24 @@ const boxTypes = [
 
 const gridTemplateColumns = "30px 200px 400px 200px 230px 200px";
 
-const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
+const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = observer(({
   position = [55.74, 37.61],
   zoom = 10,
 }) => {
+  const { authStore } = useStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authStore.state.emailVerification) {
+      toast.error('Для доступа к мониторингу складов необходимо подтвердить email');
+      router.push('/settings');
+    }
+  }, [authStore.state.emailVerification]);
+
+  if (!authStore.state.emailVerification) {
+    return null;
+  }
+
   const [warehouses, setWarehouses] = useState<IWarehouse[]>(warehousesList);
   7;
 
@@ -194,17 +210,32 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
 
   const onSaveWarehousesSettings = async () => {
     try {
+      const selectedWarehouses = warehouses.filter((warehouse) => warehouse.selected);
+      
+      // Проверяем все обязательные поля
+      const hasInvalidFields = selectedWarehouses.some(
+        (warehouse) => 
+          !warehouse.dateStart || 
+          !warehouse.dateEnd || 
+          !warehouse.boxTypes?.length || 
+          warehouse.coeff === undefined || 
+          warehouse.coeff === null
+      );
+
+      if (hasInvalidFields) {
+        toast.error("Необходимо заполнить все поля (даты, тип коробки и коэффициент) для выбранных складов");
+        return;
+      }
+
       await warehousesAPI.setWarehousesSettings({
         settings: {
-          items: warehouses
-            .filter((warehouse) => warehouse.selected)
-            .map((warehouse) => ({
-              ID: warehouse.ID,
-              dateStart: warehouse.dateStart,
-              dateEnd: warehouse.dateEnd,
-              coeff: warehouse.coeff,
-              boxTypes: warehouse.boxTypes,
-            })),
+          items: selectedWarehouses.map((warehouse) => ({
+            ID: warehouse.ID,
+            dateStart: warehouse.dateStart,
+            dateEnd: warehouse.dateEnd,
+            coeff: warehouse.coeff,
+            boxTypes: warehouse.boxTypes,
+          })),
           enabled,
         },
       });
@@ -281,6 +312,6 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = ({
       </div>
     </div>
   );
-};
+});
 
 export default WarehousesMonitoring;

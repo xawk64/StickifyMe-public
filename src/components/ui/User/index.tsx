@@ -41,7 +41,7 @@ const User: React.FC<IUserProps> = observer(
       router.push("/auth");
     };
 
-    let items = [
+    const items = [
       {
         key: "profile",
         label: (
@@ -60,21 +60,21 @@ const User: React.FC<IUserProps> = observer(
         label: "Мои импорты",
         href: "/imports",
         showDivider: true,
-        hidden: !authStore.state.wbApiKey,
+        hidden: !authStore.state.wbApiKey || !authStore.state.emailVerification,
       },
       {
         key: "/history",
         label: "История импортов",
         href: "/history",
         showDivider: true,
-        hidden: !authStore.state.wbApiKey,
+        hidden: !authStore.state.wbApiKey || !authStore.state.emailVerification,
       },
       {
         key: "/warehouses-monitoring",
         label: "Мониторинг складов",
         href: "/telegram-bot",
         showDivider: true,
-        hidden: !authStore.state.wbApiKey,
+        hidden: !authStore.state.wbApiKey || !authStore.state.emailVerification,
       },
       {
         key: "/settings",
@@ -94,9 +94,9 @@ const User: React.FC<IUserProps> = observer(
         color: "danger",
         onClick: handleLogout,
       },
-    ];
+    ].filter((item) => !item.hidden);
 
-    items = items.filter((item) => !item.hidden);
+
 
     return (
       <Dropdown placement="bottom-end" trigger="press">
