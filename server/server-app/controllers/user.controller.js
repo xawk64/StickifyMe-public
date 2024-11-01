@@ -4,7 +4,6 @@ const User = db.user;
 const path = require("path");
 
 exports.setProfile = async (req, res) => {
-  console.log(req.body);
   User.findById(req.userId, async (err, user) => {
     if (err) {
       res.status(500).send({ message: err });

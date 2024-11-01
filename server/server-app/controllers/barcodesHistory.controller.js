@@ -19,7 +19,6 @@ exports.addBarcodes = (req, res) => {
         ordersCount: req.body.orders.length,
       });
       history.save((err, history) => {
-        console.log(history, "history");
         if (err) {
           res.status(500).send({ message: err });
           return;

@@ -29,15 +29,8 @@ const User: React.FC<IUserProps> = observer(
 
     const handleLogout = () => {
       localStorage.removeItem("accessToken");
-      authStore.setAuthState({
-        id: "",
-        username: "",
-        email: "",
-        profileId: "",
-        fullName: "",
-        accessToken: "",
-        emailVerification: false,
-      });
+      authStore.resetAuthState();
+
       router.push("/auth");
     };
 

@@ -5,7 +5,7 @@ const app = express();
 const mongodb = require("mongodb");
 const fileUpload = require("express-fileupload");
 const fs = require("fs");
-const sendEmail = require("./server-app/utils/sendEmail");
+const { sendEmail, transporter } = require("./server-app/utils/sendEmail");
 
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
@@ -20,46 +20,69 @@ function logError(message) {
 }
 
 // Error handling for uncaught exceptions
-process.on("uncaughtException", (error) => {
+process.on("uncaughtException", async (error) => {
   logError(`Uncaught Exception: ${error.stack}`);
-  sendEmail(
-    "admin@example.com",
-    "Uncaught Exception in Server",
-    `An uncaught exception occurred: ${error.stack}`
-  );
+  try {
+    await sendEmail(
+      "admin@example.com",
+      "Uncaught Exception in Server",
+      `An uncaught exception occurred: ${error.stack}`
+    );
+  } catch (emailError) {
+    console.error("Failed to send error email:", emailError);
+  }
   gracefulShutdown(1);
 });
 
 // Error handling for unhandled promise rejections
-process.on("unhandledRejection", (reason, promise) => {
+process.on("unhandledRejection", async (reason, promise) => {
   logError(`Unhandled Rejection at: ${reason}`);
-  sendEmail(
-    "admin@example.com",
-    "Unhandled Rejection in Server",
-    `An unhandled rejection occurred: ${reason}`
-  );
+  try {
+    await sendEmail(
+      "admin@example.com",
+      "Unhandled Rejection in Server",
+      `An unhandled rejection occurred: ${reason}`
+    );
+  } catch (emailError) {
+    console.error("Failed to send error email:", emailError);
+  }
   gracefulShutdown(1);
 });
 
 // Graceful shutdown function
 function gracefulShutdown(exitCode) {
   console.log("Shutting down gracefully...");
-  // Close database connections, stop services, etc.
-  WarehouseCheckerService.stopAllChecks();
+  try {
+    // Close database connections, stop services, etc.
+    if (
+      WarehouseCheckerService &&
+      typeof WarehouseCheckerService.stopAllChecks === "function"
+    ) {
+      WarehouseCheckerService.stopAllChecks();
+    }
 
-  // Close the Express server
-  server.close(() => {
-    console.log("Server closed");
-    process.exit(exitCode);
-  });
+    // Close the Express server
+    if (app && typeof app.close === "function") {
+      app.close(() => {
+        console.log("Server closed");
+        process.exit(exitCode);
+      });
+    } else {
+      console.log("Server already closed or not initialized");
+      process.exit(exitCode);
+    }
 
-  // If server hasn't closed in 10 seconds, force shutdown
-  setTimeout(() => {
-    console.error(
-      "Could not close connections in time, forcefully shutting down"
-    );
+    // If server hasn't closed in 10 seconds, force shutdown
+    setTimeout(() => {
+      console.error(
+        "Could not close connections in time, forcefully shutting down"
+      );
+      process.exit(exitCode);
+    }, 10000);
+  } catch (error) {
+    console.error("Error during shutdown:", error);
     process.exit(exitCode);
-  }, 10000);
+  }
 }
 
 var corsOptions = {
@@ -128,6 +151,14 @@ db.mongoose
     console.error("Connection error", err);
     process.exit();
   });
+
+transporter.verify(function (error, success) {
+  if (error) {
+    console.error("SMTP connection error:", error);
+  } else {
+    console.log("SMTP server is ready to send messages");
+  }
+});
 
 require("./server-app/routes/auth.routes")(app);
 require("./server-app/routes/user.routes")(app);

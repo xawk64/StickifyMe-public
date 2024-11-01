@@ -26,8 +26,6 @@ exports.signup = (req, res) => {
       return;
     }
 
-    console.log("userName", req.body.username);
-
     const profile = new Profile({
       fullName: req.body.username,
     });
@@ -117,18 +115,14 @@ exports.signin = (req, res) => {
     let token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: 2592000, // 30 days
     });
-    console.log(user.profileId);
 
     Profile.find((err, profile) => {
       if (err) {
         res.status(500).send({ message: err });
       }
-
-      console.log(profile);
     });
 
     Profile.findOne({ _id: user.profileId }).exec((err, profile) => {
-      console.log(profile);
       if (err) {
         return res.status(500).send({ message: err });
       }
@@ -142,6 +136,7 @@ exports.signin = (req, res) => {
         avatarUrl: profile.avatarUrl,
         wbApiKey: profile.wbApiKey,
         chatId: profile.chatId,
+        emailVerification: user.emailVerification,
       });
     });
   });
@@ -158,7 +153,6 @@ exports.authMe = (req, res) => {
     }
 
     Profile.findOne({ _id: user.profileId }).exec((err, profile) => {
-      console.log(profile);
       if (err) {
         return res.status(500).send({ message: err });
       }

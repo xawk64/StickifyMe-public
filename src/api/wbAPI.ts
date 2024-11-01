@@ -287,7 +287,7 @@ const wbAPI = {
   },
   loadProductsInfo: async (
     orders: IOrder[],
-    withFullInfo = false,
+    withFullInfo = true,
     token: string,
     setLoadingProgress: (value: number) => void,
     setRemainingTime: (value: number) => void

@@ -25,8 +25,8 @@ import { ProgressBar } from "../components/ui/ProgressBar";
 import { formatTime } from "../utils/helpers";
 
 const modeItems = [
-  { label: "Печать A4", value: GenerateBarcodeMode.a4 as string },
   { label: "Термопринтер", value: GenerateBarcodeMode.thermo as string },
+  { label: "Печать A4", value: GenerateBarcodeMode.a4 as string },
 ];
 
 interface IComponentProps {
@@ -146,9 +146,12 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         return order;
       });
 
+      setImportInProgress(true);
+      setIsLoadingModalOpen(true);
+
       orders = await wbAPI.loadProductsInfo(
         orders,
-        withFullInfo,
+        true,
         token,
         setLoadingProgress,
         setRemainingTime

@@ -30,7 +30,7 @@ const AuthMe: React.FC = observer(() => {
       setRequestStatus(RequestStatus.error);
     }
   }, []);
-  return <div></div>;
+  return null;
 });
 
 export default AuthMe;

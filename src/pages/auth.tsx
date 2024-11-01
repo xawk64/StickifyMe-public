@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { IServerMessageResponse } from "../api/models/ServerMessageResponseType";
 import Tabs, { ITabItem } from "../components/ui/Tabs";
 import Layout from "../components/Layout/Layout";
+import styles from "./auth.module.scss";
 
 enum AuthType {
   signIn = "/auth?type=signIn",
@@ -130,70 +131,70 @@ const Auth: React.FC = observer(() => {
 
   return (
     <Layout>
-      <div className="flex items-center justify-center min-h-screen">
+      <div className={`flex items-center justify-center ${styles.root}`}>
         <div className="w-[350px] p-6 flex flex-col items-center shadow-lg bg-stone-300 rounded-md">
-        <div className="mb-4">
-          <Tabs items={tabsItems} setValue={handleAuthTypeChange} />
-        </div>
-        <div className="flex flex-col gap-4 w-full">
-          <div className="w-full">
-            <Input
-              value={username}
-              onChange={setUsername}
-              label="Логин"
-              errorMessage={errors.username}
-            />
+          <div className="mb-4">
+            <Tabs items={tabsItems} setValue={handleAuthTypeChange} />
           </div>
-
-          {authType.href === AuthType.signUp && (
+          <div className="flex flex-col gap-4 w-full">
             <div className="w-full">
               <Input
-                value={email}
-                onChange={setEmail}
-                label="E-mail"
-                errorMessage={errors.email}
+                value={username}
+                onChange={setUsername}
+                label="Логин"
+                errorMessage={errors.username}
               />
             </div>
-          )}
 
-          <div className="w-full">
-            <Input
-              value={password}
-              onChange={setPassword}
-              label="Пароль"
-              type="password"
-              errorMessage={errors.password}
-            />
-          </div>
+            {authType.href === AuthType.signUp && (
+              <div className="w-full">
+                <Input
+                  value={email}
+                  onChange={setEmail}
+                  label="E-mail"
+                  errorMessage={errors.email}
+                />
+              </div>
+            )}
 
-          {authType.href === AuthType.signUp && (
             <div className="w-full">
               <Input
-                value={confirmPassword}
-                onChange={setConfirmPassword}
-                label="Подтвердите пароль"
+                value={password}
+                onChange={setPassword}
+                label="Пароль"
                 type="password"
-                errorMessage={errors.confirmPassword}
+                errorMessage={errors.password}
               />
             </div>
-          )}
-        </div>
 
-        <Button
-          className="mt-4"
-          onClick={onSignInSignUpClick}
-          label={authType.label}
-          disabled={
-            !username ||
-            !password ||
-            (authType.href === AuthType.signUp ? !email : false)
-          }
-        />
+            {authType.href === AuthType.signUp && (
+              <div className="w-full">
+                <Input
+                  value={confirmPassword}
+                  onChange={setConfirmPassword}
+                  label="Подтвердите пароль"
+                  type="password"
+                  errorMessage={errors.confirmPassword}
+                />
+              </div>
+            )}
+          </div>
 
-        <div className="mt-4 text-center text-green-800">
-          <Link href="/reset-password-form">Забыли пароль?</Link>
+          <Button
+            className="mt-4"
+            onClick={onSignInSignUpClick}
+            label={authType.label}
+            disabled={
+              !username ||
+              !password ||
+              (authType.href === AuthType.signUp ? !email : false)
+            }
+          />
+
+          <div className="mt-4 text-center text-green-800">
+            <Link href="/reset-password-form">Забыли пароль?</Link>
+          </div>
         </div>
-      </div>
       </div>
     </Layout>
   );

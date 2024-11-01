@@ -3,6 +3,7 @@
 MAX_RESTARTS=5
 RESTART_DELAY=60
 restart_count=0
+last_restart_time=0
 
 # Function to send email
 send_email() {
@@ -21,6 +22,18 @@ send_email() {
     "
 }
 
+# Function to check and reset restart counter
+check_restart_counter() {
+    current_time=$(date +%s)
+    time_diff=$((current_time - last_restart_time))
+    
+    if [ $time_diff -gt 60 ] && [ $restart_count -gt 0 ]; then
+        echo "More than 60 seconds since last restart. Resetting restart counter."
+        restart_count=0
+    fi
+    last_restart_time=$current_time
+}
+
 # Loop to restart the server
 while [ $restart_count -lt $MAX_RESTARTS ]; do
     node server.js &
@@ -31,6 +44,9 @@ while [ $restart_count -lt $MAX_RESTARTS ]; do
     exit_code=$?
 
     if [ $exit_code -ne 0 ]; then
+        # Проверяем и обнуляем счетчик если прошло больше 60 секунд
+        check_restart_counter
+        
         restart_count=$((restart_count + 1))
         echo "Server crashed with exit code $exit_code. Restart attempt $restart_count of $MAX_RESTARTS."
         error_message=$(tail -n 1 /tmp/server_error.log)

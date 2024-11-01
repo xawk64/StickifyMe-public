@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { Select as SelectComponent, SelectItem } from "@nextui-org/react";
+import {
+  Autocomplete,
+  Select as SelectComponent,
+  SelectItem,
+} from "@nextui-org/react";
 
 interface IComponentProps {
   label?: string;
@@ -8,6 +12,7 @@ interface IComponentProps {
   placeholder: string;
   items: { key: string; label: string }[];
   multiple?: boolean;
+  searchable?: boolean;
 }
 
 const Select: React.FC<IComponentProps> = ({
@@ -17,6 +22,7 @@ const Select: React.FC<IComponentProps> = ({
   items,
   multiple = false,
   placeholder,
+  searchable,
 }) => {
   const [value, setValue] = useState<string>(initValue);
 
@@ -26,11 +32,31 @@ const Select: React.FC<IComponentProps> = ({
     const value = e.target.value;
 
     setValue(e.target.value);
+    console.log(value, "value");
 
     onChange(value.split(",").filter((value: string) => !!value));
   };
 
-  return (
+  return searchable ? (
+    <Autocomplete
+      label={label}
+      placeholder={placeholder}
+      onChange={handleChange}
+      selectedKey={value}
+      onSelectionChange={(value) => {
+        if (value) {
+          setValue(String(value));
+          onChange([String(value)]);
+        }
+      }}
+    >
+      {items.map((item) => (
+        <SelectItem key={item.key} value={item.label}>
+          {item.label}
+        </SelectItem>
+      ))}
+    </Autocomplete>
+  ) : (
     <SelectComponent
       label={label}
       isOpen={isOpen}

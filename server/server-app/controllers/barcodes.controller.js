@@ -299,7 +299,6 @@ exports.generateBarcode = async (req, res) => {
 
 exports.getHistory = (req, res) => {
   if (req.query.page > 0) {
-    console.log(req.userId);
     BarcodesHistory.find({ userId: req.userId }, (err, history) => {
       if (err) {
         res.status(500).send({ message: err });

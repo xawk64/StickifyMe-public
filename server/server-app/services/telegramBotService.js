@@ -25,8 +25,6 @@ class TelegramBotService {
     const chatId = msg.chat.id;
     const messageText = msg.text;
 
-    console.log(chatId, messageText, "messageText");
-
     if (messageText.startsWith("/start")) {
       const userId = messageText.split("/start ")[1];
 

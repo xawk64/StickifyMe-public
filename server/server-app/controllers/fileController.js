@@ -22,7 +22,6 @@ class FileController {
       await file.save();
       return res.json(file);
     } catch (e) {
-      console.log(e);
       return res.status(400).json(e);
     }
   }
@@ -35,7 +34,6 @@ class FileController {
       });
       return res.json(files);
     } catch (e) {
-      console.log(e);
       return res.status(500).json({ message: "Can not get files" });
     }
   }

@@ -83,7 +83,7 @@ const Layout: React.FC<LayoutProps> = observer(
           menuItems={menuItems}
           menuClassName={menuClassName}
           rightSideContent={
-            status === RequestStatus.success ? (
+            status === RequestStatus.success && userId ? (
               <User
                 name={fullName}
                 avatarSrc={
@@ -92,7 +92,8 @@ const Layout: React.FC<LayoutProps> = observer(
                     : undefined
                 }
               />
-            ) : status === RequestStatus.pending ? null : (
+            ) : status === RequestStatus.pending ||
+              router.pathname === "/auth" ? null : (
               <>
                 <Button href="/auth" type="primary" label="Вход" />
                 <Button

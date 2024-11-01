@@ -34,4 +34,18 @@ export class AuthStore {
   setRequestStatus = (status: RequestStatus) => {
     this.status = status;
   };
+
+  resetAuthState = () => {
+    this.state = {
+      id: "",
+      username: "",
+      email: "",
+      profileId: "",
+      fullName: "",
+      accessToken: "",
+      emailVerification: false,
+      wbApiKey: "",
+      chatId: "",
+    };
+  };
 }

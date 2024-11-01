@@ -32,6 +32,8 @@ const ApiKeyHelp = () => {
               <a
                 className={styles.link}
                 href="https://suppliers-portal.wildberries.ru/supplier-settings/access-to-api"
+                target="_blank"
+                rel="noreferrer"
               >
                 «Доступ к новому API»
               </a>

@@ -1,14 +1,14 @@
 const nodemailer = require("nodemailer");
 
-exports.sendEmail = async (email, subject, htmlMessage) => {
-  let transporter = nodemailer.createTransport({
-    service: "Mail.ru",
-    auth: {
-      user: "support@example.com",
-      pass: "pJZQijvcV0b0UD2A2iji",
-    },
-  });
+const transporter = nodemailer.createTransport({
+  service: "Mail.ru",
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
 
+const sendEmail = async (email, subject, htmlMessage) => {
   try {
     let result = await transporter.sendMail({
       from: '"Сервис example.com" <support@example.com>',
@@ -21,3 +21,5 @@ exports.sendEmail = async (email, subject, htmlMessage) => {
     console.error(e);
   }
 };
+
+module.exports = { sendEmail, transporter };
