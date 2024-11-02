@@ -340,6 +340,7 @@ exports.getHistory = (req, res) => {
           const newItem = { ...item._doc };
           delete newItem.rows;
           delete newItem.userId;
+          delete newItem.orders;
           return newItem;
         });
 

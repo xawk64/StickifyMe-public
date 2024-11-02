@@ -28,10 +28,13 @@ const HistoryImports: React.FC = observer(() => {
 
   const [rows, setRows] = useState<string[][]>([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [result, setResult] = useState<IGetHistoryResponse[]>([]);
 
   useEffect(() => {
     if (userId) {
+      setIsLoading(true);
       (async () => {
         const result = await barcodesAPI.loadBarcodesHistory({
           page: 1,
@@ -50,6 +53,7 @@ const HistoryImports: React.FC = observer(() => {
             format(new Date(item.createdAt), "dd-MM-yyyy HH:mm"),
           ])
         );
+        setIsLoading(false);
       })();
     }
   }, [userId]);
@@ -65,6 +69,7 @@ const HistoryImports: React.FC = observer(() => {
         columns={columns}
         gridTemplateColumns="50px 150px 200px  1fr"
         onRowClick={onRowClick}
+        isLoading={isLoading}
       />
     </div>
   ) : (

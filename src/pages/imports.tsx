@@ -292,6 +292,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
 
   useEffect(() => {
     if (viewHistoryId) {
+      setImportInProgress(true);
       (async () => {
         const history = await barcodesAPI.loadBarcodesHistoryById({
           id: viewHistoryId,
@@ -319,6 +320,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
           ])
         );
         setOrders(history.orders);
+        setImportInProgress(false);
       })();
     }
   }, [viewHistoryId]);
@@ -407,16 +409,16 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
                   />
                 </div>
 
+                <Table
+                  rows={rows}
+                  setRows={setRows}
+                  columns={columns}
+                  gridTemplateColumns={gridTemplateColumns}
+                  isEditable
+                  isLoading={importInProgress}
+                />
                 {rows.length > 0 && (
                   <>
-                    <Table
-                      rows={rows}
-                      setRows={setRows}
-                      columns={columns}
-                      gridTemplateColumns={gridTemplateColumns}
-                      isEditable
-                    />
-
                     <div className="flex gap-4 items-center justify-center flex-col">
                       <RadioGroup
                         items={modeItems}

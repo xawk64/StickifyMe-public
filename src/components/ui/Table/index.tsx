@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Input from "../Input";
 import styles from "./Table.module.scss";
-import { Pagination } from "@nextui-org/react";
+import { Pagination, Card, Skeleton } from "@nextui-org/react";
+import Loader from "../Loader";
 
 interface IComponentProps {
   columns?: string[];
@@ -11,6 +12,7 @@ interface IComponentProps {
   gridTemplateColumns: string;
   onRowClick?: (index: number) => void;
   itemsPerPage?: number;
+  isLoading?: boolean;
 }
 
 interface EditCellTextProps {
@@ -46,6 +48,7 @@ const Table: React.FC<IComponentProps> = ({
   gridTemplateColumns,
   onRowClick,
   itemsPerPage = 10,
+  isLoading = false,
 }) => {
   const [editableCell, setEditableCell] = useState<{
     index: number;
@@ -138,6 +141,20 @@ const Table: React.FC<IComponentProps> = ({
 
   const totalPages = Math.ceil((rows?.length || 0) / itemsPerPage);
 
+  useEffect(() => {
+    if (totalPages && currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
+  const renderSkeleton = () => {
+    return <Loader className={styles.skeleton} />;
+  };
+
+  if (isLoading) {
+    return renderSkeleton();
+  }
+
   return rows && rows.length > 0 ? (
     <div
       className={styles.tableContainer}
@@ -223,7 +240,7 @@ const Table: React.FC<IComponentProps> = ({
               );
             })}
       </div>
-      {rows && Math.ceil(rows.length / effectiveItemsPerPage) > 1 && (
+      {rows && totalPages > 1 && (
         <div className={styles.paginationContainer}>
           <Pagination
             total={Math.ceil(rows.length / effectiveItemsPerPage)}
