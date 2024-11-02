@@ -336,18 +336,44 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
     setIsLoadingModalOpen(false);
     setGenerateBarcodesInProgress(true);
 
-    const blob = await barcodesAPI.loadGenerateBarcode(
-      {
-        orders,
-        mode: mode.value as GenerateBarcodeMode,
-        withEAC,
-      },
-      true
-    );
+    try {
+      const blob = await barcodesAPI.loadGenerateBarcode(
+        {
+          orders,
+          mode: mode.value as GenerateBarcodeMode,
+          withEAC,
+        },
+        true
+      );
 
-    if (printDocument.current) printDocument.current(blob);
+      if (printDocument.current) printDocument.current(blob);
+    } catch (error) {
+      console.error("Error printing barcodes:", error);
+      toast.error("Произошла ошибка при печати этикеток");
+    } finally {
+      setGenerateBarcodesInProgress(false);
+    }
+  };
 
-    setGenerateBarcodesInProgress(false);
+  const handleDownloadClick = async () => {
+    setIsLoadingModalOpen(false);
+    setGenerateBarcodesInProgress(true);
+    try {
+      await barcodesAPI.loadGenerateBarcode(
+        {
+          orders,
+          mode: mode.value as GenerateBarcodeMode,
+          withEAC,
+        },
+        false
+      );
+      setGenerateBarcodesInProgress(false);
+    } catch (error) {
+      console.error("Error downloading barcodes:", error);
+      toast.error("Произошла ошибка при скачивании этикеток");
+    } finally {
+      setGenerateBarcodesInProgress(false);
+    }
   };
 
   return (
@@ -406,18 +432,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
 
                       <div className="flex gap-4 items-center">
                         <Button
-                          onClick={() => {
-                            setGenerateBarcodesInProgress(true);
-                            barcodesAPI.loadGenerateBarcode(
-                              {
-                                orders,
-                                mode: mode.value as GenerateBarcodeMode,
-                                withEAC,
-                              },
-                              false
-                            );
-                            setGenerateBarcodesInProgress(false);
-                          }}
+                          onClick={handleDownloadClick}
                           label="Скачать этикетки"
                           disabled={
                             importInProgress || generateBarcodesInProgress
@@ -449,19 +464,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         footer={
           <div className="flex gap-4 items-center">
             <Button
-              onClick={() => {
-                setIsLoadingModalOpen(false);
-                setGenerateBarcodesInProgress(true);
-                barcodesAPI.loadGenerateBarcode(
-                  {
-                    orders,
-                    mode: mode.value as GenerateBarcodeMode,
-                    withEAC,
-                  },
-                  false
-                );
-                setGenerateBarcodesInProgress(false);
-              }}
+              onClick={handleDownloadClick}
               label="Скачать этикетки"
               disabled={importInProgress}
             />
