@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import Modal from "../components/ui/Modal";
 import { ProgressBar } from "../components/ui/ProgressBar";
 import { formatTime } from "../utils/helpers";
+import Loader from "../components/ui/Loader";
 
 const modeItems = [
   { label: "Термопринтер", value: GenerateBarcodeMode.thermo as string },
@@ -332,7 +333,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
       toast.info("Чтобы напечатать этикетки, зайдите на сайт с компьютера");
       return;
     }
-
+    setIsLoadingModalOpen(false);
     setGenerateBarcodesInProgress(true);
 
     const blob = await barcodesAPI.loadGenerateBarcode(
@@ -448,7 +449,9 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         footer={
           <div className="flex gap-4 items-center">
             <Button
-              onClick={() =>
+              onClick={() => {
+                setIsLoadingModalOpen(false);
+                setGenerateBarcodesInProgress(true);
                 barcodesAPI.loadGenerateBarcode(
                   {
                     orders,
@@ -456,8 +459,9 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
                     withEAC,
                   },
                   false
-                )
-              }
+                );
+                setGenerateBarcodesInProgress(false);
+              }}
               label="Скачать этикетки"
               disabled={importInProgress}
             />
@@ -496,6 +500,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
       >
         <p className="mb-4">
           Идет генерация этикеток, пожалуйста, не закрывайте это окно
+          <Loader />
         </p>
       </Modal>
     </Layout>
