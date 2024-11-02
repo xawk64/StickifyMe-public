@@ -209,8 +209,6 @@ const wbAPI = {
         return [];
       }
 
-      orders = orders.filter((_: any, i: number) => i < 20);
-
       ordersIds = orders.map((order: IOrder) => order.id);
 
       const onePercent = 100 / orders.length;

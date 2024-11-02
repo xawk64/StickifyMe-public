@@ -14,7 +14,7 @@ import Checkbox from "../components/ui/Checkbox";
 import Tabs from "../components/ui/Tabs";
 import HistoryImports from "../components/HistoryImports/HistoryImports";
 import wbAPI from "../api/wbAPI";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { IOrder } from "../api/models/OrderType";
 import Layout from "../components/Layout/Layout";
 import FilePicker from "../components/ui/FilePicker";
@@ -160,6 +160,8 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
       );
 
       if (orders.length === 0) {
+        setImportInProgress(false);
+        setIsLoadingModalOpen(false);
         toast.error("Не найдено ни одного заказа со статусом 'В сборке'");
         return;
       }
