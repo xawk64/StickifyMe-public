@@ -32,7 +32,6 @@ const Select: React.FC<IComponentProps> = ({
     const value = e.target.value;
 
     setValue(e.target.value);
-    console.log(value, "value");
 
     onChange(value.split(",").filter((value: string) => !!value));
   };

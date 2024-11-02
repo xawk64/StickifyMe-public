@@ -7,6 +7,7 @@ interface IFilePickerProps {
   accept?: string;
   onChange?: (file: File | null) => void;
   showSelectedFile?: boolean;
+  disabled?: boolean;
 }
 
 const FilePicker: React.FC<IFilePickerProps> = ({
@@ -14,6 +15,7 @@ const FilePicker: React.FC<IFilePickerProps> = ({
   accept = ".xlsx",
   onChange,
   showSelectedFile = false,
+  disabled = false,
 }) => {
   const [selectedFileName, setSelectedFileName] = useState<string>("");
 
@@ -44,8 +46,9 @@ const FilePicker: React.FC<IFilePickerProps> = ({
           onChange={handleFileChange}
           ref={fileInputRef}
           accept={accept}
+          disabled={disabled}
         />
-        <Button label={label} onClick={handleButtonClick} />
+        <Button label={label} onClick={handleButtonClick} disabled={disabled} />
 
         {showSelectedFile && selectedFileName && (
           <span className={styles.selectedFile}>{selectedFileName}</span>

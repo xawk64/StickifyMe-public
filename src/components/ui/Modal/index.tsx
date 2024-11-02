@@ -14,6 +14,7 @@ interface ModalProps {
   children: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
+  hideCloseButton?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -23,9 +24,15 @@ const Modal: React.FC<ModalProps> = ({
   children,
   footer,
   className,
+  hideCloseButton,
 }) => {
   return (
-    <NextUIModal isOpen={isOpen} onClose={onClose} className={className}>
+    <NextUIModal
+      isOpen={isOpen}
+      onClose={onClose}
+      className={className}
+      hideCloseButton={hideCloseButton}
+    >
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>
         <ModalBody>{children}</ModalBody>

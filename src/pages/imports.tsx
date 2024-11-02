@@ -87,12 +87,14 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   const [importType, setImportType] = useState(ImportBarcodeMode.wb);
 
   const [withEAC, setWithEAC] = useState(false);
-  const [withFullInfo, setWithFullInfo] = useState(false);
 
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
   const router = useRouter();
   const [remainingTime, setRemainingTime] = useState(0);
+
+  const [generateBarcodesInProgress, setGenerateBarcodesInProgress] =
+    useState(false);
 
   const [isInitialized, setIsInitialized] = useState(false);
   const [importInProgress, setImportInProgress] = useState(false);
@@ -251,6 +253,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         ])
       );
       setOrders(orders);
+      setImportInProgress(false);
       toast.success("Заказы успешно импортированы из Wildberries!");
     } catch (error) {
       console.error("Error importing from WB:", error);
@@ -328,6 +331,8 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
       return;
     }
 
+    setGenerateBarcodesInProgress(true);
+
     const blob = await barcodesAPI.loadGenerateBarcode(
       {
         orders,
@@ -338,6 +343,8 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
     );
 
     if (printDocument.current) printDocument.current(blob);
+
+    setGenerateBarcodesInProgress(false);
   };
 
   return (
@@ -359,11 +366,15 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
                       setValue={setWithFullInfo}
                       label="Загрузить полную информацию о товарах (медленно)"
                     /> */}
-                    <FilePicker onChange={handleFileChange} />
+                    <FilePicker
+                      onChange={handleFileChange}
+                      disabled={importInProgress || generateBarcodesInProgress}
+                    />
                   </div>
                   <Button
                     onClick={onImportFromWBClick}
                     label="Импорт из Wildberries"
+                    disabled={importInProgress || generateBarcodesInProgress}
                   />
                 </div>
 
@@ -392,7 +403,8 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
 
                       <div className="flex gap-4 items-center">
                         <Button
-                          onClick={() =>
+                          onClick={() => {
+                            setGenerateBarcodesInProgress(true);
                             barcodesAPI.loadGenerateBarcode(
                               {
                                 orders,
@@ -400,14 +412,20 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
                                 withEAC,
                               },
                               false
-                            )
-                          }
+                            );
+                            setGenerateBarcodesInProgress(false);
+                          }}
                           label="Скачать этикетки"
+                          disabled={
+                            importInProgress || generateBarcodesInProgress
+                          }
                         />
                         <Button
                           onClick={handlePrintClick}
                           label="Напечатать этикетки"
-                          disabled={importInProgress}
+                          disabled={
+                            importInProgress || generateBarcodesInProgress
+                          }
                         />
                       </div>
                     </div>
@@ -448,6 +466,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
             />
           </div>
         }
+        hideCloseButton={importInProgress}
       >
         {importInProgress ? (
           <>
@@ -466,6 +485,16 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         ) : (
           <p className="mb-4">Импорт успешно завершен</p>
         )}
+      </Modal>
+      <Modal
+        isOpen={generateBarcodesInProgress}
+        onClose={() => setGenerateBarcodesInProgress(false)}
+        title="Генерация этикеток"
+        hideCloseButton={generateBarcodesInProgress}
+      >
+        <p className="mb-4">
+          Идет генерация этикеток, пожалуйста, не закрывайте это окно
+        </p>
       </Modal>
     </Layout>
   );

@@ -239,7 +239,25 @@ const wbAPI = {
         const processedBatch = await Promise.all<IOrder>(
           currentBatch.map(
             async ({ id, nmId, createdAt, deliveryType }: any) => {
-              const product = await wbAPI.loadProduct(nmId, token);
+              let product: IProduct | undefined;
+              let attempts = 0;
+              const maxAttempts = 5;
+
+              while (attempts < maxAttempts) {
+                try {
+                  product = await wbAPI.loadProduct(nmId, token);
+                  break;
+                } catch (err) {
+                  attempts++;
+                  if (attempts === maxAttempts) throw err;
+                  await new Promise((resolve) => setTimeout(resolve, 2000));
+                }
+              }
+
+              if (!product) {
+                throw new Error(`Failed to load product for nmId: ${nmId}`);
+              }
+
               loadingProgress += onePercent;
               setLoadingProgress(loadingProgress);
 
@@ -351,10 +369,25 @@ const wbAPI = {
 
       const processedBatch = await Promise.all<IOrder>(
         currentBatch.map(
-          async ({ id, nmId, createdAtMarket, deliveryType, product }: any) => {
-            const productFromWb = withFullInfo
-              ? await wbAPI.loadProduct(nmId, token)
-              : product;
+          async ({ id, nmId, createdAtMarket, deliveryType }: any) => {
+            let product: IProduct | undefined;
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (attempts < maxAttempts) {
+              try {
+                product = await wbAPI.loadProduct(nmId, token);
+                break;
+              } catch (err) {
+                attempts++;
+                if (attempts === maxAttempts) throw err;
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+              }
+            }
+
+            if (!product) {
+              throw new Error(`Failed to load product for nmId: ${nmId}`);
+            }
 
             loadingProgress += onePercent;
             setLoadingProgress(loadingProgress);
@@ -366,7 +399,7 @@ const wbAPI = {
               createdAtMarket,
               deliveryType,
               stickersCount: 1,
-              product: productFromWb,
+              product,
               bcUp: barcodesInfo?.bcUp || "",
               bcDown: barcodesInfo?.bcDown || "",
               barcode: barcodesInfo?.barcode || "",

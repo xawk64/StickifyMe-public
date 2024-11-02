@@ -21,32 +21,36 @@ function logError(message) {
 
 // Error handling for uncaught exceptions
 process.on("uncaughtException", async (error) => {
-  logError(`Uncaught Exception: ${error.stack}`);
-  try {
-    await sendEmail(
-      "admin@example.com",
-      "Uncaught Exception in Server",
-      `An uncaught exception occurred: ${error.stack}`
-    );
-  } catch (emailError) {
-    console.error("Failed to send error email:", emailError);
+  if (process.env.NODE_ENV === "production") {
+    logError(`Uncaught Exception: ${error.stack}`);
+    try {
+      await sendEmail(
+        "admin@example.com",
+        "Uncaught Exception in Server",
+        `An uncaught exception occurred: ${error.stack}`
+      );
+    } catch (emailError) {
+      console.error("Failed to send error email:", emailError);
+    }
+    gracefulShutdown(1);
   }
-  gracefulShutdown(1);
 });
 
 // Error handling for unhandled promise rejections
 process.on("unhandledRejection", async (reason, promise) => {
-  logError(`Unhandled Rejection at: ${reason}`);
-  try {
-    await sendEmail(
-      "admin@example.com",
-      "Unhandled Rejection in Server",
-      `An unhandled rejection occurred: ${reason}`
-    );
-  } catch (emailError) {
-    console.error("Failed to send error email:", emailError);
+  if (process.env.NODE_ENV === "production") {
+    logError(`Unhandled Rejection at: ${reason}`);
+    try {
+      await sendEmail(
+        "admin@example.com",
+        "Unhandled Rejection in Server",
+        `An unhandled rejection occurred: ${reason}`
+      );
+    } catch (emailError) {
+      console.error("Failed to send error email:", emailError);
+    }
+    gracefulShutdown(1);
   }
-  gracefulShutdown(1);
 });
 
 // Graceful shutdown function

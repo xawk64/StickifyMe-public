@@ -46,7 +46,6 @@ const Table: React.FC<IComponentProps> = ({
   gridTemplateColumns,
   onRowClick,
   itemsPerPage = 10,
-  
 }) => {
   const [editableCell, setEditableCell] = useState<{
     index: number;
@@ -63,15 +62,15 @@ const Table: React.FC<IComponentProps> = ({
     const checkMobile = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      
+
       // Проверяем количество колонок для карточного вида
-      const columnsCount = gridTemplateColumns.split(' ').length;
-      setIsCard(mobile && columnsCount < 7);
+      const columnsCount = gridTemplateColumns.split(" ").length;
+      setIsCard(mobile && columnsCount < 8);
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, [gridTemplateColumns]);
 
   // Изменяем количество элементов на странице для мобильных
@@ -84,12 +83,14 @@ const Table: React.FC<IComponentProps> = ({
     : [];
 
   // Добавляем стили для карточного вида
-  const cardStyles = isCard ? {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '1rem',
-    padding: '1rem',
-  } : {};
+  const cardStyles = isCard
+    ? {
+        display: "flex",
+        flexDirection: "column" as const,
+        gap: "1rem",
+        padding: "1rem",
+      }
+    : {};
 
   const onChangeCellText = (
     newValue: string,
@@ -146,78 +147,81 @@ const Table: React.FC<IComponentProps> = ({
     >
       <div
         ref={tableRef}
-        className={`${styles.table} ${isCard ? styles.cardView : ''}`}
+        className={`${styles.table} ${isCard ? styles.cardView : ""}`}
         style={{
-          ["--grid-template-columns" as any]: isCard ? '1fr' : gridTemplateColumns,
-          ...cardStyles
+          ["--grid-template-columns" as any]: isCard
+            ? "1fr"
+            : gridTemplateColumns,
+          ...cardStyles,
         }}
       >
-        {isCard ? (
-          // Карточный вид для мобильных
-          currentItems.map((row, rowIndex) => (
-            <div 
-              key={rowIndex}
-              className={styles.card}
-              onClick={() => onRowClick && onRowClick(indexOfFirstItem + rowIndex)}
-            >
-              {columns && columns.map((column, colIndex) => (
-                <div key={colIndex} className={styles.cardItem}>
-                  <div className={styles.cardLabel}>{column}</div>
-                  <div className={styles.cardValue}>{row[colIndex]}</div>
-                </div>
-              ))}
-            </div>
-          ))
-        ) : (
-          // Обычный табличный вид
-          columns &&
-          columns.length > 0 &&
-          columns.map((column, i) => {
-            return (
-              <div key={i} className={styles.column}>
-                <div className={`${styles.cell} ${styles.header}`}>
-                  <div className={`${styles.cell} ${styles.text}`}>
-                    {column}
-                  </div>
-                </div>
-                {currentItems.map((row, rowIndex) => (
-                  <div
-                    key={rowIndex}
-                    className={`${styles.cell} ${styles.content} ${
-                      currentRowHover === rowIndex ? styles.active : ""
-                    }`}
-                    onClick={() => {
-                      setEditableCell({
-                        index: i,
-                        indexInRow: rowIndex,
-                      });
-                      onRowClick && onRowClick(indexOfFirstItem + rowIndex);
-                    }}
-                    onMouseMove={() => setCurrentRowHover(rowIndex)}
-                    onMouseLeave={() => setCurrentRowHover(null)}
-                  >
-                    {isEditable &&
-                    editableCell?.index === i &&
-                    editableCell.indexInRow === rowIndex &&
-                    typeof row[i] === "string" ? (
-                      <EditCellText
-                        defaultValue={row[i] as string}
-                        onChangeText={(value) =>
-                          onChangeCellText(value, rowIndex, i)
-                        }
-                        onBlur={() => setEditableCell(null)}
-                      />
-                    ) : (
-                      <div className={`${styles.cell} ${styles.text}`}>
-                        {row[i]}
-                      </div>
-                    )}
-                  </div>
-                ))}
+        {isCard
+          ? // Карточный вид для мобильных
+            currentItems.map((row, rowIndex) => (
+              <div
+                key={rowIndex}
+                className={styles.card}
+                onClick={() =>
+                  onRowClick && onRowClick(indexOfFirstItem + rowIndex)
+                }
+              >
+                {columns &&
+                  columns.map((column, colIndex) => (
+                    <div key={colIndex} className={styles.cardItem}>
+                      <div className={styles.cardLabel}>{column}</div>
+                      <div className={styles.cardValue}>{row[colIndex]}</div>
+                    </div>
+                  ))}
               </div>
-            );
-          }))}
-        
+            ))
+          : // Обычный табличный вид
+            columns &&
+            columns.length > 0 &&
+            columns.map((column, i) => {
+              return (
+                <div key={i} className={styles.column}>
+                  <div className={`${styles.cell} ${styles.header}`}>
+                    <div className={`${styles.cell} ${styles.text}`}>
+                      {column}
+                    </div>
+                  </div>
+                  {currentItems.map((row, rowIndex) => (
+                    <div
+                      key={rowIndex}
+                      className={`${styles.cell} ${styles.content} ${
+                        currentRowHover === rowIndex ? styles.active : ""
+                      }`}
+                      onClick={() => {
+                        setEditableCell({
+                          index: i,
+                          indexInRow: rowIndex,
+                        });
+                        onRowClick && onRowClick(indexOfFirstItem + rowIndex);
+                      }}
+                      onMouseMove={() => setCurrentRowHover(rowIndex)}
+                      onMouseLeave={() => setCurrentRowHover(null)}
+                    >
+                      {isEditable &&
+                      editableCell?.index === i &&
+                      editableCell.indexInRow === rowIndex &&
+                      typeof row[i] === "string" ? (
+                        <EditCellText
+                          defaultValue={row[i] as string}
+                          onChangeText={(value) =>
+                            onChangeCellText(value, rowIndex, i)
+                          }
+                          onBlur={() => setEditableCell(null)}
+                        />
+                      ) : (
+                        <div className={`${styles.cell} ${styles.text}`}>
+                          {row[i]}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
       </div>
       {rows && Math.ceil(rows.length / effectiveItemsPerPage) > 1 && (
         <div className={styles.paginationContainer}>
