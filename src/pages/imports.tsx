@@ -498,7 +498,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         title="Генерация этикеток"
         hideCloseButton={generateBarcodesInProgress}
       >
-        <p className="mb-4">
+        <p className="mb-4 flex flex-col items-center justify-center gap-4">
           Идет генерация этикеток, пожалуйста, не закрывайте это окно
           <Loader />
         </p>
