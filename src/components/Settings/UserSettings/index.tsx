@@ -8,23 +8,44 @@ import { toast } from "react-toastify";
 import wbAPI from "../../../api/wbAPI";
 import { observer } from "mobx-react-lite";
 import ApiKeyHelp from "./ApiKeyHelp";
+import authAPI from "../../../api/authAPI";
 
 const UserSettings: React.FC = observer(() => {
   const { authStore } = useStore();
-  const [fullName, setFullName] = useState(authStore.state.fullName || "");
+  const [companyName, setCompanyName] = useState(authStore.state.fullName || "");
   const [wbApiKey, setWbApiKey] = useState(authStore.state.wbApiKey || "");
+  const [resendTimer, setResendTimer] = useState(0);
 
   useEffect(() => {
-    setFullName(authStore.state.fullName);
+    setCompanyName(authStore.state.fullName);
     setWbApiKey(authStore.state.wbApiKey || "");
   }, [authStore.state.fullName, authStore.state.wbApiKey]);
+
+  useEffect(() => {
+    if (resendTimer > 0) {
+      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendTimer]);
 
   const handleAvatarChange = (newAvatarUrl: string) => {
     authStore.setAuthState({ ...authStore.state, avatarUrl: newAvatarUrl });
   };
 
+  const handleResendVerification = async () => {
+    if (resendTimer > 0) return;
+    
+    try {
+      await authAPI.resendVerification();
+      toast.success("Письмо с подтверждением отправлено на вашу почту");
+      setResendTimer(60);
+    } catch (error) {
+      toast.error("Ошибка при отправке письма подтверждения");
+    }
+  };
+
   const handleSaveSettings = async () => {
-    if (!fullName || !wbApiKey) {
+    if (!companyName || !wbApiKey) {
       toast.error("Пожалуйста, заполните все поля");
       return;
     }
@@ -36,8 +57,12 @@ const UserSettings: React.FC = observer(() => {
           return;
         }
       }
-      await profileAPI.updateProfile({ fullName, wbApiKey });
-      authStore.setAuthState({ ...authStore.state, fullName, wbApiKey });
+      await profileAPI.updateProfile({ fullName: companyName, wbApiKey });
+      authStore.setAuthState({
+        ...authStore.state,
+        fullName: companyName,
+        wbApiKey,
+      });
       toast.success("Настройки успешно сохранены");
     } catch (error) {
       toast.error("Ошибка при сохранении настроек");
@@ -57,11 +82,17 @@ const UserSettings: React.FC = observer(() => {
         onAvatarChange={handleAvatarChange}
       />
       <Input
-        label="Имя компании"
-        value={fullName}
-        onChange={(value) => setFullName(value)}
+        label="Email"
+        value={authStore.state.email}
         className="max-w-[400px]"
-        isInvalid={!fullName}
+        disabled={true}
+      />
+      <Input
+        label="Название компании"
+        value={companyName}
+        onChange={(value) => setCompanyName(value)}
+        className="max-w-[400px]"
+        isInvalid={!companyName}
         errorMessage="Поле обязательно для заполнения"
       />
       <Input
@@ -80,6 +111,15 @@ const UserSettings: React.FC = observer(() => {
             для подтверждения email. Это необходимо для получения полного
             доступа к сервису.
           </p>
+          <div className="mt-2">
+            <Button
+              onClick={handleResendVerification}
+              label={resendTimer > 0 ? `Повторная отправка через ${resendTimer}с` : "Отправить письмо повторно"}
+              disabled={resendTimer > 0}
+              type="secondary"
+              size="sm"
+            />
+          </div>
         </div>
       )}
       <Button
@@ -87,8 +127,8 @@ const UserSettings: React.FC = observer(() => {
         label="Сохранить настройки"
         disabled={
           !wbApiKey ||
-          !fullName ||
-          (fullName === authStore.state.fullName &&
+          !companyName ||
+          (companyName === authStore.state.fullName &&
             wbApiKey === authStore.state.wbApiKey)
         }
       />

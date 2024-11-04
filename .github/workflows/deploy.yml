@@ -35,7 +35,7 @@ jobs:
             git config core.sshCommand "ssh -i /root/.ssh/id_ed25519 -F /dev/null" &&
             git pull origin master && 
             docker-compose down --remove-orphans &&
-            #docker system prune -a
+            docker system prune -a
 
             # Create a temporary .env file
             echo "MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}" > .env

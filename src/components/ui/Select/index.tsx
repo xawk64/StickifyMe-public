@@ -13,6 +13,7 @@ interface IComponentProps {
   items: { key: string; label: string }[];
   multiple?: boolean;
   searchable?: boolean;
+  className?: string;
 }
 
 const Select: React.FC<IComponentProps> = ({
@@ -23,6 +24,7 @@ const Select: React.FC<IComponentProps> = ({
   multiple = false,
   placeholder,
   searchable,
+  className,
 }) => {
   const [value, setValue] = useState<string>(initValue);
 
@@ -63,6 +65,7 @@ const Select: React.FC<IComponentProps> = ({
       placeholder={placeholder}
       selectedKeys={value.split(",")}
       onChange={handleChange}
+      className={className}
       onOpenChange={(open: boolean) => {
         open !== isOpen && setIsOpen(open);
       }}

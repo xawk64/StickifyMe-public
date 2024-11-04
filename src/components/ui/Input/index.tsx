@@ -6,7 +6,7 @@ import { LockIcon } from "../Icons/LockIcon";
 interface IComponentProps {
   label?: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   type?: string;
   className?: string;
   onBlur?: () => void;
@@ -14,6 +14,7 @@ interface IComponentProps {
   isInvalid?: boolean;
   errorMessage?: string;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 const Input: React.FC<IComponentProps> = ({
@@ -27,6 +28,7 @@ const Input: React.FC<IComponentProps> = ({
   isInvalid,
   errorMessage,
   placeholder,
+  disabled,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -61,6 +63,7 @@ const Input: React.FC<IComponentProps> = ({
       errorMessage={errorMessage}
       placeholder={placeholder}
       endContent={endContent}
+      disabled={disabled}
     />
   );
 };

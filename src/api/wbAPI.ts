@@ -160,145 +160,171 @@ const wbAPI = {
   loadOrders: async (
     token: string,
     setLoadingProgress: (value: number) => void,
-    setRemainingTime: (value: number) => void
+    setRemainingTime: (value: number) => void,
+    daysCountForOrders: number
   ): Promise<IOrder[] | undefined> => {
-    let loadingProgress = 0;
-    const response = await fetch(
-      `https://marketplace-api.wildberries.ru/api/v3/orders?limit=1000&next=0&dateFrom=${
-        Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 2
-      }&dateTo=${Math.floor(Date.now() / 1000)}`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-    const data = await response.json();
-    let orders = data.orders;
-    if (orders) {
-      let ordersIds = orders.map((order: IOrder) => order.id);
-      const ordersStatusesResponse = await fetch(
-        "https://marketplace-api.wildberries.ru/api/v3/orders/status",
-        {
-          method: "POST",
-          headers: {
-            accept: "application/json",
-            ["Content-Type"]: "application/json",
-            Authorization: token,
-          },
-          body: JSON.stringify({
-            ["orders"]: ordersIds,
-          }),
-        }
-      );
-      const ordersStatuses = await ordersStatusesResponse.json();
-      const orderStatusById: { [key: string]: string } =
-        ordersStatuses.orders.reduce(
-          (
-            acc: { [key: string]: string },
-            curr: { id: number; supplierStatus: string }
-          ) => ({ ...acc, [curr.id]: curr.supplierStatus }),
-          {} as { [key: string]: string }
+    try {
+      let loadingProgress = 0;
+      let orders: IOrder[] = [];
+      let next = 0;
+
+      do {
+        const response = await fetch(
+          `https://marketplace-api.wildberries.ru/api/v3/orders?limit=1000&next=${next}&dateFrom=${
+            Math.floor(Date.now() / 1000) - 60 * 60 * 24 * daysCountForOrders
+          }&dateTo=${Math.floor(Date.now() / 1000)}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
-
-      orders = orders.filter(
-        ({ id }: IOrder) => orderStatusById[String(id)] === "confirm"
-      );
-
-      if (orders.length === 0) {
-        return [];
-      }
-
-      ordersIds = orders.map((order: IOrder) => order.id);
-
-      const onePercent = 100 / orders.length;
-
-      if (orders.length > maxStickers) {
-        setRemainingTime(
-          (getStickersDelay / 1000) * Math.ceil(orders.length / maxStickers)
-        );
-      }
-
-      const processOrders = async (
-        ordersToProcess: IOrder[],
-        processedOrders: IOrder[] = []
-      ) => {
-        if (ordersToProcess.length === 0) {
-          return processedOrders;
-        }
-
-        const batchSize = maxStickers;
-        const currentBatch = ordersToProcess.slice(0, batchSize);
-        const remainingOrders = ordersToProcess.slice(batchSize);
-
-        const ordersIds = currentBatch.map((order: IOrder) => order.id);
-        const stickers = await wbAPI.loadBarcodes(ordersIds, token);
-
-        const processedBatch = await Promise.all<IOrder>(
-          currentBatch.map(
-            async ({ id, nmId, createdAt, deliveryType }: any) => {
-              let product: IProduct | undefined;
-              let attempts = 0;
-              const maxAttempts = 5;
-
-              while (attempts < maxAttempts) {
-                try {
-                  product = await wbAPI.loadProduct(nmId, token);
-                  break;
-                } catch (err) {
-                  attempts++;
-                  if (attempts === maxAttempts) throw err;
-                  await new Promise((resolve) => setTimeout(resolve, 2000));
-                }
-              }
-
-              if (!product) {
-                throw new Error(`Failed to load product for nmId: ${nmId}`);
-              }
-
-              loadingProgress += onePercent;
-              setLoadingProgress(loadingProgress);
-
-              const barcodesInfo = stickers[id];
-              return {
-                id,
-                nmId,
-                createdAtMarket: createdAt,
-                deliveryType,
-                stickersCount: 1,
-                product,
-                bcUp: barcodesInfo?.bcUp || "2439286",
-                bcDown: barcodesInfo?.bcDown || "7401",
-                barcode: barcodesInfo?.barcode || "*Ba3tnkmJ",
-                barcodeFile: barcodesInfo?.barcodeFile,
-              };
-            }
-          )
-        );
-
-        const newProcessedOrders = [...processedOrders, ...processedBatch];
-
-        setRemainingTime(
-          (getStickersDelay / 1000) *
-            Math.ceil(remainingOrders.length / maxStickers)
-        );
-
-        if (remainingOrders.length > 0) {
-          return new Promise((resolve) => {
-            setTimeout(() => {
-              resolve(processOrders(remainingOrders, newProcessedOrders));
-            }, getStickersDelay);
-          });
+        const data = await response.json();
+        orders = [...orders, ...data.orders];
+        if (data.orders.length === 1000) {
+          next = data.next;
         } else {
-          return newProcessedOrders;
+          next = 0;
         }
-      };
+      } while (next !== 0);
 
-      orders = await processOrders(orders);
+      if (orders) {
+        let ordersIds = orders.map((order: IOrder) => order.id);
+        const batchSize = 1000;
+        const ordersStatuses: {
+          orders: { id: number; supplierStatus: string }[];
+        } = { orders: [] };
 
-      orders = orders.filter(({ barcodeFile }: IOrder) => !!barcodeFile);
+        for (let i = 0; i < ordersIds.length; i += batchSize) {
+          const batchIds = ordersIds.slice(i, i + batchSize);
+          const ordersStatusesResponse = await fetch(
+            "https://marketplace-api.wildberries.ru/api/v3/orders/status",
+            {
+              method: "POST",
+              headers: {
+                accept: "application/json",
+                ["Content-Type"]: "application/json",
+                Authorization: token,
+              },
+              body: JSON.stringify({
+                ["orders"]: batchIds,
+              }),
+            }
+          );
+          const batchStatuses = await ordersStatusesResponse.json();
+          ordersStatuses.orders.push(...batchStatuses.orders);
+        }
+        const orderStatusById: { [key: string]: string } =
+          ordersStatuses.orders.reduce(
+            (
+              acc: { [key: string]: string },
+              curr: { id: number; supplierStatus: string }
+            ) => ({ ...acc, [curr.id]: curr.supplierStatus }),
+            {} as { [key: string]: string }
+          );
 
-      return orders;
+        orders = orders.filter(
+          ({ id }: IOrder) => orderStatusById[String(id)] === "confirm"
+        );
+
+        if (orders.length === 0) {
+          return [];
+        }
+
+        ordersIds = orders.map((order: IOrder) => order.id);
+
+        const onePercent = 100 / orders.length;
+
+        if (orders.length > maxStickers) {
+          setRemainingTime(
+            (getStickersDelay / 1000) * Math.ceil(orders.length / maxStickers)
+          );
+        }
+
+        const processOrders = async (
+          ordersToProcess: IOrder[],
+          processedOrders: IOrder[] = []
+        ) => {
+          if (ordersToProcess.length === 0) {
+            return processedOrders;
+          }
+
+          const batchSize = maxStickers;
+          const currentBatch = ordersToProcess.slice(0, batchSize);
+          const remainingOrders = ordersToProcess.slice(batchSize);
+
+          const ordersIds = currentBatch.map((order: IOrder) => order.id);
+          const stickers = await wbAPI.loadBarcodes(ordersIds, token);
+
+          const processedBatch = await Promise.all<IOrder>(
+            currentBatch.map(
+              async ({ id, nmId, createdAt, deliveryType }: any) => {
+                let product: IProduct | undefined;
+                let attempts = 0;
+                const maxAttempts = 5;
+
+                while (attempts < maxAttempts) {
+                  try {
+                    product = await wbAPI.loadProduct(nmId, token);
+                    break;
+                  } catch (err) {
+                    attempts++;
+                    if (attempts === maxAttempts) throw err;
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
+                  }
+                }
+
+                if (!product) {
+                  throw new Error(`Failed to load product for nmId: ${nmId}`);
+                }
+
+                loadingProgress += onePercent;
+                setLoadingProgress(loadingProgress);
+
+                const barcodesInfo = stickers[id];
+                return {
+                  id,
+                  nmId,
+                  createdAtMarket: createdAt,
+                  deliveryType,
+                  stickersCount: 1,
+                  product,
+                  bcUp: barcodesInfo?.bcUp || "2439286",
+                  bcDown: barcodesInfo?.bcDown || "7401",
+                  barcode: barcodesInfo?.barcode || "*Ba3tnkmJ",
+                  barcodeFile: barcodesInfo?.barcodeFile,
+                };
+              }
+            )
+          );
+
+          const newProcessedOrders = [...processedOrders, ...processedBatch];
+
+          setRemainingTime(
+            (getStickersDelay / 1000) *
+              Math.ceil(remainingOrders.length / maxStickers)
+          );
+
+          if (remainingOrders.length > 0) {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                resolve(processOrders(remainingOrders, newProcessedOrders));
+              }, getStickersDelay);
+            });
+          } else {
+            return newProcessedOrders;
+          }
+        };
+
+        orders = (await processOrders(orders)) as IOrder[];
+
+        orders = orders.filter(({ barcodeFile }: IOrder) => !!barcodeFile);
+
+        return orders;
+      }
+    } catch (error) {
+      console.error("Error loading orders:", error);
+      return [];
     }
   },
   loadProductsInfo: async (

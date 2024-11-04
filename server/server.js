@@ -19,6 +19,8 @@ function logError(message) {
   fs.appendFileSync("/tmp/server_error.log", message + "\n");
 }
 
+const PORT = 4000;
+
 // Error handling for uncaught exceptions
 process.on("uncaughtException", async (error) => {
   if (process.env.NODE_ENV === "production") {
@@ -110,14 +112,6 @@ app.use(
 app.use(
   bodyParser.json({
     limit: "50mb",
-    verify: (req, res, buf) => {
-      try {
-        JSON.parse(buf);
-      } catch (e) {
-        res.status(400).json({ message: "Ошибка JSON" });
-        throw new Error("Invalid JSON");
-      }
-    },
   })
 );
 
@@ -147,9 +141,13 @@ db.mongoose
   .then(() => {
     console.log("Successfully connect to MongoDB. ");
     // Initialize subscription plans after successful DB connection
+    // Запускаем сервер только после успешного подключения к БД
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}.`);
+      // Инициализируем сервис только один раз здесь
+      WarehouseCheckerService.initialize();
+    });
     initializeSubscriptionPlans();
-    // Initialize warehouse checker service
-    WarehouseCheckerService.initialize();
   })
   .catch((err) => {
     console.error("Connection error", err);
@@ -170,19 +168,11 @@ require("./server-app/routes/barcodesHistory.routes")(app);
 require("./server-app/routes/barcodes.routes")(app);
 require("./server-app/routes/warehouses.routes")(app);
 require("./server-app/routes/support.routes")(app);
-//require("./server-app/routes/subscription.routes")(app);
-//require("./server-app/routes/payment.routes")(app);
-
 app.get("/", (req, res) => {
   res.json({ message: "StickifyMe API" });
 });
-
-const PORT = process.env.PORT || 4000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
-  WarehouseCheckerService.initialize();
-});
+//require("./server-app/routes/subscription.routes")(app);
+//require("./server-app/routes/payment.routes")(app);
 
 process.on("SIGTERM", () => gracefulShutdown(0));
 process.on("SIGINT", () => gracefulShutdown(0));

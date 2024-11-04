@@ -17,13 +17,13 @@ import wbAPI from "../api/wbAPI";
 import { format, set } from "date-fns";
 import { IOrder } from "../api/models/OrderType";
 import Layout from "../components/Layout/Layout";
-import FilePicker from "../components/ui/FilePicker";
 import { useStore } from "../store";
 import { toast } from "react-toastify";
 import Modal from "../components/ui/Modal";
 import { ProgressBar } from "../components/ui/ProgressBar";
 import { formatTime } from "../utils/helpers";
 import Loader from "../components/ui/Loader";
+import Select from "../components/ui/Select";
 
 const modeItems = [
   { label: "Термопринтер", value: GenerateBarcodeMode.thermo as string },
@@ -36,7 +36,7 @@ interface IComponentProps {
 }
 
 const gridTemplateColumns =
-  "30px 80px 50px 50px 60px 90px  95px 350px 80px 200px 1fr 1fr 1fr 1fr 100px 100px";
+  "30px 80px 50px 60px 90px  95px 350px 80px 200px 1fr 1fr 1fr 1fr 100px 100px";
 
 const tabItems = [
   { label: "Новый импорт", href: "/imports" },
@@ -63,7 +63,6 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   const [columns, setColumns] = useState([
     "№",
     "id заказа",
-    "Кол-во",
     "ШК низ",
     "ШК верх",
     "Баркод заказа",
@@ -88,6 +87,8 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   const [importType, setImportType] = useState(ImportBarcodeMode.wb);
 
   const [withEAC, setWithEAC] = useState(false);
+
+  const [daysCountForOrders, setDaysCountForOrders] = useState(3);
 
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
@@ -182,7 +183,6 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         orders.map((order, i) => [
           String(i + 1),
           `${order.id}`,
-          "1",
           order.bcDown,
           order.bcUp,
           order.barcode,
@@ -216,11 +216,15 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
       let orders = await wbAPI.loadOrders(
         token,
         setLoadingProgress,
-        setRemainingTime
+        setRemainingTime,
+        daysCountForOrders
       );
 
-      if (!orders) {
-        throw new Error("Не удалось загрузить заказы");
+      if (!orders || orders.length === 0) {
+        toast.error("Не найдено ни одного заказа со статусом 'В сборке'");
+        setImportInProgress(false);
+        setIsLoadingModalOpen(false);
+        return;
       }
 
       orders = orders.sort((a, b) => {
@@ -239,7 +243,6 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         orders.map((order, i) => [
           `${i + 1}`,
           `${order.id}`,
-          "1",
           order.bcDown,
           order.bcUp,
           order.barcode,
@@ -301,7 +304,6 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
           history.orders.map((order, i) => [
             `${i + 1}`,
             `${order.id}`,
-            "1",
             order.bcDown,
             order.bcUp,
             order.barcode,
@@ -390,21 +392,44 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
             {(tab.href === tabItems[0].href ||
               (tab === tabItems[1] && viewHistoryId)) && (
               <>
-                <div className="flex  gap-4 items-center justify-center">
-                  <div className="flex gap-2 items-center">
-                    {/* <Checkbox
+                <div className="flex flex-col gap-4 items-center justify-center">
+                  {/*   <div className="flex gap-2 items-center">
+                   <Checkbox
                       value={withFullInfo}
                       setValue={setWithFullInfo}
                       label="Загрузить полную информацию о товарах (медленно)"
-                    /> */}
+                    /> 
                     <FilePicker
                       onChange={handleFileChange}
                       disabled={importInProgress || generateBarcodesInProgress}
                     />
-                  </div>
+                   
+                  </div> */}
+                  <p className="flex items-center gap-2">
+                    {daysCountForOrders === 1
+                      ? "Выполнять импорт заказов за последний "
+                      : `Выполнять импорт заказов за последние `}
+                    <Select
+                      initValue={daysCountForOrders.toString()}
+                      onChange={(value) =>
+                        setDaysCountForOrders(parseInt(value[0]))
+                      }
+                      items={Array.from({ length: 7 }, (_, i) => ({
+                        key: `${i + 1}`,
+                        label: `${i + 1}`,
+                      }))}
+                      placeholder="Количество дней"
+                      className="w-[70px] min-w-[70px]"
+                    />{" "}
+                    {daysCountForOrders === 1
+                      ? "день"
+                      : daysCountForOrders > 4
+                      ? "дней"
+                      : "дня"}
+                  </p>
                   <Button
                     onClick={onImportFromWBClick}
-                    label="Импорт из Wildberries"
+                    label="Импорт заказов из Wildberries"
                     disabled={importInProgress || generateBarcodesInProgress}
                   />
                 </div>
