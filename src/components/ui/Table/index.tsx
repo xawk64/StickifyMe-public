@@ -50,6 +50,7 @@ const Table: React.FC<IComponentProps> = ({
   itemsPerPage = 10,
   isLoading = false,
 }) => {
+  isEditable = false;
   const [editableCell, setEditableCell] = useState<{
     index: number;
     indexInRow: number;

@@ -269,3 +269,32 @@ exports.confirmResetPassword = async (req, res) => {
       .send({ message: "Произошла ошибка при обработке запроса." });
   }
 };
+
+exports.resendVerification = async (req, res) => {
+  console.log("resendVerification");
+  
+  try {
+    const user = await User.findById(req.userId);
+    
+    if (!user) {
+      return res.status(404).send({ message: "Пользователь не найден" });
+    }
+
+    if (user.emailVerification) {
+      return res.status(400).send({ message: "Email уже подтвержден" });
+    }
+
+    await sendEmail(
+      user.email,
+      "Подтверждение учетной записи",
+      `Добрый день, ${user.username}! <br />Вы запросили повторное подтверждение почты на сервисе example.com. Для подтверждения перейдите по ссылке: https://example.com/verify/?hash=${user.emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение.`
+    );
+
+    res.status(200).send({
+      message: "Письмо для подтверждения отправлено на вашу почту",
+    });
+  } catch (error) {
+    console.error("Ошибка при повторной отправке подтверждения:", error);
+    res.status(500).send({ message: "Произошла ошибка при обработке запроса" });
+  }
+};

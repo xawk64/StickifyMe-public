@@ -1,5 +1,6 @@
 import { get, post } from ".";
 import { ApiUrlEnum } from "../utils/enums";
+import { IServerMessageResponse } from "./models/ServerMessageResponseType";
 import { SigninParamsType } from "./models/SigninParamsType";
 import { SigninResponseType } from "./models/SigninResponseType";
 import { SignupParamsType } from "./models/SignupParamsType";
@@ -24,4 +25,6 @@ export default {
     password: string;
   }): Promise<{ message: string }> =>
     post(ApiUrlEnum.authConfirmResetPassword, params),
+  resendVerification: (): Promise<IServerMessageResponse> =>
+    get(ApiUrlEnum.authResendVerification),
 };
