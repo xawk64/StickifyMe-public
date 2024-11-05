@@ -115,17 +115,17 @@ exports.generateBarcode = async (req, res) => {
             characterSpacing: 3 * coff,
           }
         );
-
+      ctx.doc.fontSize(5 * coff);
       //наименование товара
       ctx.doc
         .font(fontURL)
         .text(
-          truncateText(order.product.title),
+          truncateText(order.product.title, 80),
           5 * coff + offsetX,
           5 * coff + offsetY,
           { width: 100 * coff }
         );
-
+      ctx.doc.fontSize(4 * coff);
       if (order.product.characteristics["Цвет"]) {
         ctx.doc
           .font(fontURL)
@@ -135,15 +135,25 @@ exports.generateBarcode = async (req, res) => {
               40
             ),
             5 * coff + offsetX,
-            18 * coff + offsetY
+            17 * coff + offsetY
           );
       }
 
-      ctx.doc.fontSize(5 * coff);
       ctx.doc
         .font(fontURL)
         .text(
-          truncateText(`Артикул: ${order.nmId || ""}`, 40),
+          truncateText(`Артикул WB: ${order.nmId || ""}`, 40),
+          5 * coff + offsetX,
+          21 * coff + offsetY
+        );
+
+      ctx.doc
+        .font(fontURL)
+        .text(
+          truncateText(
+            `Артикул продавца: ${order.product.vendorCode || ""}`,
+            100
+          ),
           5 * coff + offsetX,
           25 * coff + offsetY
         );
@@ -157,7 +167,7 @@ exports.generateBarcode = async (req, res) => {
               40
             ),
             5 * coff + offsetX,
-            30 * coff + offsetY
+            33 * coff + offsetY
           );
       }
 
@@ -167,7 +177,7 @@ exports.generateBarcode = async (req, res) => {
           .text(
             truncateText(`Производитель: ${order.product.brand || ""}`, 40),
             5 * coff + offsetX,
-            35 * coff + offsetY
+            37 * coff + offsetY
           );
       }
 
