@@ -92,7 +92,7 @@ exports.signup = (req, res) => {
 
 exports.signin = (req, res) => {
   User.findOne({
-    username: req.body.username,
+    $or: [{ username: req.body.username }, { email: req.body.username }],
   }).exec((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
@@ -272,10 +272,10 @@ exports.confirmResetPassword = async (req, res) => {
 
 exports.resendVerification = async (req, res) => {
   console.log("resendVerification");
-  
+
   try {
     const user = await User.findById(req.userId);
-    
+
     if (!user) {
       return res.status(404).send({ message: "Пользователь не найден" });
     }

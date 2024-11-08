@@ -109,6 +109,7 @@ const Auth: React.FC = observer(() => {
           password,
         });
         const signInData = await authAPI.loadSignIn({ username, password });
+        localStorage.setItem("accessToken", signInData.accessToken);
         setAuthState(signInData);
         toast.success(signUpData.message);
       } catch (e) {
@@ -119,6 +120,7 @@ const Auth: React.FC = observer(() => {
     } else {
       try {
         const signInData = await authAPI.loadSignIn({ username, password });
+        localStorage.setItem("accessToken", signInData.accessToken);
         setAuthState(signInData);
         toast.success("Вход выполнен успешно!");
       } catch (e) {
@@ -141,7 +143,7 @@ const Auth: React.FC = observer(() => {
               <Input
                 value={username}
                 onChange={setUsername}
-                label="Логин"
+                label="Логин или email"
                 errorMessage={errors.username}
               />
             </div>

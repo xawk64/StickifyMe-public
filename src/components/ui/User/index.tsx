@@ -28,10 +28,9 @@ const User: React.FC<IUserProps> = observer(
     const { authStore } = useStore();
 
     const handleLogout = () => {
+      router.push("/auth");
       localStorage.removeItem("accessToken");
       authStore.resetAuthState();
-
-      router.push("/auth");
     };
 
     const items = [

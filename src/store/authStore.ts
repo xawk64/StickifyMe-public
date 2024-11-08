@@ -25,9 +25,6 @@ export class AuthStore {
 
   setAuthState = (state: SigninResponseType) => {
     this.state = state;
-    if (state.accessToken) {
-      localStorage.setItem("accessToken", state.accessToken);
-    }
     this.status = RequestStatus.success;
   };
 

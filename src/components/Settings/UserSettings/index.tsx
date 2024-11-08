@@ -9,10 +9,13 @@ import wbAPI from "../../../api/wbAPI";
 import { observer } from "mobx-react-lite";
 import ApiKeyHelp from "./ApiKeyHelp";
 import authAPI from "../../../api/authAPI";
+import { RequestStatus } from "../../../store/enums";
 
 const UserSettings: React.FC = observer(() => {
   const { authStore } = useStore();
-  const [companyName, setCompanyName] = useState(authStore.state.fullName || "");
+  const [companyName, setCompanyName] = useState(
+    authStore.state.fullName || ""
+  );
   const [wbApiKey, setWbApiKey] = useState(authStore.state.wbApiKey || "");
   const [resendTimer, setResendTimer] = useState(0);
 
@@ -34,7 +37,7 @@ const UserSettings: React.FC = observer(() => {
 
   const handleResendVerification = async () => {
     if (resendTimer > 0) return;
-    
+
     try {
       await authAPI.resendVerification();
       toast.success("Письмо с подтверждением отправлено на вашу почту");
@@ -92,7 +95,7 @@ const UserSettings: React.FC = observer(() => {
         value={companyName}
         onChange={(value) => setCompanyName(value)}
         className="max-w-[400px]"
-        isInvalid={!companyName}
+        isInvalid={authStore.status === RequestStatus.success && !companyName}
         errorMessage="Поле обязательно для заполнения"
       />
       <Input
@@ -100,28 +103,33 @@ const UserSettings: React.FC = observer(() => {
         value={wbApiKey}
         onChange={(value) => setWbApiKey(value)}
         className="max-w-[400px]"
-        isInvalid={!wbApiKey}
+        isInvalid={authStore.status === RequestStatus.success && !wbApiKey}
         errorMessage="Для работы сервиса необходим ключ API"
       />
       <ApiKeyHelp />
-      {!authStore.state.emailVerification && (
-        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 w-full max-w-[400px]">
-          <p>
-            Ваша почта не подтверждена. Пожалуйста, проверьте почту и папку спам
-            для подтверждения email. Это необходимо для получения полного
-            доступа к сервису.
-          </p>
-          <div className="mt-2">
-            <Button
-              onClick={handleResendVerification}
-              label={resendTimer > 0 ? `Повторная отправка через ${resendTimer}с` : "Отправить письмо повторно"}
-              disabled={resendTimer > 0}
-              type="secondary"
-              size="sm"
-            />
+      {authStore.status === RequestStatus.success &&
+        !authStore.state.emailVerification && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 w-full max-w-[400px]">
+            <p>
+              Ваша почта не подтверждена. Пожалуйста, проверьте почту и папку
+              спам для подтверждения email. Это необходимо для получения полного
+              доступа к сервису.
+            </p>
+            <div className="mt-2">
+              <Button
+                onClick={handleResendVerification}
+                label={
+                  resendTimer > 0
+                    ? `Повторная отправка через ${resendTimer}с`
+                    : "Отправить письмо повторно"
+                }
+                disabled={resendTimer > 0}
+                type="secondary"
+                size="sm"
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
       <Button
         onClick={handleSaveSettings}
         label="Сохранить настройки"
