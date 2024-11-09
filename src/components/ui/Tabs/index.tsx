@@ -11,11 +11,12 @@ export interface ITabItem {
 interface IComponentProps {
   items: ITabItem[];
   setValue: (value: ITabItem | undefined) => void;
+  value: ITabItem | undefined;
 }
 
-const Tabs: React.FC<IComponentProps> = ({ items, setValue }) => {
+const Tabs: React.FC<IComponentProps> = ({ items, setValue, value }) => {
   const pathname = usePathname();
-  const [selected, setSelected] = React.useState(pathname);
+  const [selected, setSelected] = React.useState(value?.href || pathname);
 
   return (
     <TabsComponent

@@ -95,7 +95,7 @@ const Layout: React.FC<LayoutProps> = observer(
             ) : status === RequestStatus.pending ||
               router.pathname === "/auth" ? null : (
               <>
-                <Button href="/auth" type="primary" label="Вход" />
+                <Button href="/auth?type=signIn" type="primary" label="Вход" />
                 <Button
                   href="/auth?type=signUp"
                   type="secondary"

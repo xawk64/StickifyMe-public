@@ -37,7 +37,11 @@ const Landing: React.FC = () => {
           <p>
             ПЕЧАТЬ ЭТИКЕТОК ДЛЯ <br></br> ПРОДАВЦОВ WB В ОДНОМ МЕСТЕ!
           </p>
-          <Button label="ПОПРОБОВАТЬ БЕСПЛАТНО" size="lg" href="/auth" />
+          <Button
+            label="ПОПРОБОВАТЬ БЕСПЛАТНО"
+            size="lg"
+            href="/auth?type=signUp"
+          />
         </div>
       </div>
       <OurAdvantages />

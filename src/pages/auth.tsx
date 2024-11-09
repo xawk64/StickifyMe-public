@@ -48,9 +48,9 @@ const Auth: React.FC = observer(() => {
   }, [state]);
 
   const [authType, setAuthType] = useState(
-    tabsItems.find((item) =>
-      typeof type === "string" ? item.href.includes(type) : tabsItems[0]
-    ) || tabsItems[0]
+    tabsItems.find(
+      (item) => typeof type === "string" && item.href.includes(type)
+    ) || tabsItems[1]
   );
 
   const handleAuthTypeChange = (value: ITabItem | undefined) => {
@@ -72,7 +72,7 @@ const Auth: React.FC = observer(() => {
       if (password.length < 8) {
         newErrors.password = "Пароль должен содержать не менее 8 символов";
       } else if (
-        !/^(?=.*[A-Za-z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/.test(
+        !/^(?=.*[A-Za-zА-Яа-я])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/.test(
           password
         )
       ) {
@@ -112,6 +112,13 @@ const Auth: React.FC = observer(() => {
         localStorage.setItem("accessToken", signInData.accessToken);
         setAuthState(signInData);
         toast.success(signUpData.message);
+
+        (window as any)._tmr.push({
+          type: "reachGoal",
+          id: 3576395,
+          value: 20,
+          goal: "UserSignup",
+        });
       } catch (e) {
         toast.error(
           "Ошибка регистрации: " + (e as IServerMessageResponse).message
@@ -136,14 +143,22 @@ const Auth: React.FC = observer(() => {
       <div className={`flex items-center justify-center ${styles.root}`}>
         <div className="w-[350px] p-6 flex flex-col items-center shadow-lg bg-stone-300 rounded-md">
           <div className="mb-4">
-            <Tabs items={tabsItems} setValue={handleAuthTypeChange} />
+            <Tabs
+              value={authType}
+              items={tabsItems}
+              setValue={handleAuthTypeChange}
+            />
           </div>
           <div className="flex flex-col gap-4 w-full">
             <div className="w-full">
               <Input
                 value={username}
                 onChange={setUsername}
-                label="Логин или email"
+                label={
+                  authType.href === AuthType.signIn
+                    ? "Логин или email"
+                    : "Логин"
+                }
                 errorMessage={errors.username}
               />
             </div>
