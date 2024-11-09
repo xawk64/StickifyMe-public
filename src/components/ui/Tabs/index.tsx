@@ -11,7 +11,7 @@ export interface ITabItem {
 interface IComponentProps {
   items: ITabItem[];
   setValue: (value: ITabItem | undefined) => void;
-  value: ITabItem | undefined;
+  value?: ITabItem | undefined;
 }
 
 const Tabs: React.FC<IComponentProps> = ({ items, setValue, value }) => {
