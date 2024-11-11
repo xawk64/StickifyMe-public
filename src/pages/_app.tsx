@@ -67,12 +67,14 @@ _tmr.push({id: "3576395", type: "pageView", start: (new Date()).getTime()});
                 name: "Stickify",
                 url: "https://stickify.ru",
                 description:
-                  "Сервис для печати этикеток Wildberries. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре, поддержка термопринтера и формата А4.",
+                  "Сервис для генерации этикеток Wildberries для печати. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре, поддержка термопринтера и формата А4. Мониторинг коэффициентов приемки складов Wildberries.",
               }),
             }}
           />
           <title>
-            StickifyMe - Печать этикеток для продавцов WB, в одном месте!
+            StickifyMe - генерация этикеток (баркодов) для продавцов WB, в одном
+            месте бесплатно! Мониторинг коэффициентов приемки складов
+            Wildberries.
           </title>
           <meta
             name="google-site-verification"
@@ -82,18 +84,18 @@ _tmr.push({id: "3576395", type: "pageView", start: (new Date()).getTime()});
           <meta name="yandex-verification" content="da50e1fc89f38446" />
           <meta
             name="description"
-            content="Сервис для печати этикеток Wildberries. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре, поддержка термопринтера и формата А4."
+            content="Сервис для генерации этикеток (баркодов) Wildberries для печати. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре, поддержка термопринтера и формата А4. Мониторинг коэффициентов приемки складов Wildberries."
           />
           {/* Open Graph / Facebook */}
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://example.com/" />
           <meta
             property="og:title"
-            content="StickifyMe - Печать этикеток для продавцов WB"
+            content="StickifyMe - Генерация этикеток (баркодов) для продавцов WB бесплатно. Мониторинг коэффициентов приемки складов Wildberries."
           />
           <meta
             property="og:description"
-            content="Сервис для печати этикеток Wildberries. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре."
+            content="Сервис для генерации этикеток (баркодов) Wildberries для печати. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре. Бесплатно. Мониторинг коэффициентов приемки складов Wildberries."
           />
           <meta property="og:image" content="/og-image.jpg" />
           {/* Twitter */}
@@ -101,18 +103,17 @@ _tmr.push({id: "3576395", type: "pageView", start: (new Date()).getTime()});
           <meta property="twitter:url" content="https://example.com/" />
           <meta
             property="twitter:title"
-            content="StickifyMe - Печать этикеток для продавцов WB"
+            content="StickifyMe - Генерация этикеток (баркодов) для продавцов WB бесплатно. Мониторинг коэффициентов приемки складов Wildberries."
           />
           <meta
             property="twitter:description"
-            content="Сервис для печати этикеток Wildberries. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре."
+            content="Сервис для генерации этикеток (баркодов) Wildberries для печати. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре."
           />
           <meta property="twitter:image" content="/og-image.jpg" />
           {/* Дополнительные мета-теги */}
           <meta
             name="keywords"
-            content="Wildberries, этикетки, штрих-коды, печать этикеток, WB, маркетплейс, термопринтер, мониторинг складов Wildberries, 
-            мониторинг коэффициентов приемки, генерация штрихкодов, штрихкод, баркод, этикетка, FBS, бесплатно"
+            content="Wildberries, этикетки, штрих-коды, печать этикеток, WB, маркетплейс, термопринтер, мониторинг складов Wildberries, мониторинг коэффициентов приемки, генерация штрихкодов, штрихкод, баркод, этикетка, FBS, бесплатно, wildberries qr, ловец приемки wildberries, ловец бесплатной приемки wildberries, barcode wildberries, генератор qr wildberries, генератор qr кодов wildberries, сгенерировать qr код wildberries, коэффициент wildberries наценки, где посмотреть коэффициент логистики wildberries, wildberries коэффициент приемки, коэффициент наценки по оплатам wildberries, баркоды для wildberries генерация, генерация баркодов онлайн для wildberries, баркод wildberries, сгенерировать баркод для wildberries, создать баркод для wildberries, распечатать баркод для wildberries, как сделать баркод для wildberries, программа для этикеток wildberries, wildberries баркод товара, сгенерировать баркод для wildberries бесплатно, создать баркод для wildberries онлайн бесплатно, преобразовать баркод в штрихкод для wildberries, программа для баркодов wildberries, где взять баркод для wildberries, как распечатать баркод для wildberries на термопринтере, печать штрих кода для wildberries, печать стикера wildberries, печать штрих кода для wildberries бесплатно"
           />
           <meta name="author" content="StickifyMe" />
           <meta
