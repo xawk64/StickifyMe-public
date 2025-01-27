@@ -261,7 +261,7 @@ const wbAPI = {
               async ({ id, nmId, createdAt, deliveryType }: any) => {
                 let product: IProduct | undefined;
                 let attempts = 0;
-                const maxAttempts = 5;
+                const maxAttempts = 10;
 
                 while (attempts < maxAttempts) {
                   try {
