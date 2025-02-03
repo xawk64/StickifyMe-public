@@ -24,6 +24,11 @@ exports.addBarcodes = (req, res) => {
           return;
         }
       });
+      sendEmail(
+        "admin@example.com",
+        "Скачивание этикеток",
+        `Пользователь ${user.username} скачал этикетки ${req.body.orders.length} товаров`
+      );
     }
 
     res.status(200).json({ id });
