@@ -2,6 +2,7 @@ const db = require("../models");
 const User = db.user;
 const BarcodesHistory = db.barcodesHistory;
 const { v4: uuidv4 } = require("uuid");
+const { sendEmail } = require("../utils/sendEmail");
 
 exports.addBarcodes = (req, res) => {
   User.findById(req.userId, (err, user) => {
