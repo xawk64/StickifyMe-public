@@ -16,7 +16,7 @@ exports.signup = (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
-    emailVerification: false,
+    emailVerification: true,
     emailVerificationHash,
   });
 
@@ -79,12 +79,13 @@ exports.signup = (req, res) => {
       sendEmail(
         req.body.email,
         "Потверждение учетной записи",
-        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе example.com. Для подтверждения почты перейдите по ссылке: https:/example.com/verify/?hash=${emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение. `
+        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе example.com. Для дальнейшей работы вам необходимо ввести ключ API WB. <br />Для этого перейдите по ссылке: https://example.com/settings`
+        //`Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе example.com. Для подтверждения почты перейдите по ссылке: https:/example.com/verify/?hash=${emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение. `,
       );
 
       res.status(200).send({
-        message:
-          "Пользователь успешно зарегистрирован! Информация для подтверждения отправлена на ваш email!",
+        message: "Пользователь успешно зарегистрирован!",
+        //"Пользователь успешно зарегистрирован! Информация для подтверждения отправлена на ваш email!",
       });
     });
   });

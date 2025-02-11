@@ -107,7 +107,7 @@ const UserSettings: React.FC = observer(() => {
         errorMessage="Для работы сервиса необходим ключ API"
       />
       <ApiKeyHelp />
-      {authStore.status === RequestStatus.success &&
+      {/* {authStore.status === RequestStatus.success &&
         !authStore.state.emailVerification && (
           <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 w-full max-w-[400px]">
             <p>
@@ -129,7 +129,7 @@ const UserSettings: React.FC = observer(() => {
               />
             </div>
           </div>
-        )}
+        )} */}
       <Button
         onClick={handleSaveSettings}
         label="Сохранить настройки"
