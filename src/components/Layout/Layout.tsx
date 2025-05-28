@@ -13,7 +13,7 @@ import Link from "next/link";
 import styles from "./styles.module.scss";
 
 const menuItemsDefault: MenuItem[] = [
-  { label: "Импорт", href: "/imports" },
+  { label: "Скачать этикетки", href: "/imports" },
   { label: "Телеграм бот", href: "/telegram-bot" },
   { label: "Настройки", href: "/settings" },
   { label: "Поддержка", href: "/support" },

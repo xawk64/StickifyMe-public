@@ -49,7 +49,7 @@ const User: React.FC<IUserProps> = observer(
       },
       {
         key: "/imports",
-        label: "Мои импорты",
+        label: "Скачать этикетки",
         href: "/imports",
         showDivider: true,
         hidden: !authStore.state.wbApiKey || !authStore.state.emailVerification,
