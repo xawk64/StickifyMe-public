@@ -27,3 +27,20 @@ describe("error handling", () => {
     expect(res.text).not.toContain("SyntaxError");
   });
 });
+
+describe("request size limits", () => {
+  let app;
+
+  beforeAll(async () => {
+    await connectTestDb();
+    app = createTestApp();
+  });
+  afterAll(disconnectTestDb);
+
+  it("rejects a large JSON body on regular endpoints", async () => {
+    const res = await request(app)
+      .post("/api/auth/signin")
+      .send({ username: "x".repeat(2 * 1024 * 1024), password: "y" });
+    expect(res.status).toBe(413);
+  });
+});
