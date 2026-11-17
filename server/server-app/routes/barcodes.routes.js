@@ -1,4 +1,6 @@
 const controller = require("../controllers/barcodes.controller");
+const { validate } = require("../middlewares/validate");
+const schemas = require("../validation/barcodes.schemas");
 const { authJwt } = require("../middlewares");
 
 module.exports = function (app) {
@@ -12,15 +14,19 @@ module.exports = function (app) {
 
   app.post(
     "/api/barcodes/generate",
-    [authJwt.authAPIverifyToken],
+    [authJwt.authAPIverifyToken, validate({ body: schemas.generateLabels })],
     controller.generateBarcode,
   );
 
-  app.get("/api/barcodes/history", [authJwt.authAPIverifyToken], controller.getHistory);
+  app.get(
+    "/api/barcodes/history",
+    [authJwt.authAPIverifyToken, validate({ query: schemas.historyPage })],
+    controller.getHistory,
+  );
 
   app.get(
     "/api/barcodes/history/:historyId",
-    [authJwt.authAPIverifyToken],
+    [authJwt.authAPIverifyToken, validate({ params: schemas.historyId })],
     controller.getHistoryById,
   );
 };

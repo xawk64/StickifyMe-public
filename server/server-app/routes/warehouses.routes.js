@@ -1,4 +1,6 @@
 const controller = require("../controllers/warehouse.controller");
+const { validate } = require("../middlewares/validate");
+const schemas = require("../validation/warehouses.schemas");
 const { authJwt } = require("../middlewares");
 
 module.exports = function (app) {
@@ -12,7 +14,7 @@ module.exports = function (app) {
 
   app.post(
     "/api/warehouses/settings",
-    [authJwt.authAPIverifyToken],
+    [authJwt.authAPIverifyToken, validate({ body: schemas.saveSettings })],
     controller.setSettings,
   );
   app.get(
