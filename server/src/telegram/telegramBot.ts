@@ -83,37 +83,6 @@ export class TelegramBot {
     await this.sendMessage(chatId, MESSAGES.linked);
   }
 
-  /** Kept until message formatting moves into the monitoring module. */
-  async sendWarehouseInfo(
-    chatId: number,
-    items: {
-      warehouseID: number;
-      warehouseName: string;
-      date: string;
-      boxTypeName: string;
-      coefficient: number;
-    }[],
-    oldCoefficients: Record<string, number>,
-  ): Promise<void> {
-    const formatCoefficient = (value: number) =>
-      value === 0 ? "`бесплатно`" : value === -1 ? "нет приёмки" : `x${value}`;
-    const message = items.reduce((text, item) => {
-      const oldCoefficient =
-        oldCoefficients[`${item.warehouseID}${item.date}${item.boxTypeName}`];
-      const date = item.date.split("T")[0]?.split("-").reverse().join(".");
-      return (
-        text +
-        `Склад: ${item.warehouseName}\n🗓: ${date}\nТип упаковки: ${item.boxTypeName}\n` +
-        `Коэффициент: ${formatCoefficient(item.coefficient)}` +
-        (oldCoefficient !== undefined
-          ? `\nПрошлый коэффициент: ${formatCoefficient(oldCoefficient)}`
-          : "") +
-        "\n \n"
-      );
-    }, "");
-    await this.sendMessage(chatId, message);
-  }
-
   async sendMessage(chatId: number, text: string): Promise<void> {
     if (!this.deps.client) {
       this.deps.log.info({ chatId, text }, "telegram dry-run: message not sent");

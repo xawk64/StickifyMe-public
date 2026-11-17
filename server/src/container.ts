@@ -1,10 +1,13 @@
 import type { Config } from "./config";
+import type { Logger } from "./logger";
 import { createRepositories, type Repositories } from "./repositories";
 import { AuthService, type MailSender } from "./services/auth.service";
-import { ProfileService } from "./services/profile.service";
-import { TelegramLinkService } from "./services/telegramLink.service";
-import { SupportService } from "./services/support.service";
 import { HistoryService } from "./services/history.service";
+import type { WarehouseMonitor } from "./services/monitoring/warehouseMonitor";
+import { MonitoringSettingsService } from "./services/monitoringSettings.service";
+import { ProfileService } from "./services/profile.service";
+import { SupportService } from "./services/support.service";
+import { TelegramLinkService } from "./services/telegramLink.service";
 
 export interface Services {
   auth: AuthService;
@@ -12,11 +15,14 @@ export interface Services {
   telegramLink: TelegramLinkService;
   support: SupportService;
   history: HistoryService;
+  monitoringSettings: MonitoringSettingsService;
 }
 
 export interface ServiceDeps {
   config: Config;
   mailer: MailSender;
+  monitor: Pick<WarehouseMonitor, "isInitialized" | "changeSettings">;
+  log: Logger;
   repositories?: Repositories;
 }
 
@@ -24,6 +30,8 @@ export interface ServiceDeps {
 export function createServices({
   config,
   mailer,
+  monitor,
+  log,
   repositories = createRepositories(),
 }: ServiceDeps): Services {
   return {
@@ -37,5 +45,11 @@ export function createServices({
     telegramLink: new TelegramLinkService(repositories),
     support: new SupportService({ repositories, mailer }),
     history: new HistoryService({ repositories, mailer }),
+    monitoringSettings: new MonitoringSettingsService({
+      repositories,
+      monitor,
+      mailer,
+      log,
+    }),
   };
 }

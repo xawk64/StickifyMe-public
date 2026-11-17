@@ -17,6 +17,8 @@ const { createLabelsRouter } = require("./http/routes/labels.routes");
 const { createTelegramRouter } = require("./http/routes/telegram.routes");
 const { createSupportRouter } = require("./http/routes/support.routes");
 const { createHistoryRouter } = require("./http/routes/history.routes");
+const { createMonitoringRouter } = require("./http/routes/monitoring.routes");
+const { monitor } = require("./services/monitoring/legacyInstance");
 
 const LARGE_PAYLOAD_ROUTES = ["/api/barcodes/generate", "/api/barcodes-history/add"];
 
@@ -66,14 +68,15 @@ function createApp(options = {}) {
     }),
   );
 
-  const services = options.services ?? createServices({ config, mailer });
+  const services =
+    options.services ?? createServices({ config, mailer, monitor, log: logger });
   const auth = requireAuth(config.jwtSecret);
 
   app.use(createAuthRouter(services.auth, auth));
   app.use(createProfileRouter(services.profile, auth));
   app.use(createHistoryRouter(services.history, auth));
   app.use(createLabelsRouter(auth));
-  require("./routes/warehouses.routes")(app);
+  app.use(createMonitoringRouter(services.monitoringSettings, auth));
   app.use(createSupportRouter(services.support, auth));
   app.use(createTelegramRouter(services.telegramLink, auth));
   app.get("/", (req, res) => {

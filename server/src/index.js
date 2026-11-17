@@ -3,7 +3,7 @@ const { createApp } = require("./app");
 const { notifyAdmin, mailer } = require("./mail/mailer");
 const templates = require("./mail/templates");
 const { db } = require("./models");
-const WarehouseCheckerService = require("./services/warehousesMonitoringService");
+const { monitor } = require("./services/monitoring/legacyInstance");
 
 const SHUTDOWN_TIMEOUT_MS = 10000;
 
@@ -33,7 +33,7 @@ async function gracefulShutdown(exitCode) {
   forceExit.unref();
 
   try {
-    WarehouseCheckerService.stopAllChecks();
+    monitor.stopAll();
     if (httpServer) {
       await new Promise((resolve) => httpServer.close(resolve));
       console.log("HTTP server closed");
@@ -75,7 +75,7 @@ db.mongoose
     // Start accepting requests only after the database is reachable
     httpServer = app.listen(config.port, () => {
       console.log(`Server is running on port ${config.port}`);
-      WarehouseCheckerService.initialize();
+      monitor.initialize();
     });
   })
   .catch((err) => {

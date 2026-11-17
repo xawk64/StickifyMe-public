@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import {
   clearTestDb,
   connectTestDb,
@@ -7,7 +7,9 @@ import {
   require,
 } from "./helpers/app.mjs";
 
-const service = require("../../dist/services/warehousesMonitoringService");
+const { WarehouseMonitor } = require("../../dist/services/monitoring/warehouseMonitor");
+const { createRepositories } = require("../../dist/repositories");
+const { logger } = require("../../dist/logger");
 
 const settingsItem = {
   ID: 507,
@@ -17,32 +19,47 @@ const settingsItem = {
   dateEnd: new Date("2024-10-10"),
 };
 
-describe("WarehouseCheckerService lifecycle", () => {
+function createMonitor(overrides = {}) {
+  return new WarehouseMonitor({
+    repositories: createRepositories(),
+    fetchCoefficients: vi.fn().mockResolvedValue([]),
+    notifier: { sendMessage: vi.fn().mockResolvedValue(undefined) },
+    intervalMs: 60_000,
+    log: logger,
+    ...overrides,
+  });
+}
+
+describe("WarehouseMonitor lifecycle", () => {
+  let monitor;
+
   beforeAll(connectTestDb);
   afterEach(async () => {
-    service.stopAllChecks();
-    service.checkers = {};
+    monitor?.stopAll();
     await clearTestDb();
   });
   afterAll(disconnectTestDb);
 
   it("does not reject when monitoring is enabled for a profile without stored settings", async () => {
+    monitor = createMonitor();
     const profile = await db.profile.create({ fullName: "x", chatId: 1 });
 
     await expect(
-      service.changeSettings(String(profile._id), {
+      monitor.changeSettings(String(profile._id), {
         enabled: true,
         items: [settingsItem],
       }),
     ).resolves.toBeUndefined();
-    expect(service.checkers[String(profile._id)]).toBeUndefined();
+    expect(monitor.getChecker(String(profile._id))).toBeUndefined();
   });
 
   it("ignores removal of a checker that does not exist", () => {
-    expect(() => service.removeChecker("missing")).not.toThrow();
+    monitor = createMonitor();
+    expect(() => monitor.removeChecker("missing")).not.toThrow();
   });
 
   it("starts a checker when enabled and stops it when disabled", async () => {
+    monitor = createMonitor();
     const profile = await db.profile.create({ fullName: "x", chatId: 1 });
     const profileId = String(profile._id);
     await db.warehouseSettings.create({
@@ -51,10 +68,46 @@ describe("WarehouseCheckerService lifecycle", () => {
       items: [settingsItem],
     });
 
-    await service.changeSettings(profileId, { enabled: true, items: [settingsItem] });
-    expect(service.checkers[profileId]?.isChecking).toBe(true);
+    await monitor.changeSettings(profileId, { enabled: true, items: [settingsItem] });
+    expect(monitor.getChecker(profileId)?.isChecking).toBe(true);
 
-    await service.changeSettings(profileId, { enabled: false, items: [settingsItem] });
-    expect(service.checkers[profileId]).toBeUndefined();
+    await monitor.changeSettings(profileId, { enabled: false, items: [settingsItem] });
+    expect(monitor.getChecker(profileId)).toBeUndefined();
+  });
+
+  it("notifies the linked chat and stores the snapshot after a check", async () => {
+    const coefficient = {
+      date: "2024-10-05T00:00:00Z",
+      coefficient: 0,
+      warehouseID: 507,
+      warehouseName: "Коледино",
+      boxTypeName: "Короба",
+    };
+    const notifier = { sendMessage: vi.fn().mockResolvedValue(undefined) };
+    monitor = createMonitor({
+      notifier,
+      fetchCoefficients: vi.fn().mockResolvedValue([coefficient]),
+    });
+    const profile = await db.profile.create({
+      fullName: "x",
+      chatId: 42,
+      wbApiKey: "key",
+    });
+    const profileId = String(profile._id);
+    await db.warehouseSettings.create({
+      userProfileId: profileId,
+      enabled: true,
+      items: [settingsItem],
+    });
+
+    await monitor.addChecker(profileId);
+    await monitor.getChecker(profileId).performCheck();
+
+    expect(notifier.sendMessage).toHaveBeenCalledWith(
+      42,
+      expect.stringContaining("Коледино"),
+    );
+    const snapshot = await db.warehouse.findOne({ userProfileId: profileId });
+    expect(snapshot.items).toHaveLength(1);
   });
 });
