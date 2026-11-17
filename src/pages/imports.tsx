@@ -1,6 +1,5 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import * as XLSX from "xlsx";
 import Button from "../components/ui/Button";
 import { useRouter } from "next/router";
 import barcodesAPI from "../api/barcodesAPI";
@@ -13,7 +12,7 @@ import RadioGroup from "../components/ui/RadioGroup";
 import Checkbox from "../components/ui/Checkbox";
 import Tabs from "../components/ui/Tabs";
 import HistoryImports from "../components/HistoryImports/HistoryImports";
-import importAPI, { ExcelOrder, ImportProgress } from "../api/importAPI";
+import importAPI, { ImportProgress } from "../api/importAPI";
 import { getErrorMessage } from "../api";
 import { format, set } from "date-fns";
 import { IOrder } from "../api/models/OrderType";
@@ -105,88 +104,6 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   const onImportProgress = ({ done, total, remainingMs }: ImportProgress) => {
     setLoadingProgress(total ? (done / total) * 100 : 0);
     setRemainingTime(Math.round(remainingMs / 1000));
-  };
-
-  const readExcel = async (file: File) => {
-    const fileReader = new FileReader();
-
-    setImportType(ImportBarcodeMode.excel);
-    fileReader.readAsArrayBuffer(file);
-
-    fileReader.onload = async (e: ProgressEvent<FileReader>) => {
-      if (!hasWbApiKey) {
-        toast.error("Не найден ключ API для Wildberries");
-        return;
-      }
-      const bufferArray = e.target?.result;
-      const wb = XLSX.read(bufferArray, { type: "buffer" });
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-
-      const data: { [key: string]: string }[] = XLSX.utils.sheet_to_json(ws);
-
-      // The export only identifies orders; stickers and product cards come from WB via the API.
-      const excelOrders: ExcelOrder[] = data
-        .map((item) => ({
-          id: parseInt(item["№ задания"]),
-          nmId: parseInt(item["Артикул Wildberries"]),
-          createdAtMarket: item["Дата создания"],
-        }))
-        .filter((order) => Number.isInteger(order.id) && Number.isInteger(order.nmId));
-
-      setImportInProgress(true);
-      setIsLoadingModalOpen(true);
-
-      let orders: IOrder[];
-      try {
-        orders = await importAPI.importFromExcel(excelOrders, onImportProgress);
-      } catch (error) {
-        setImportInProgress(false);
-        setIsLoadingModalOpen(false);
-        toast.error(getErrorMessage(error, "Не удалось загрузить данные из Wildberries"));
-        return;
-      }
-
-      if (orders.length === 0) {
-        setImportInProgress(false);
-        setIsLoadingModalOpen(false);
-        toast.error("Не найдено ни одного заказа со статусом 'В сборке'");
-        return;
-      }
-
-      orders = orders.sort((a, b) => {
-        if (a.product.title !== b.product.title) {
-          return a.product.title.localeCompare(b.product.title);
-        }
-        return a.nmId - b.nmId;
-      });
-
-      barcodesAPI.addBarcodesHistory({
-        type: importType,
-        orders,
-      });
-      setRows(
-        orders.map((order, i) => [
-          String(i + 1),
-          `${order.id}`,
-          order.bcDown,
-          order.bcUp,
-          order.barcode,
-          order.product.barcode,
-          order.product.title,
-          `${order.nmId}`,
-          order.product.vendorCode,
-          order.product.characteristics["Цвет"]?.[0] || "",
-          order.product.characteristics["Размер"]?.[0] || "",
-          order.product.brand,
-          order.product.characteristics["Страна производства"]?.[0] || "",
-          order.product.subjectName,
-          order.createdAtMarket,
-        ])
-      );
-      setOrders(orders);
-      toast.success("Заказы успешно импортированы из Wildberries!");
-    };
   };
 
   const onImportFromWBClick = async () => {
@@ -309,10 +226,6 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
     }
   }, [viewHistoryId]);
 
-  const handleFileChange = (file: File | null) => {
-    if (file) readExcel(file);
-  };
-
   const handlePrintClick = async () => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile) {
@@ -375,18 +288,6 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
               (tab === tabItems[1] && viewHistoryId)) && (
               <>
                 <div className="flex flex-col gap-4 items-center justify-center">
-                  {/*   <div className="flex gap-2 items-center">
-                   <Checkbox
-                      value={withFullInfo}
-                      setValue={setWithFullInfo}
-                      label="Загрузить полную информацию о товарах (медленно)"
-                    /> 
-                    <FilePicker
-                      onChange={handleFileChange}
-                      disabled={importInProgress || generateBarcodesInProgress}
-                    />
-                   
-                  </div> */}
                   <p className="flex items-center gap-2">
                     {daysCountForOrders === 1
                       ? "Выполнять импорт заказов за последний "

@@ -34,20 +34,5 @@ export function createImportsRouter(
     ),
   );
 
-  router.post(
-    "/api/imports/excel",
-    requireAuth,
-    validate({ body: schemas.enrichOrders }),
-    asyncHandler((req, res) =>
-      streamNdjson(res, log, async (emit) => ({
-        orders: await imports.enrichOrders(
-          currentUserId(req),
-          req.body.orders,
-          (progress) => emit({ type: "progress", ...progress }),
-        ),
-      })),
-    ),
-  );
-
   return router;
 }

@@ -175,23 +175,6 @@ describe("POST /api/imports/*", () => {
     expect((result.orders as unknown[]).length).toBe(1); // order 1 (order 3 has no sticker)
   });
 
-  it("enriches orders from an Excel file", async () => {
-    const app = createTestApp({ wbClient: fakeWb(0) as unknown as WbClient });
-    const user = await registerUser(app);
-    await withWbKey(user);
-
-    const res = await request(app)
-      .post("/api/imports/excel")
-      .set(authed(user.token))
-      .send({ orders: [{ id: 7, nmId: 107, createdAtMarket: "2024-10-01" }] });
-
-    const result = lines(res.text).at(-1)!;
-    expect(result.type).toBe("result");
-    expect(result.orders).toEqual([
-      expect.objectContaining({ id: 7, createdAtMarket: "2024-10-01", bcUp: "123456" }),
-    ]);
-  });
-
   it("reports a rejected WB key as an error event", async () => {
     const wb = fakeWb(2);
     wb.getOrders.mockRejectedValueOnce(new WbAuthError("unauthorized", 401));

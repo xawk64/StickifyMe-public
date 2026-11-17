@@ -13,13 +13,6 @@ type ImportEvent =
   | { type: "result"; orders: IOrder[] }
   | { type: "error"; status: number; message: string };
 
-/** Excel rows carry only what the export contains; the API adds stickers and product cards. */
-export interface ExcelOrder {
-  id: number;
-  nmId: number;
-  createdAtMarket?: string;
-}
-
 async function runImport(
   url: string,
   body: Record<string, unknown>,
@@ -45,10 +38,6 @@ const importAPI = {
   /** Orders in assembly created during the last `days` days, with stickers and product data. */
   importFromWb: (days: number, onProgress: (progress: ImportProgress) => void) =>
     runImport(ApiUrlEnum.importFromWb, { days }, onProgress),
-
-  /** Orders from an Excel export, enriched on the server. */
-  importFromExcel: (orders: ExcelOrder[], onProgress: (progress: ImportProgress) => void) =>
-    runImport(ApiUrlEnum.importFromExcel, { orders }, onProgress),
 };
 
 export default importAPI;

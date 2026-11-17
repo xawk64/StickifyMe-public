@@ -16,5 +16,4 @@ export enum ApiUrlEnum {
   telegramLinkToken = "/api/telegram/link-token",
   setWbApiKey = "/api/profile/wb-api-key",
   importFromWb = "/api/imports/wb",
-  importFromExcel = "/api/imports/excel",
 }

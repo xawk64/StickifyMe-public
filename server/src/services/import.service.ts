@@ -6,7 +6,7 @@ import type { Order, Product } from "../models";
 import type { Repositories } from "../repositories";
 import type { SecretBox } from "../utils/secretBox";
 
-/** Order fields known before WB enrichment (from the WB order list or an Excel file). */
+/** Order fields known before stickers and product cards are loaded. */
 export interface BaseOrder {
   id: number;
   nmId: number;
@@ -108,11 +108,6 @@ export class ImportService {
       })),
       onProgress,
     );
-  }
-
-  /** Orders listed in an Excel export, enriched with stickers and product cards. */
-  async enrichOrders(userId: string, orders: BaseOrder[], onProgress?: ProgressListener) {
-    return this.prepare(await this.apiKeyOf(userId), orders, onProgress);
   }
 
   private async prepare(
