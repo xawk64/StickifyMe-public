@@ -271,9 +271,9 @@ const wbAPI = {
                   deliveryType,
                   stickersCount: 1,
                   product,
-                  bcUp: barcodesInfo?.bcUp || "2439286",
-                  bcDown: barcodesInfo?.bcDown || "7401",
-                  barcode: barcodesInfo?.barcode || "*Ba3tnkmJ",
+                  bcUp: barcodesInfo?.bcUp || "",
+                  bcDown: barcodesInfo?.bcDown || "",
+                  barcode: barcodesInfo?.barcode || "",
                   barcodeFile: barcodesInfo?.barcodeFile,
                 };
               }
