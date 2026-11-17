@@ -6,7 +6,7 @@ import { inject } from "vitest";
 // and the app share the same mongoose instance.
 export const require = createRequire(import.meta.url);
 
-export const db = require("../../src/models");
+export const db = require("../../dist/models");
 
 export async function connectTestDb() {
   const uri = inject("mongoUri");
@@ -26,6 +26,6 @@ export async function disconnectTestDb() {
 }
 
 export function createTestApp() {
-  const { createApp } = require("../../src/app");
+  const { createApp } = require("../../dist/app");
   return createApp();
 }

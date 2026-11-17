@@ -27,7 +27,7 @@ jobs:
       - run: yarn typecheck
 
   api:
-    name: API (lint, format, test)
+    name: API (lint, format, typecheck, test)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -47,6 +47,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn lint
       - run: yarn format:check
+      - run: yarn typecheck
       - run: yarn test
 
   docker:

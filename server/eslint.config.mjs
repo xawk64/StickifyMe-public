@@ -1,8 +1,9 @@
 import js from "@eslint/js";
 import prettier from "eslint-config-prettier";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
-export default [
+export default tseslint.config(
   { ignores: ["node_modules/", "coverage/", "dist/", "uploads/"] },
   js.configs.recommended,
   {
@@ -22,12 +23,23 @@ export default [
     },
   },
   {
+    files: ["**/*.ts", "**/*.mts"],
+    extends: [tseslint.configs.strict],
+    languageOptions: { globals: { ...globals.node } },
     rules: {
-      "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    },
+  },
+  {
+    rules: {
       eqeqeq: ["error", "always"],
       "no-var": "error",
       "prefer-const": "error",
     },
   },
+  {
+    files: ["**/*.js", "**/*.mjs"],
+    rules: { "no-unused-vars": ["error", { argsIgnorePattern: "^_" }] },
+  },
   prettier,
-];
+);

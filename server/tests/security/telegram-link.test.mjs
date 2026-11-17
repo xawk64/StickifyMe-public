@@ -10,7 +10,7 @@ import {
 } from "../helpers/app.mjs";
 import { authed, registerUser } from "../helpers/users.mjs";
 
-const { TelegramBotService } = require("../../src/services/telegramBotService");
+const { TelegramBotService } = require("../../dist/services/telegramBotService");
 
 describe("telegram account linking", () => {
   let app;

@@ -7,7 +7,7 @@ import {
   require,
 } from "./helpers/app.mjs";
 
-const service = require("../../src/services/warehousesMonitoringService");
+const service = require("../../dist/services/warehousesMonitoringService");
 
 const settingsItem = {
   ID: 507,
