@@ -5,8 +5,8 @@ const Profile = db.profile;
 const WarehouseSettings = db.warehouseSettings;
 const Warehouses = db.warehouse;
 
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const { sendEmail } = require("../utils/sendEmail");
 const { v4: uuidv4 } = require("uuid");
 
@@ -104,7 +104,7 @@ exports.signin = (req, res) => {
       return res.status(404).send({ message: "Пользователь не найден." });
     }
 
-    let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+    const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 
     if (!passwordIsValid) {
       return res.status(401).send({
@@ -113,14 +113,8 @@ exports.signin = (req, res) => {
       });
     }
 
-    let token = jwt.sign({ id: user.id }, config.jwtSecret, {
+    const token = jwt.sign({ id: user.id }, config.jwtSecret, {
       expiresIn: 2592000, // 30 days
-    });
-
-    Profile.find((err, profile) => {
-      if (err) {
-        res.status(500).send({ message: err });
-      }
     });
 
     Profile.findOne({ _id: user.profileId }).exec((err, profile) => {

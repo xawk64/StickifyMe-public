@@ -131,7 +131,7 @@ class WarehouseChecker {
         }
       });
 
-      let warehouseInfo = {
+      const warehouseInfo = {
         items: [],
         userProfileId: this.profile._id,
       };
@@ -247,7 +247,7 @@ class WarehouseCheckerService {
   }
 
   async changeSettings(profileId, newSettings) {
-    let checker = this.checkers[profileId];
+    const checker = this.checkers[profileId];
 
     if (!checker) {
       if (newSettings.enabled && newSettings.items.length) {

@@ -50,17 +50,17 @@ exports.getProfiles = (req, res) => {
             res.status(500).send({ message: err });
           }
 
-          let limit = req.query.limit;
-          let page = req.query.page;
+          const limit = req.query.limit;
+          const page = req.query.page;
 
-          let startIndex = (page - 1) * limit;
-          let endIndex = page * limit;
+          const startIndex = (page - 1) * limit;
+          const endIndex = page * limit;
 
-          let profilesWithoutAuthProfile = profiles.filter(
+          const profilesWithoutAuthProfile = profiles.filter(
             (profile) => String(profile._id) !== String(userProfile._id),
           );
 
-          let result = profilesWithoutAuthProfile.slice(startIndex, endIndex);
+          const result = profilesWithoutAuthProfile.slice(startIndex, endIndex);
 
           res.status(200).json({ users: result, usersCount: profiles.length });
         });

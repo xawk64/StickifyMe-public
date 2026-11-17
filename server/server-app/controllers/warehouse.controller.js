@@ -69,7 +69,7 @@ exports.getSettings = (req, res) => {
       res.status(500).send({ message: err });
     }
 
-    Profile.findById(user.profileId, (err, userProfile) => {
+    Profile.findById(user.profileId, (err, _userProfile) => {
       if (err) {
         res.status(500).send({ message: err });
       }

@@ -1,8 +1,9 @@
-PDFDocument = require("pdfkit");
+// canvas2pdf looks up PDFDocument on the global object.
+const PDFDocument = require("pdfkit");
+global.PDFDocument = PDFDocument;
 const fs = require("fs");
 const canvas2pdf = require("canvas2pdf");
 const JsBarcode = require("jsbarcode");
-const QRCode = require("qrcode");
 const { DOMImplementation, XMLSerializer } = require("xmldom");
 const SVGtoPDF = require("svg-to-pdfkit");
 const db = require("../models");
@@ -217,7 +218,7 @@ exports.generateBarcode = async (req, res) => {
         for (let Y = 0; Y < (X === maxX - 1 ? maxY : 3); Y++) {
           const y = Y;
 
-          const isProductSticker = (X + Y) % 2 == 0;
+          const isProductSticker = (X + Y) % 2 === 0;
 
           const order = orders[orderCounter];
 
@@ -314,13 +315,13 @@ exports.getHistory = (req, res) => {
       }
 
       if (history.length) {
-        let limit = req.query.limit;
-        let page = req.query.page;
+        const limit = req.query.limit;
+        const page = req.query.page;
 
-        let startIndex = (page - 1) * limit;
-        let endIndex = page * limit;
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
 
-        let result = history.slice(startIndex, endIndex).map((item) => {
+        const result = history.slice(startIndex, endIndex).map((item) => {
           const newItem = { ...item._doc };
           delete newItem.rows;
           delete newItem.userId;

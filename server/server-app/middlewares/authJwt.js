@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../config");
 
 const authAPIverifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"];
+  const token = req.headers["x-access-token"];
 
   if (!token) {
     return res.status(403).send({ message: "No token provided!" });
@@ -18,7 +18,7 @@ const authAPIverifyToken = (req, res, next) => {
 };
 
 const authAPIverifyTokenGenerateBarcodes = (req, res, next) => {
-  let token = req.headers["x-access-token"];
+  const token = req.headers["x-access-token"];
 
   if (!token) {
     next();
