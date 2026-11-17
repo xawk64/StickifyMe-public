@@ -13,6 +13,7 @@ const { createServices } = require("./container");
 const { requireAuth } = require("./http/middlewares/auth");
 const { createAuthRouter } = require("./http/routes/auth.routes");
 const { createProfileRouter } = require("./http/routes/profile.routes");
+const { createLabelsRouter } = require("./http/routes/labels.routes");
 const { createTelegramRouter } = require("./http/routes/telegram.routes");
 const { createSupportRouter } = require("./http/routes/support.routes");
 const { createHistoryRouter } = require("./http/routes/history.routes");
@@ -71,7 +72,7 @@ function createApp(options = {}) {
   app.use(createAuthRouter(services.auth, auth));
   app.use(createProfileRouter(services.profile, auth));
   app.use(createHistoryRouter(services.history, auth));
-  require("./routes/barcodes.routes")(app);
+  app.use(createLabelsRouter(auth));
   require("./routes/warehouses.routes")(app);
   app.use(createSupportRouter(services.support, auth));
   app.use(createTelegramRouter(services.telegramLink, auth));
