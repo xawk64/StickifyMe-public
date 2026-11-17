@@ -1,7 +1,6 @@
 const db = require("../models");
 const User = db.user;
 const BarcodesHistory = db.barcodesHistory;
-const { v4: uuidv4 } = require("uuid");
 const { notifyAdmin } = require("../utils/sendEmail");
 const templates = require("../emails/templates");
 
@@ -19,9 +18,7 @@ exports.addBarcodes = async (req, res) => {
       return res.status(404).send({ message: "Пользователь не найден" });
     }
 
-    const id = uuidv4();
-
-    await BarcodesHistory.create({
+    const history = await BarcodesHistory.create({
       orders,
       type: req.body.type,
       userId: req.userId,
@@ -35,7 +32,7 @@ exports.addBarcodes = async (req, res) => {
       }),
     );
 
-    return res.status(200).json({ id });
+    return res.status(200).json({ id: String(history._id) });
   } catch (err) {
     console.error("Error saving barcodes history:", err);
     return res.status(500).send({ message: err.message || err });
