@@ -74,10 +74,12 @@ export const cards = PRODUCTS.map((p, i) => {
   };
 });
 
+const FIRST_ORDER_ID = 3_100_000_000;
+
 /** 24 FBS orders spread over the last days; most are "in assembly" (confirm). */
 export function orders(now = Date.now()) {
   return Array.from({ length: 24 }, (_, i) => ({
-    id: 3_100_000_000 + i * 17,
+    id: FIRST_ORDER_ID + i * 17,
     nmId: cards[i % cards.length]!.nmID,
     createdAt: new Date(now - i * 3 * 60 * 60 * 1000).toISOString(),
     deliveryType: "fbs",
@@ -85,8 +87,9 @@ export function orders(now = Date.now()) {
   }));
 }
 
+/** Every fifth order is already shipped, the rest are "in assembly" (confirm). */
 export const statusOf = (orderId: number) =>
-  (orderId / 17) % 5 === 4 ? "complete" : "confirm";
+  ((orderId - FIRST_ORDER_ID) / 17) % 5 === 4 ? "complete" : "confirm";
 
 export const WAREHOUSES = [
   { ID: 507, name: "Коледино", address: "Московская обл., д. Коледино" },
