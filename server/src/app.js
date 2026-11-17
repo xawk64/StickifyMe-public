@@ -12,6 +12,7 @@ const { mailer } = require("./mail/mailer");
 const { createServices } = require("./container");
 const { requireAuth } = require("./http/middlewares/auth");
 const { createAuthRouter } = require("./http/routes/auth.routes");
+const { createProfileRouter } = require("./http/routes/profile.routes");
 
 const LARGE_PAYLOAD_ROUTES = ["/api/barcodes/generate", "/api/barcodes-history/add"];
 
@@ -65,7 +66,7 @@ function createApp(options = {}) {
   const auth = requireAuth(config.jwtSecret);
 
   app.use(createAuthRouter(services.auth, auth));
-  require("./routes/user.routes")(app);
+  app.use(createProfileRouter(services.profile, auth));
   require("./routes/barcodesHistory.routes")(app);
   require("./routes/barcodes.routes")(app);
   require("./routes/warehouses.routes")(app);
