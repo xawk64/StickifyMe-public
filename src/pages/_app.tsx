@@ -25,48 +25,13 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
       <NextUIProvider navigate={router.push}>
         <Head>
           <script
-            dangerouslySetInnerHTML={{
-              __html: `
-              if (typeof window !== 'undefined' && !window.location.href.includes('localhost')) {
-                (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-                m[i].l=1*new Date();
-                for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-                k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-                (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-                ym(98771871, "init", {
-                  clickmap: true,
-                  trackLinks: true,
-                  accurateTrackBounce: true,
-                });
-              }
-            `,
-            }}
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `if (typeof window !== 'undefined' && !window.location.href.includes('localhost')) {
-var _tmr = window._tmr || (window._tmr = []);
-_tmr.push({id: "3576395", type: "pageView", start: (new Date()).getTime()});
-(function (d, w, id) {
-  if (d.getElementById(id)) return;
-  var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true; ts.id = id;
-  ts.src = "https://top-fwz1.mail.ru/js/code.js";
-  var f = function () {var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ts, s);};
-  if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
-})(document, window, "tmr-code");
-}
-`,
-            }}
-          />
-          <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify({
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 name: "Stickify",
-                url: "https://stickify.ru",
+                url: SITE_URL,
                 description:
                   "Сервис для генерации этикеток Wildberries для печати. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре, поддержка термопринтера и формата А4. Мониторинг коэффициентов приемки складов Wildberries.",
               }),
@@ -77,12 +42,6 @@ _tmr.push({id: "3576395", type: "pageView", start: (new Date()).getTime()});
             месте бесплатно! Мониторинг коэффициентов приемки складов
             Wildberries.
           </title>
-          <meta
-            name="google-site-verification"
-            content="JhKAOXbBwexhob9oBks0P-CukqCasArynmbW7nem27E"
-          />
-
-          <meta name="yandex-verification" content="da50e1fc89f38446" />
           <meta
             name="description"
             content="Сервис для генерации этикеток (баркодов) Wildberries для печати. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре, поддержка термопринтера и формата А4. Мониторинг коэффициентов приемки складов Wildberries."
@@ -111,11 +70,6 @@ _tmr.push({id: "3576395", type: "pageView", start: (new Date()).getTime()});
             content="Сервис для генерации этикеток (баркодов) Wildberries для печати. Импорт заказов, удобная сортировка, генерация штрих-кодов с информацией о товаре."
           />
           <meta property="twitter:image" content="/og-image.jpg" />
-          {/* Дополнительные мета-теги */}
-          <meta
-            name="keywords"
-            content="Wildberries, этикетки, штрих-коды, печать этикеток, WB, маркетплейс, термопринтер, мониторинг складов Wildberries, мониторинг коэффициентов приемки, генерация штрихкодов, штрихкод, баркод, этикетка, FBS, бесплатно, wildberries qr, ловец приемки wildberries, ловец бесплатной приемки wildberries, barcode wildberries, генератор qr wildberries, генератор qr кодов wildberries, сгенерировать qr код wildberries, коэффициент wildberries наценки, где посмотреть коэффициент логистики wildberries, wildberries коэффициент приемки, коэффициент наценки по оплатам wildberries, баркоды для wildberries генерация, генерация баркодов онлайн для wildberries, баркод wildberries, сгенерировать баркод для wildberries, создать баркод для wildberries, распечатать баркод для wildberries, как сделать баркод для wildberries, программа для этикеток wildberries, wildberries баркод товара, сгенерировать баркод для wildberries бесплатно, создать баркод для wildberries онлайн бесплатно, преобразовать баркод в штрихкод для wildberries, программа для баркодов wildberries, где взять баркод для wildberries, как распечатать баркод для wildberries на термопринтере, печать штрих кода для wildberries, печать стикера wildberries, печать штрих кода для wildberries бесплатно"
-          />
           <meta name="author" content="StickifyMe" />
           <meta
             name="viewport"
