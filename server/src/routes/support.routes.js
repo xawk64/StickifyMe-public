@@ -1,6 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/support.controller");
-const { validate } = require("../middlewares/validate");
+const { validate } = require("../http/middlewares/validate");
 const schemas = require("../validation/support.schemas");
 
 module.exports = function (app) {

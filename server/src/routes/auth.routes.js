@@ -1,7 +1,7 @@
 const { verifySignUp } = require("../middlewares");
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/auth.controller");
-const { validate } = require("../middlewares/validate");
+const { validate } = require("../http/middlewares/validate");
 const schemas = require("../validation/auth.schemas");
 
 module.exports = function (app) {

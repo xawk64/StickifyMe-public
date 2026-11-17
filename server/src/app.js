@@ -3,7 +3,11 @@ const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const { rateLimit } = require("express-rate-limit");
 const { config } = require("./config");
-const { errorHandler, notFoundHandler } = require("./middlewares/errorHandler");
+const {
+  createErrorHandler,
+  notFoundHandler,
+} = require("./http/middlewares/errorHandler");
+const { logger } = require("./logger");
 
 const LARGE_PAYLOAD_ROUTES = ["/api/barcodes/generate", "/api/barcodes-history/add"];
 
@@ -65,7 +69,7 @@ function createApp(options = {}) {
   });
 
   app.use(notFoundHandler);
-  app.use(errorHandler);
+  app.use(createErrorHandler(logger));
 
   return app;
 }

@@ -4,7 +4,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 const { z } = require("zod");
-const { validate } = require("../dist/middlewares/validate");
+const { validate } = require("../dist/http/middlewares/validate");
 const { ValidationError } = require("../dist/errors");
 
 describe("validate middleware", () => {

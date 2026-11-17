@@ -1,5 +1,5 @@
 const controller = require("../controllers/barcodes.controller");
-const { validate } = require("../middlewares/validate");
+const { validate } = require("../http/middlewares/validate");
 const schemas = require("../validation/barcodes.schemas");
 const { authJwt } = require("../middlewares");
 

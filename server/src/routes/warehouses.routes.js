@@ -1,5 +1,5 @@
 const controller = require("../controllers/warehouse.controller");
-const { validate } = require("../middlewares/validate");
+const { validate } = require("../http/middlewares/validate");
 const schemas = require("../validation/warehouses.schemas");
 const { authJwt } = require("../middlewares");
 
