@@ -1,5 +1,4 @@
 import { getStickersDelay, maxStickers } from "../utils/constants";
-import { ICoordinates } from "./models/GetCoordinatesResponseType";
 import { IWarehouse } from "./models/GetWarehousesResponseType";
 import { IOrder } from "./models/OrderType";
 import { IProduct } from "./models/ProductType";
@@ -20,23 +19,6 @@ const wbAPI = {
     } catch (error) {
       console.error("Error checking API key:", error);
       return false;
-    }
-  },
-  loadCoordinates: async (query: string, token: string) => {
-    try {
-      const response = await fetch(`https://photon.komoot.io/api/?q=${query}`, {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          ["Content-Type"]: "application/json",
-          Authorization: token,
-        },
-      });
-      const data: ICoordinates = await response.json();
-      return data?.features[0]?.geometry?.coordinates || [0, 0];
-    } catch (error) {
-      console.error("Error loading coordinates:", error);
-      return [0, 0];
     }
   },
   loadWarehouses: async (token: string) => {
