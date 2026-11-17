@@ -1,9 +1,6 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const app = express();
+const { createApp } = require("./server-app/app");
+const app = createApp();
 const mongodb = require("mongodb");
-const fileUpload = require("express-fileupload");
 const fs = require("fs");
 const { sendEmail, transporter } = require("./server-app/utils/sendEmail");
 
@@ -88,32 +85,6 @@ function gracefulShutdown(exitCode) {
   }
 }
 
-var corsOptions = {
-  origin: ["http://localhost:3000", "https://example.com:403"],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-
-app.use("/uploads", express.static("./uploads"));
-
-app.use(
-  fileUpload({
-    createParentPath: true,
-    limits: {
-      fileSize: 50 * 1024 * 1024, // 50 МБ максимальный размер файла
-    },
-  })
-);
-
-app.use(
-  bodyParser.json({
-    limit: "50mb",
-  })
-);
-
-app.use(bodyParser.urlencoded({ extended: true }));
-
 const MONGO_USERNAME = process.env.MONGO_USERNAME;
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 
@@ -155,16 +126,6 @@ transporter.verify(function (error, success) {
   } else {
     console.log("SMTP server is ready to send messages");
   }
-});
-
-require("./server-app/routes/auth.routes")(app);
-require("./server-app/routes/user.routes")(app);
-require("./server-app/routes/barcodesHistory.routes")(app);
-require("./server-app/routes/barcodes.routes")(app);
-require("./server-app/routes/warehouses.routes")(app);
-require("./server-app/routes/support.routes")(app);
-app.get("/", (req, res) => {
-  res.json({ message: "StickifyMe API" });
 });
 
 process.on("SIGTERM", () => gracefulShutdown(0));
