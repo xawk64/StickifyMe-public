@@ -33,6 +33,12 @@ function loadConfig(env = process.env) {
     },
     telegramBotToken: env.TELEGRAM_BOT_TOKEN || "",
     uploadsDir: path.resolve(env.UPLOADS_DIR || path.join(__dirname, "../../uploads")),
+    // "1" when running behind a single reverse proxy, so rate limiting sees the real client IP
+    trustProxy: toInt(env.TRUST_PROXY, 0),
+    authRateLimit: {
+      windowMs: 15 * 60 * 1000,
+      limit: toInt(env.AUTH_RATE_LIMIT_MAX, 20),
+    },
     monitoringIntervalMs: toInt(env.MONITORING_INTERVAL_MS, 17000),
   };
 }

@@ -2,11 +2,20 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
+const { rateLimit } = require("express-rate-limit");
 const config = require("./config");
 const { errorHandler, notFoundHandler } = require("./middlewares/errorHandler");
 
-function createApp() {
+const AUTH_ROUTES = [
+  "/api/auth/signin",
+  "/api/auth/signup",
+  "/api/auth/reset-password",
+  "/api/auth/confirm-reset-password",
+];
+
+function createApp(options = {}) {
   const app = express();
+  app.set("trust proxy", config.trustProxy);
 
   app.use(cors({ origin: config.corsOrigins, credentials: true }));
 
@@ -33,6 +42,17 @@ function createApp() {
   );
 
   app.use(bodyParser.urlencoded({ extended: true }));
+
+  app.use(
+    AUTH_ROUTES,
+    rateLimit({
+      ...config.authRateLimit,
+      ...options.authRateLimit,
+      standardHeaders: "draft-7",
+      legacyHeaders: false,
+      message: { message: "Слишком много попыток, попробуйте позже" },
+    }),
+  );
 
   require("./routes/auth.routes")(app);
   require("./routes/user.routes")(app);

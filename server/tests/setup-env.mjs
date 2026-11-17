@@ -12,3 +12,4 @@ process.env.UPLOADS_DIR = path.join(
   "stickifyme-test-uploads",
   String(process.pid),
 );
+process.env.AUTH_RATE_LIMIT_MAX = "1000";
