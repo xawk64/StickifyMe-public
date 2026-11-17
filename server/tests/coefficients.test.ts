@@ -1,11 +1,10 @@
-import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
 
-const require = createRequire(import.meta.url);
-const {
+import {
   diffCoefficients,
   formatCoefficientsMessage,
-} = require("../dist/services/monitoring/coefficients");
+  type WarehouseCoefficient,
+} from "../src/services/monitoring/coefficients";
 
 const settings = [
   {
@@ -17,7 +16,7 @@ const settings = [
   },
 ];
 
-const slot = (overrides = {}) => ({
+const slot = (overrides: Partial<WarehouseCoefficient> = {}) => ({
   date: "2024-10-05T00:00:00Z",
   coefficient: 1,
   warehouseID: 1,
@@ -65,7 +64,7 @@ describe("diffCoefficients", () => {
   it("does not mutate the snapshot passed in", () => {
     const snapshot = [slot({ coefficient: 2 })];
     diffCoefficients(snapshot, [slot({ coefficient: 0 })], settings);
-    expect(snapshot[0].coefficient).toBe(2);
+    expect(snapshot[0]?.coefficient).toBe(2);
   });
 });
 

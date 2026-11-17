@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -5,12 +6,12 @@ import {
   connectTestDb,
   createTestApp,
   disconnectTestDb,
-} from "../helpers/app.mjs";
-import { makeOrder } from "../helpers/fixtures.mjs";
-import { authed, registerUser } from "../helpers/users.mjs";
+} from "../helpers/app";
+import { makeOrder } from "../helpers/fixtures";
+import { authed, registerUser, type TestUser } from "../helpers/users";
 
 describe("barcodes history access control", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -19,7 +20,7 @@ describe("barcodes history access control", () => {
   afterEach(clearTestDb);
   afterAll(disconnectTestDb);
 
-  async function addHistory(user, title) {
+  async function addHistory(user: TestUser, title: string) {
     const res = await request(app)
       .post("/api/barcodes-history/add")
       .set(authed(user.token))
@@ -41,7 +42,7 @@ describe("barcodes history access control", () => {
 });
 
 describe("barcode endpoints authentication", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();

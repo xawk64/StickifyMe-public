@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -5,13 +6,13 @@ import {
   connectTestDb,
   createTestApp,
   disconnectTestDb,
-} from "./helpers/app.mjs";
-import { makeOrder } from "./helpers/fixtures.mjs";
-import { authed, registerUser } from "./helpers/users.mjs";
+} from "./helpers/app";
+import { makeOrder } from "./helpers/fixtures";
+import { authed, registerUser, type TestUser } from "./helpers/users";
 
 describe("request validation", () => {
-  let app;
-  let user;
+  let app: Express;
+  let user: TestUser;
 
   beforeAll(async () => {
     await connectTestDb();

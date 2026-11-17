@@ -7,20 +7,8 @@ export default tseslint.config(
   { ignores: ["node_modules/", "coverage/", "dist/", "uploads/"] },
   js.configs.recommended,
   {
-    files: ["**/*.js"],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: "commonjs",
-      globals: { ...globals.node },
-    },
-  },
-  {
     files: ["**/*.mjs"],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: "module",
-      globals: { ...globals.node },
-    },
+    languageOptions: { sourceType: "module", globals: { ...globals.node } },
   },
   {
     files: ["**/*.ts", "**/*.mts"],
@@ -28,18 +16,18 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.node } },
     rules: {
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-    },
-  },
-  {
-    rules: {
       eqeqeq: ["error", "always"],
-      "no-var": "error",
-      "prefer-const": "error",
     },
   },
   {
-    files: ["**/*.js", "**/*.mjs"],
-    rules: { "no-unused-vars": ["error", { argsIgnorePattern: "^_" }] },
+    // application code logs through pino only
+    files: ["src/**/*.ts"],
+    rules: { "no-console": "error" },
+  },
+  {
+    // documents loaded in assertions are known to exist
+    files: ["tests/**/*.ts"],
+    rules: { "@typescript-eslint/no-non-null-assertion": "off" },
   },
   prettier,
 );

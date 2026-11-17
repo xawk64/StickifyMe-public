@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import { clearTestDb, connectTestDb, disconnectTestDb } from "./helpers/app.mjs";
-import { createTestBot } from "./helpers/telegram.mjs";
+import { clearTestDb, connectTestDb, disconnectTestDb } from "./helpers/app";
+import { createTestBot } from "./helpers/telegram";
 
 describe("TelegramBot", () => {
   beforeAll(connectTestDb);
@@ -20,7 +20,7 @@ describe("TelegramBot", () => {
   it("asks to use the link from the web app for a bare /start", async () => {
     const { bot, client } = createTestBot();
     await bot.handleMessage({ chat: { id: 7 }, text: "/start" });
-    expect(client.sendMessage).toHaveBeenCalledWith(
+    expect(client!.sendMessage).toHaveBeenCalledWith(
       7,
       expect.stringContaining("не по ссылке"),
       expect.anything(),

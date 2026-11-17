@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -6,11 +7,11 @@ import {
   createTestApp,
   db,
   disconnectTestDb,
-} from "../helpers/app.mjs";
-import { registerUser } from "../helpers/users.mjs";
+} from "../helpers/app";
+import { registerUser } from "../helpers/users";
 
 describe("NoSQL operator injection", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -39,7 +40,7 @@ describe("NoSQL operator injection", () => {
       .send({ email: { $ne: null } });
 
     expect(res.status).toBe(400);
-    const user = await db.user.findById(victim.userId);
+    const user = (await db.user.findById(victim.userId))!;
     expect(user.resetPasswordToken).toBeUndefined();
   });
 

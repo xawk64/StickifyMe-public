@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -5,10 +6,10 @@ import {
   connectTestDb,
   createTestApp,
   disconnectTestDb,
-} from "./helpers/app.mjs";
+} from "./helpers/app";
 
 describe("app smoke test", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();

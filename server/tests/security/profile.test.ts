@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -6,11 +7,11 @@ import {
   createTestApp,
   db,
   disconnectTestDb,
-} from "../helpers/app.mjs";
-import { authed, registerUser } from "../helpers/users.mjs";
+} from "../helpers/app";
+import { authed, registerUser } from "../helpers/users";
 
 describe("profile access control", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -37,7 +38,7 @@ describe("profile access control", () => {
 });
 
 describe("profile update", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -56,7 +57,7 @@ describe("profile update", () => {
     });
 
     expect(res.status).toBe(200);
-    const profile = await db.profile.findById(user.profileId);
+    const profile = (await db.profile.findById(user.profileId))!;
     expect(profile.fullName).toBe("Shop LLC");
     expect(profile.chatId).toBeUndefined();
     expect(profile.avatarUrl).toBeUndefined();

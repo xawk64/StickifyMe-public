@@ -16,8 +16,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
-    "allowJs": true,
-    "checkJs": false,
+    "allowJs": false,
     "types": ["node"]
   },
   "include": ["src", "tests", "vitest.config.mts"]

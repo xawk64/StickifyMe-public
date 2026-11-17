@@ -57,7 +57,7 @@ export class TelegramBot {
     await this.deps.client?.stopPolling?.();
   }
 
-  async handleMessage(msg: Pick<TelegramBotApi.Message, "chat" | "text">): Promise<void> {
+  async handleMessage(msg: { chat: { id: number }; text?: string }): Promise<void> {
     const chatId = msg.chat.id;
     // stickers, photos etc. have no text
     const text = msg.text ?? "";

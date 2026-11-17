@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -6,12 +7,12 @@ import {
   createTestApp,
   db,
   disconnectTestDb,
-} from "../helpers/app.mjs";
-import { createTestBot } from "../helpers/telegram.mjs";
-import { authed, registerUser } from "../helpers/users.mjs";
+} from "../helpers/app";
+import { createTestBot } from "../helpers/telegram";
+import { authed, registerUser } from "../helpers/users";
 
 describe("telegram account linking", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -20,7 +21,7 @@ describe("telegram account linking", () => {
   afterEach(clearTestDb);
   afterAll(disconnectTestDb);
 
-  const startCommand = (payload, chatId) =>
+  const startCommand = (payload: string, chatId: number) =>
     createTestBot().bot.handleMessage({
       chat: { id: chatId },
       text: `/start ${payload}`,
@@ -31,7 +32,7 @@ describe("telegram account linking", () => {
 
     await startCommand(victim.userId, 777);
 
-    const profile = await db.profile.findById(victim.profileId);
+    const profile = (await db.profile.findById(victim.profileId))!;
     expect(profile.chatId).toBeUndefined();
   });
 
@@ -44,11 +45,11 @@ describe("telegram account linking", () => {
     expect(res.body.token).toMatch(/^[\w-]{20,64}$/);
 
     await startCommand(res.body.token, 555);
-    expect((await db.profile.findById(user.profileId)).chatId).toBe(555);
+    expect((await db.profile.findById(user.profileId))!.chatId).toBe(555);
 
     // the token cannot be reused for another chat
     await startCommand(res.body.token, 666);
-    expect((await db.profile.findById(user.profileId)).chatId).toBe(555);
+    expect((await db.profile.findById(user.profileId))!.chatId).toBe(555);
   });
 
   it("requires authentication to issue a link token", async () => {

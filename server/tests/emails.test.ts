@@ -1,9 +1,7 @@
-import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
 
-const require = createRequire(import.meta.url);
-const templates = require("../dist/mail/templates");
-const { escapeHtml } = require("../dist/utils/html");
+import * as templates from "../src/mail/templates";
+import { escapeHtml } from "../src/utils/html";
 
 const payload = `<img src=x onerror="alert('x')">`;
 
@@ -27,7 +25,10 @@ describe("email templates", () => {
       { email: "a", username: "b", settings: { note: payload } },
     ],
   ])("%s does not inject user input as HTML", (name, data) => {
-    const { html } = templates[name](data);
+    const render = templates[name as keyof typeof templates] as (d: typeof data) => {
+      html: string;
+    };
+    const { html } = render(data);
     expect(html).not.toContain("<img");
     expect(html).toContain("&lt;img");
   });

@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -6,10 +7,10 @@ import {
   createTestApp,
   db,
   disconnectTestDb,
-} from "./helpers/app.mjs";
+} from "./helpers/app";
 
 describe("auth", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -26,21 +27,21 @@ describe("auth", () => {
     });
     expect(res.status).toBe(200);
 
-    const user = await db.user.findOne({ username: "seller" });
+    const user = (await db.user.findOne({ username: "seller" }))!;
     expect(user.profileId).toBeTruthy();
     const [profile, warehouse, settings] = await Promise.all([
       db.profile.findById(user.profileId),
       db.warehouse.findOne({ userProfileId: user.profileId }),
       db.warehouseSettings.findOne({ userProfileId: user.profileId }),
     ]);
-    expect(profile.fullName).toBe("seller");
+    expect(profile!.fullName).toBe("seller");
     expect(warehouse).not.toBeNull();
-    expect(settings.enabled).toBe(true);
+    expect(settings!.enabled).toBe(true);
   });
 });
 
 describe("account uniqueness", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -51,7 +52,7 @@ describe("account uniqueness", () => {
   afterAll(disconnectTestDb);
 
   it("creates exactly one account under concurrent signups with the same email", async () => {
-    const signup = (i) =>
+    const signup = (i: number) =>
       request(app)
         .post("/api/auth/signup")
         .send({

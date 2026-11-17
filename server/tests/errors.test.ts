@@ -1,9 +1,10 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { connectTestDb, createTestApp, disconnectTestDb } from "./helpers/app.mjs";
+import { connectTestDb, createTestApp, disconnectTestDb } from "./helpers/app";
 
 describe("error handling", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -29,7 +30,7 @@ describe("error handling", () => {
 });
 
 describe("request size limits", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();

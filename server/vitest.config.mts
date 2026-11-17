@@ -3,13 +3,15 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     environment: "node",
-    globalSetup: ["./tests/global-setup.mjs"],
-    setupFiles: ["./tests/setup-env.mjs"],
+    include: ["tests/**/*.test.ts"],
+    globalSetup: ["./tests/global-setup.ts"],
+    setupFiles: ["./tests/setup-env.ts"],
     testTimeout: 20000,
     hookTimeout: 60000,
     coverage: {
       provider: "v8",
-      include: ["dist/**"],
+      include: ["src/**"],
+      exclude: ["src/index.ts", "src/types/**"],
       reporter: ["text-summary", "html"],
     },
   },

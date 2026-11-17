@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -6,12 +7,12 @@ import {
   createTestApp,
   db,
   disconnectTestDb,
-} from "./helpers/app.mjs";
-import { makeOrder } from "./helpers/fixtures.mjs";
-import { authed, registerUser } from "./helpers/users.mjs";
+} from "./helpers/app";
+import { makeOrder } from "./helpers/fixtures";
+import { authed, registerUser, type TestUser } from "./helpers/users";
 
 describe("barcodes history", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -38,7 +39,7 @@ describe("barcodes history", () => {
 });
 
 describe("barcodes history listing", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -47,7 +48,7 @@ describe("barcodes history listing", () => {
   afterEach(clearTestDb);
   afterAll(disconnectTestDb);
 
-  const add = (user, count) =>
+  const add = (user: TestUser, count: number) =>
     request(app)
       .post("/api/barcodes-history/add")
       .set(authed(user.token))
@@ -89,7 +90,7 @@ describe("barcodes history listing", () => {
 });
 
 describe("monitoring settings", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();

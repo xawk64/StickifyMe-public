@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -6,11 +7,11 @@ import {
   createTestApp,
   db,
   disconnectTestDb,
-} from "../helpers/app.mjs";
-import { registerUser } from "../helpers/users.mjs";
+} from "../helpers/app";
+import { registerUser } from "../helpers/users";
 
 describe("authentication hardening", () => {
-  let app;
+  let app: Express;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -53,7 +54,7 @@ describe("authentication hardening", () => {
     const user = await registerUser(app);
     await request(app).post("/api/auth/reset-password").send({ email: user.email });
 
-    const stored = (await db.user.findById(user.userId)).resetPasswordToken;
+    const stored = (await db.user.findById(user.userId))!.resetPasswordToken;
     expect(stored).toMatch(/^[a-f0-9]{64}$/);
 
     // the stored value itself must not work as a token
@@ -65,7 +66,7 @@ describe("authentication hardening", () => {
 
   it("hashes passwords with bcrypt cost 12", async () => {
     const user = await registerUser(app);
-    const { password } = await db.user.findById(user.userId);
+    const { password } = (await db.user.findById(user.userId))!;
     expect(password).toMatch(/^\$2[aby]\$12\$/);
   });
 });

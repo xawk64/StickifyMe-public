@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import request from "supertest";
@@ -7,14 +8,14 @@ import {
   connectTestDb,
   createTestApp,
   disconnectTestDb,
-} from "../helpers/app.mjs";
-import { makeOrder } from "../helpers/fixtures.mjs";
-import { binaryParser, countPdfPages } from "../helpers/pdf.mjs";
-import { authed, registerUser } from "../helpers/users.mjs";
+} from "../helpers/app";
+import { makeOrder } from "../helpers/fixtures";
+import { binaryParser, countPdfPages } from "../helpers/pdf";
+import { authed, registerUser, type TestUser } from "../helpers/users";
 
 describe("label PDF generation isolation", () => {
-  let app;
-  let user;
+  let app: Express;
+  let user: TestUser;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -24,7 +25,7 @@ describe("label PDF generation isolation", () => {
   afterEach(clearTestDb);
   afterAll(disconnectTestDb);
 
-  const generate = (orders) =>
+  const generate = (orders: ReturnType<typeof makeOrder>[]) =>
     request(app)
       .post("/api/barcodes/generate")
       .set(authed(user.token))

@@ -1,3 +1,4 @@
+import type { Express } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import request from "supertest";
@@ -8,16 +9,16 @@ import {
   createTestApp,
   db,
   disconnectTestDb,
-} from "../helpers/app.mjs";
-import { PNG_1PX_BASE64 } from "../helpers/fixtures.mjs";
-import { authed, registerUser } from "../helpers/users.mjs";
+} from "../helpers/app";
+import { PNG_1PX_BASE64 } from "../helpers/fixtures";
+import { authed, registerUser, type TestUser } from "../helpers/users";
 
 const png = Buffer.from(PNG_1PX_BASE64, "base64");
-const uploadsDir = process.env.UPLOADS_DIR;
+const uploadsDir = process.env.UPLOADS_DIR as string;
 
 describe("avatar upload", () => {
-  let app;
-  let user;
+  let app: Express;
+  let user: TestUser;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -29,7 +30,7 @@ describe("avatar upload", () => {
     await disconnectTestDb();
   });
 
-  const upload = (buffer, filename, contentType) =>
+  const upload = (buffer: Buffer, filename: string, contentType: string) =>
     request(app)
       .post("/api/upload-avatar")
       .set(authed(user.token))
@@ -48,7 +49,7 @@ describe("avatar upload", () => {
       fs.existsSync(path.resolve(uploadsDir, "avatars", "..", "..", "escape.png")),
     ).toBe(false);
 
-    const profile = await db.profile.findById(user.profileId);
+    const profile = (await db.profile.findById(user.profileId))!;
     expect(profile.avatarUrl).toBe(res.body.avatarUrl);
   });
 
