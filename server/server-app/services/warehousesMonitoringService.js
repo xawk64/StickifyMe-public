@@ -188,24 +188,25 @@ class WarehouseCheckerService {
   }
 
   async addNewChecker(profileId) {
-    const profile = await Profile.findById(profileId);
-    const settings = await WarehouseSettings.findOne({
-      userProfileId: profileId,
-    });
+    const [profile, settings, warehouses] = await Promise.all([
+      Profile.findById(profileId),
+      WarehouseSettings.findOne({ userProfileId: profileId }),
+      Warehouses.findOne({ userProfileId: profileId }),
+    ]);
 
-    if (!settings.enabled || !profile.chatId) {
+    // Nothing to monitor: no profile, no settings, monitoring off or no chat linked
+    if (!profile || !settings || !settings.enabled || !profile.chatId) {
       return;
     }
-    const warehouses = await Warehouses.findOne({
-      userProfileId: profileId,
-    });
 
-    if (!settings) {
-      throw new Error(`No settings found for user ${profile.username}`);
-    }
+    // Never keep two interval loops for the same profile
+    this.removeChecker(profileId);
 
-    // Создаем новый WarehouseChecker для каждого пользователя
-    const checker = new WarehouseChecker(profile, settings, warehouses);
+    const checker = new WarehouseChecker(
+      profile,
+      settings,
+      warehouses || { items: [], userProfileId: profile._id },
+    );
 
     // Запускаем первый цикл проверок
     checker.startCheckCycle();
@@ -216,6 +217,9 @@ class WarehouseCheckerService {
 
   removeChecker(profileId) {
     const checker = this.checkers[profileId];
+    if (!checker) {
+      return;
+    }
     checker.stopCheckCycle();
     delete this.checkers[profileId];
   }
@@ -251,7 +255,7 @@ class WarehouseCheckerService {
 
     if (!checker) {
       if (newSettings.enabled && newSettings.items.length) {
-        this.addNewChecker(profileId);
+        await this.addNewChecker(profileId);
       }
       return;
     }
