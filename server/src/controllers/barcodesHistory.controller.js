@@ -1,8 +1,8 @@
 const db = require("../models");
 const User = db.user;
 const BarcodesHistory = db.barcodesHistory;
-const { notifyAdmin } = require("../utils/sendEmail");
-const templates = require("../emails/templates");
+const { notifyAdmin } = require("../mail/mailer");
+const templates = require("../mail/templates");
 
 exports.addBarcodes = async (req, res) => {
   try {

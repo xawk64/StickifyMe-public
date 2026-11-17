@@ -1,11 +1,22 @@
-const { escapeHtml } = require("../utils/html");
+import { escapeHtml } from "../utils/html";
+
+export interface EmailTemplate {
+  subject: string;
+  html: string;
+}
 
 // Every value interpolated into HTML goes through escapeHtml:
 // usernames, support messages etc. are user input.
-const line = (label, value) => `${label}: ${escapeHtml(value)}<br/>`;
+const line = (label: string, value: unknown) => `${label}: ${escapeHtml(value)}<br/>`;
 const now = () => new Date().toLocaleString("ru-RU");
 
-const welcome = ({ username, appUrl }) => ({
+export const welcome = ({
+  username,
+  appUrl,
+}: {
+  username: string;
+  appUrl: string;
+}): EmailTemplate => ({
   subject: "Подтверждение учетной записи",
   html:
     `Добрый день, ${escapeHtml(username)}! <br />Вы зарегистрировались на сервисе StickifyMe. ` +
@@ -13,12 +24,24 @@ const welcome = ({ username, appUrl }) => ({
     `Для этого перейдите по ссылке: ${escapeHtml(`${appUrl}/settings`)}`,
 });
 
-const passwordReset = ({ name, link }) => ({
+export const passwordReset = ({
+  name,
+  link,
+}: {
+  name: string;
+  link: string;
+}): EmailTemplate => ({
   subject: "Сброс пароля",
   html: `Добрый день, ${escapeHtml(name)}! Для сброса пароля перейдите по ссылке: ${escapeHtml(link)}`,
 });
 
-const verificationReminder = ({ username, link }) => ({
+export const verificationReminder = ({
+  username,
+  link,
+}: {
+  username: string;
+  link: string;
+}): EmailTemplate => ({
   subject: "Подтверждение учетной записи",
   html:
     `Добрый день, ${escapeHtml(username)}! <br />Вы запросили повторное подтверждение почты ` +
@@ -26,7 +49,13 @@ const verificationReminder = ({ username, link }) => ({
     `Если это делали не Вы, просьба закрыть данное сообщение.`,
 });
 
-const adminNewSignup = ({ email, username }) => ({
+export const adminNewSignup = ({
+  email,
+  username,
+}: {
+  email: string;
+  username: string;
+}): EmailTemplate => ({
   subject: "Новая регистрация в StickifyMe",
   html:
     "Зарегистрирован новый пользователь:<br/>" +
@@ -35,12 +64,26 @@ const adminNewSignup = ({ email, username }) => ({
     line("Дата", now()),
 });
 
-const adminLabelsHistory = ({ username, ordersCount }) => ({
+export const adminLabelsHistory = ({
+  username,
+  ordersCount,
+}: {
+  username: string;
+  ordersCount: number;
+}): EmailTemplate => ({
   subject: "История этикеток",
   html: `Пользователь ${escapeHtml(username)} подготовил историю этикеток для ${Number(ordersCount)} товаров`,
 });
 
-const adminSupportRequest = ({ email, type, message }) => ({
+export const adminSupportRequest = ({
+  email,
+  type,
+  message,
+}: {
+  email: string;
+  type: string;
+  message: string;
+}): EmailTemplate => ({
   subject: `Новое обращение: ${type}`,
   html:
     line("От пользователя", email) +
@@ -48,7 +91,15 @@ const adminSupportRequest = ({ email, type, message }) => ({
     `Сообщение:<br/>${escapeHtml(message).replace(/\n/g, "<br/>")}`,
 });
 
-const adminMonitoringSettings = ({ email, username, settings }) => ({
+export const adminMonitoringSettings = ({
+  email,
+  username,
+  settings,
+}: {
+  email: string;
+  username: string;
+  settings: unknown;
+}): EmailTemplate => ({
   subject: "Обновление настроек мониторинга",
   html:
     "Пользователь обновил настройки мониторинга:<br/>" +
@@ -58,7 +109,11 @@ const adminMonitoringSettings = ({ email, username, settings }) => ({
     line("Дата", now()),
 });
 
-const adminMonitoringSettingsError = ({ userId }) => ({
+export const adminMonitoringSettingsError = ({
+  userId,
+}: {
+  userId: string;
+}): EmailTemplate => ({
   subject: "Обновление настроек мониторинга",
   html:
     "Произошла ошибка при обработке запроса:<br/>" +
@@ -66,7 +121,15 @@ const adminMonitoringSettingsError = ({ userId }) => ({
     line("Дата", now()),
 });
 
-const adminTelegramConnected = ({ email, username, chatId }) => ({
+export const adminTelegramConnected = ({
+  email,
+  username,
+  chatId,
+}: {
+  email?: string;
+  username?: string;
+  chatId: number;
+}): EmailTemplate => ({
   subject: "Подключение Telegram бота",
   html:
     "Пользователь подключил Telegram бота:<br/>" +
@@ -76,20 +139,13 @@ const adminTelegramConnected = ({ email, username, chatId }) => ({
     line("Дата", now()),
 });
 
-const adminCrash = ({ title, details }) => ({
+export const adminCrash = ({
+  title,
+  details,
+}: {
+  title: string;
+  details: string;
+}): EmailTemplate => ({
   subject: title,
   html: `<pre>${escapeHtml(details)}</pre>`,
 });
-
-module.exports = {
-  welcome,
-  passwordReset,
-  verificationReminder,
-  adminNewSignup,
-  adminLabelsHistory,
-  adminSupportRequest,
-  adminMonitoringSettings,
-  adminMonitoringSettingsError,
-  adminTelegramConnected,
-  adminCrash,
-};

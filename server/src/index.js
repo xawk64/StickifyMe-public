@@ -1,7 +1,7 @@
 const { config } = require("./config");
 const { createApp } = require("./app");
-const { notifyAdmin, verifyMailTransport } = require("./utils/sendEmail");
-const templates = require("./emails/templates");
+const { notifyAdmin, mailer } = require("./mail/mailer");
+const templates = require("./mail/templates");
 const db = require("./models");
 const WarehouseCheckerService = require("./services/warehousesMonitoringService");
 
@@ -83,4 +83,4 @@ db.mongoose
     process.exit(1);
   });
 
-verifyMailTransport();
+mailer.verify();

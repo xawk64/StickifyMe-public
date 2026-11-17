@@ -1,8 +1,8 @@
 const TelegramBot = require("node-telegram-bot-api");
 const User = require("../models/user.model");
 const Profile = require("../models/profile.model");
-const { notifyAdmin } = require("../utils/sendEmail");
-const templates = require("../emails/templates");
+const { notifyAdmin } = require("../mail/mailer");
+const templates = require("../mail/templates");
 const { config } = require("../config");
 const { hashToken } = require("../utils/tokens");
 

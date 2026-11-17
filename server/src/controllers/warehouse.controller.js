@@ -1,7 +1,7 @@
 const db = require("../models");
 const WarehouseCheckerService = require("../services/warehousesMonitoringService");
-const { notifyAdmin } = require("../utils/sendEmail");
-const templates = require("../emails/templates");
+const { notifyAdmin } = require("../mail/mailer");
+const templates = require("../mail/templates");
 const { NotFoundError } = require("../errors");
 const User = db.user;
 const WarehouseSettings = db.warehouseSettings;
