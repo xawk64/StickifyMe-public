@@ -12,19 +12,15 @@ module.exports = function (app) {
 
   app.post(
     "/api/barcodes/generate",
-    [authJwt.authAPIverifyTokenGenerateBarcodes],
+    [authJwt.authAPIverifyToken],
     controller.generateBarcode,
   );
 
-  app.get(
-    "/api/barcodes/history",
-    [authJwt.authAPIverifyTokenGenerateBarcodes],
-    controller.getHistory,
-  );
+  app.get("/api/barcodes/history", [authJwt.authAPIverifyToken], controller.getHistory);
 
   app.get(
     "/api/barcodes/history/:historyId",
-    [authJwt.authAPIverifyTokenGenerateBarcodes],
+    [authJwt.authAPIverifyToken],
     controller.getHistoryById,
   );
 };

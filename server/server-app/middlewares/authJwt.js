@@ -17,24 +17,7 @@ const authAPIverifyToken = (req, res, next) => {
   });
 };
 
-const authAPIverifyTokenGenerateBarcodes = (req, res, next) => {
-  const token = req.headers["x-access-token"];
-
-  if (!token) {
-    next();
-  }
-
-  jwt.verify(token, config.jwtSecret, (err, decoded) => {
-    if (err) {
-      next();
-    }
-    req.userId = decoded.id;
-    next();
-  });
-};
-
 const authJwt = {
   authAPIverifyToken,
-  authAPIverifyTokenGenerateBarcodes,
 };
 module.exports = authJwt;
