@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const config = require("./config");
+const { errorHandler, notFoundHandler } = require("./middlewares/errorHandler");
 
 function createApp() {
   const app = express();
@@ -42,6 +43,9 @@ function createApp() {
   app.get("/", (req, res) => {
     res.json({ message: "StickifyMe API" });
   });
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   return app;
 }
