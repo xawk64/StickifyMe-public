@@ -7,6 +7,7 @@ import Button from "../components/ui/Button";
 import telegramLogo from "../assets/telegram-logo.png";
 import OurAdvantages from "../components/Landing/OurAdvantages";
 import Footer from "../components/Landing/Footer";
+import { TELEGRAM_CHANNEL_URL } from "../config/env";
 
 const Landing: React.FC = () => {
   return (
@@ -16,7 +17,7 @@ const Landing: React.FC = () => {
       menuItems={[
         {
           label: "НАПИСАТЬ НАМ",
-          href: "https://t.me/Stickifyme",
+          href: TELEGRAM_CHANNEL_URL,
           iconHref: telegramLogo,
           target: "_blank",
         },

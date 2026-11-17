@@ -1,6 +1,7 @@
 import React from "react";
 import Layout from "../components/Layout/Layout";
 import styles from "./terms.module.scss";
+import { SUPPORT_EMAIL } from "../config/env";
 
 const TermsPage: React.FC = () => {
   return (
@@ -206,7 +207,7 @@ const TermsPage: React.FC = () => {
 
             <p>
               Для удаления Аккаунта Пользователю необходимо написать на адрес
-              support@example.com письмо с требованием аннулировать аккаунт.
+              {SUPPORT_EMAIL} письмо с требованием аннулировать аккаунт.
             </p>
           </section>
           <section className={styles.section}>

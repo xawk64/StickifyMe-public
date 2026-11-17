@@ -5,6 +5,7 @@ import Select from "../components/ui/Select";
 import Button from "../components/ui/Button";
 import { toast } from "react-toastify";
 import supportAPI from "../api/supportAPI";
+import { SUPPORT_EMAIL, TELEGRAM_CHANNEL_URL } from "../config/env";
 
 const feedbackTypes = [
   { key: "problem", label: "Проблема" },
@@ -78,11 +79,11 @@ const Support: React.FC = () => {
         <div className="text-center mt-6">
           <p>Также вы можете связаться с нами:</p>
           <div className="flex flex-col gap-2 mt-2">
-            <a href="mailto:support@example.com" className="text-blue-500">
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-blue-500">
               По электронной почте
             </a>
             <a
-              href="https://t.me/Stickifyme"
+              href={TELEGRAM_CHANNEL_URL}
               className="text-blue-500"
               target="_blank"
               rel="noreferrer"

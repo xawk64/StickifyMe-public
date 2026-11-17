@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Link from "next/link";
 import styles from "./styles.module.scss";
+import { API_URL } from "../../config/env";
 
 const menuItemsDefault: MenuItem[] = [
   { label: "Скачать этикетки", href: "/imports" },
@@ -88,7 +89,7 @@ const Layout: React.FC<LayoutProps> = observer(
                 name={fullName}
                 avatarSrc={
                   avatarUrl
-                    ? (process.env.NEXT_PUBLIC_API_URL || "") + avatarUrl
+                    ? API_URL + avatarUrl
                     : undefined
                 }
               />

@@ -10,6 +10,7 @@ import { observer } from "mobx-react-lite";
 import ApiKeyHelp from "./ApiKeyHelp";
 import authAPI from "../../../api/authAPI";
 import { RequestStatus } from "../../../store/enums";
+import { API_URL } from "../../../config/env";
 
 const UserSettings: React.FC = observer(() => {
   const { authStore } = useStore();
@@ -77,9 +78,9 @@ const UserSettings: React.FC = observer(() => {
       <AvatarPicker
         currentAvatar={
           authStore.state.avatarUrl
-            ? (process.env.NEXT_PUBLIC_API_URL || "") +
+            ? API_URL +
               authStore.state.avatarUrl
-            : process.env.NEXT_PUBLIC_API_URL +
+            : API_URL +
               "/uploads/avatars/default_avatar.jpg"
         }
         onAvatarChange={handleAvatarChange}

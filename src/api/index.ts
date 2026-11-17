@@ -1,8 +1,8 @@
+import { API_URL } from "../config/env";
 import { saveAs } from "file-saver";
 import { IServerMessageResponse } from "./models/ServerMessageResponseType";
 
-const defaultLocation: string =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const defaultLocation: string = API_URL;
 
 export enum LocalStorageKeysEnum {
   TOKEN = "accessToken",

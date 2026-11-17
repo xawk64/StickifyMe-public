@@ -5,6 +5,7 @@ import logo from "../../../assets/logo.png";
 import styles from "./styles.module.scss";
 import telegramLogo from "../../../assets/telegram-logo.png";
 import emailLogo from "../../../assets/email.png";
+import { SUPPORT_EMAIL, TELEGRAM_CHANNEL_URL } from "../../../config/env";
 
 export default function Footer() {
   return (
@@ -28,7 +29,7 @@ export default function Footer() {
             <div className="flex flex-col items-center gap-4">
               <p className="font-bold">КОНТАКТЫ</p>
               <div className="flex flex-row items-center gap-4">
-                <Link href="mailto:support@example.com">
+                <Link href={`mailto:${SUPPORT_EMAIL}`}>
                   <Image
                     src={emailLogo}
                     alt="emailLogo"
@@ -47,7 +48,7 @@ export default function Footer() {
                 <span className="sr-only">VK</span>
               </Link> */}
                 <Link
-                  href="https://t.me/Stickifyme"
+                  href={TELEGRAM_CHANNEL_URL}
                   target="_blank"
                   rel="noreferrer"
                 >

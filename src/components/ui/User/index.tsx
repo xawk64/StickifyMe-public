@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { useStore } from "../../../store";
 import styles from "./styles.module.scss";
 import { observer } from "mobx-react-lite";
+import { API_URL } from "../../../config/env";
 
 interface IUserProps {
   name: string;
@@ -21,7 +22,7 @@ const User: React.FC<IUserProps> = observer(
   ({
     name,
     description,
-    avatarSrc = process.env.NEXT_PUBLIC_API_URL +
+    avatarSrc = API_URL +
       "/uploads/avatars/default_avatar.jpg",
   }) => {
     const router = useRouter();

@@ -1,6 +1,7 @@
 import React from "react";
 import Layout from "../components/Layout/Layout";
 import styles from "./terms.module.scss";
+import { SUPPORT_EMAIL } from "../config/env";
 
 const PrivacyPage: React.FC = () => {
   return (
@@ -83,7 +84,7 @@ const PrivacyPage: React.FC = () => {
             </ul>
             <p>
               Вы можете в любой момент отказаться от получения информационных
-              сообщений, направив запрос на электронную почту support@example.com
+              сообщений, направив запрос на электронную почту {SUPPORT_EMAIL}
               с темой &quot;Отказ от рассылки&quot;.
             </p>
           </section>
@@ -161,7 +162,7 @@ const PrivacyPage: React.FC = () => {
               можете обратиться к нам:
             </p>
             <ul>
-              <li>По электронной почте: support@example.com</li>
+              <li>По электронной почте: {SUPPORT_EMAIL}</li>
               <li>Через форму обратной связи на сайте</li>
               <li>В нашем Telegram-канале</li>
             </ul>
