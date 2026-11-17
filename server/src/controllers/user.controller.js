@@ -3,7 +3,7 @@ const Profile = db.profile;
 const User = db.user;
 const path = require("path");
 const { randomUUID } = require("crypto");
-const config = require("../config");
+const { config } = require("../config");
 const { detectImageExtension } = require("../utils/imageType");
 
 exports.setProfile = async (req, res, next) => {

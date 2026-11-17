@@ -3,7 +3,7 @@ const User = require("../models/user.model");
 const Profile = require("../models/profile.model");
 const { notifyAdmin } = require("../utils/sendEmail");
 const templates = require("../emails/templates");
-const config = require("../config");
+const { config } = require("../config");
 const { hashToken } = require("../utils/tokens");
 
 const LINK_TOKEN_PATTERN = /^[\w-]{20,64}$/;

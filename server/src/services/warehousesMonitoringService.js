@@ -6,7 +6,7 @@ const WarehouseSettings = require("../models/warehouseSettings.model");
 const Warehouses = require("../models/warehouse.model");
 const TelegramBotService = require("./telegramBotService");
 
-const config = require("../config");
+const { config } = require("../config");
 
 const timeoutInterval = config.monitoringIntervalMs;
 

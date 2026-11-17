@@ -1,4 +1,4 @@
-const config = require("./config");
+const { config } = require("./config");
 const { createApp } = require("./app");
 const { notifyAdmin, verifyMailTransport } = require("./utils/sendEmail");
 const templates = require("./emails/templates");

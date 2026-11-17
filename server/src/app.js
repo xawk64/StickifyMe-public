@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const { rateLimit } = require("express-rate-limit");
-const config = require("./config");
+const { config } = require("./config");
 const { errorHandler, notFoundHandler } = require("./middlewares/errorHandler");
 
 const LARGE_PAYLOAD_ROUTES = ["/api/barcodes/generate", "/api/barcodes-history/add"];

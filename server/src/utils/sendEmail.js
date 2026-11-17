@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const config = require("../config");
+const { config } = require("../config");
 
 // Without SMTP settings (local run, demo, tests) emails are logged instead of sent.
 const transporter = config.mail.host
