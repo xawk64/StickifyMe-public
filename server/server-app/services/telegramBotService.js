@@ -6,17 +6,24 @@ const templates = require("../emails/templates");
 const config = require("../config");
 
 class TelegramBotService {
-  constructor(token) {
-    if (!token) {
-      console.error("Error initializing Telegram bot: no token provided!");
+  /**
+   * @param {string} token bot token; without it messages are only logged
+   * @param {{ bot?: object }} [options] inject a bot client (tests)
+   */
+  constructor(token, options = {}) {
+    this.bot = options.bot || null;
+    if (!this.bot && token) {
+      try {
+        this.bot = new TelegramBot(token, { polling: true });
+      } catch (error) {
+        console.error("Error initializing Telegram bot:", error);
+      }
+    }
+    if (!this.bot) {
+      console.log("Telegram bot token is not set: notifications will be logged only");
       return;
     }
-    try {
-      this.bot = new TelegramBot(token, { polling: true });
-      this.initializeHandlers();
-    } catch (error) {
-      console.error("Error initializing Telegram bot:", error);
-    }
+    this.initializeHandlers();
   }
 
   initializeHandlers() {
@@ -25,7 +32,8 @@ class TelegramBotService {
 
   async handleMessage(msg) {
     const chatId = msg.chat.id;
-    const messageText = msg.text;
+    // stickers, photos etc. have no text
+    const messageText = msg.text || "";
 
     if (messageText.startsWith("/start")) {
       const userId = messageText.split("/start ")[1];
@@ -90,6 +98,11 @@ class TelegramBotService {
   }
 
   async sendMessage(chatId, message) {
+    if (!this.bot) {
+      console.log(`[telegram:dry-run] chat=${chatId}
+${message}`);
+      return;
+    }
     await this.bot.sendMessage(chatId, message, { parse_mode: "markdown" });
   }
 
@@ -127,3 +140,4 @@ class TelegramBotService {
 }
 
 module.exports = new TelegramBotService(config.telegramBotToken);
+module.exports.TelegramBotService = TelegramBotService;
