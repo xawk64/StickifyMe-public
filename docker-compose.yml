@@ -1,61 +1,62 @@
-version: "3"
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    container_name: app
-    restart: always
-    ports:
-      - "3000:3000"
-    depends_on:
-      - server
-    networks:
-      - app-network
-    expose:
-      - "3000"
+# Local environment: `cp .env.example .env && docker compose up --build`
+name: stickifyme
 
-  server:
+services:
+  mongo:
+    image: mongo:7.0.14
+    restart: unless-stopped
+    # Not published to the host: only reachable from the compose network.
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  api:
     build:
       context: ./server
-      dockerfile: Dockerfile.backend
-    container_name: server
-    restart: always
-    ports:
-      - "4000:4000"
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
     environment:
-      - NODE_ENV=production
-      - MONGO_USERNAME=${MONGO_USERNAME}
-      - MONGO_PASSWORD=${MONGO_PASSWORD}
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - JWT_SECRET=${JWT_SECRET}
-      - MONGO_URI=${MONGO_URI}
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      MONGO_URI: mongodb://mongo:27017/stickifyme
+      JWT_SECRET: ${JWT_SECRET:-local-dev-jwt-secret-change-me}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:${WEB_PORT:-3000}}
+      APP_URL: ${APP_URL:-http://localhost:${WEB_PORT:-3000}}
+    ports:
+      - "${API_PORT:-4000}:4000"
+    volumes:
+      - avatars:/app/uploads/avatars
     depends_on:
-      - mongo
-    networks:
-      - app-network
-    expose:
-      - "4000"
-    volumes:
-      - ./server/uploads/avatars:/usr/src/server/uploads/avatars
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
-  mongo:
-    container_name: mongo
-    image: mongo:latest
-    command: mongod --auth
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
-    volumes:
-      - ./data/db:/data/db
-      - ./data/configdb:/data/configdb
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:${API_PORT:-4000}}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:${WEB_PORT:-3000}}
+        NEXT_PUBLIC_SUPPORT_EMAIL: ${NEXT_PUBLIC_SUPPORT_EMAIL:-support@example.com}
+        NEXT_PUBLIC_TELEGRAM_BOT_NAME: ${NEXT_PUBLIC_TELEGRAM_BOT_NAME:-your_monitoring_bot}
+        NEXT_PUBLIC_TELEGRAM_CHANNEL_URL: ${NEXT_PUBLIC_TELEGRAM_CHANNEL_URL:-https://t.me/}
+    restart: unless-stopped
     ports:
-      - "27017:27017"
-    networks:
-      - app-network
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
 
-networks:
-  app-network:
-    driver: bridge
+volumes:
+  mongo-data:
+  avatars:
