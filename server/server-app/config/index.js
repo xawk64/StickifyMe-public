@@ -1,3 +1,5 @@
+const path = require("path");
+
 const toList = (value) =>
   (value || "")
     .split(",")
@@ -30,6 +32,7 @@ function loadConfig(env = process.env) {
       from: env.MAIL_FROM || '"StickifyMe" <no-reply@example.com>',
     },
     telegramBotToken: env.TELEGRAM_BOT_TOKEN || "",
+    uploadsDir: path.resolve(env.UPLOADS_DIR || path.join(__dirname, "../../uploads")),
     monitoringIntervalMs: toInt(env.MONITORING_INTERVAL_MS, 17000),
   };
 }

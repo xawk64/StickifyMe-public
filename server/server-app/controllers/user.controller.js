@@ -2,6 +2,7 @@ const db = require("../models");
 const Profile = db.profile;
 const User = db.user;
 const path = require("path");
+const config = require("../config");
 
 exports.setProfile = async (req, res) => {
   User.findById(req.userId, async (err, user) => {
@@ -43,7 +44,8 @@ exports.uploadAvatar = async (req, res) => {
 
   const uploadPath = path.join(
     __dirname,
-    "../../uploads/avatars",
+    config.uploadsDir,
+    "avatars",
     `${userId}_${avatarFile.name}`,
   );
 
