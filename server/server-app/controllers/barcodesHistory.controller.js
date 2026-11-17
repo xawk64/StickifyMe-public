@@ -40,13 +40,3 @@ exports.addBarcodes = async (req, res) => {
     return res.status(500).send({ message: err.message || err });
   }
 };
-
-exports.getBarcodesHistory = (req, res) => {
-  BarcodesHistory.find((err, barcodesHistory) => {
-    if (err) {
-      return res.status(500).send({ message: err });
-    }
-
-    return res.status(200).json({ barcodesHistory });
-  });
-};

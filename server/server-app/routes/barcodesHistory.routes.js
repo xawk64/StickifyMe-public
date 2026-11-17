@@ -10,12 +10,6 @@ module.exports = function (app) {
     next();
   });
 
-  app.get(
-    "/api/barcodes-history",
-    [authJwt.authAPIverifyToken],
-    controller.getBarcodesHistory,
-  );
-
   app.post(
     "/api/barcodes-history/add",
     [authJwt.authAPIverifyToken],
