@@ -1,124 +1,88 @@
 const config = require("./server-app/config");
 const { createApp } = require("./server-app/app");
-const app = createApp();
-const mongodb = require("mongodb");
-const fs = require("fs");
 const { sendEmail, verifyMailTransport } = require("./server-app/utils/sendEmail");
-
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
 
-// Function to log errors
-function logError(message) {
-  console.error(message);
-  fs.appendFileSync("/tmp/server_error.log", message + "\n");
+const SHUTDOWN_TIMEOUT_MS = 10000;
+
+const app = createApp();
+let httpServer = null;
+let isShuttingDown = false;
+
+async function notifyAdminAboutCrash(subject, details) {
+  try {
+    await sendEmail(config.adminEmail, subject, details);
+  } catch (emailError) {
+    console.error("Failed to send error email:", emailError);
+  }
 }
 
-
-// Error handling for uncaught exceptions
-process.on("uncaughtException", async (error) => {
-  if (config.nodeEnv === "production") {
-    logError(`Uncaught Exception: ${error.stack}`);
-    try {
-      await sendEmail(
-        config.adminEmail,
-        "Uncaught Exception in Server",
-        `An uncaught exception occurred: ${error.stack}`
-      );
-    } catch (emailError) {
-      console.error("Failed to send error email:", emailError);
-    }
-    gracefulShutdown(1);
+async function gracefulShutdown(exitCode) {
+  if (isShuttingDown) {
+    return;
   }
-});
-
-// Error handling for unhandled promise rejections
-process.on("unhandledRejection", async (reason, promise) => {
-  if (config.nodeEnv === "production") {
-    logError(`Unhandled Rejection at: ${reason}`);
-    try {
-      await sendEmail(
-        config.adminEmail,
-        "Unhandled Rejection in Server",
-        `An unhandled rejection occurred: ${reason}`
-      );
-    } catch (emailError) {
-      console.error("Failed to send error email:", emailError);
-    }
-    gracefulShutdown(1);
-  }
-});
-
-// Graceful shutdown function
-function gracefulShutdown(exitCode) {
+  isShuttingDown = true;
   console.log("Shutting down gracefully...");
+
+  const forceExit = setTimeout(() => {
+    console.error("Could not close connections in time, forcefully shutting down");
+    process.exit(exitCode);
+  }, SHUTDOWN_TIMEOUT_MS);
+  forceExit.unref();
+
   try {
-    // Close database connections, stop services, etc.
-    if (
-      WarehouseCheckerService &&
-      typeof WarehouseCheckerService.stopAllChecks === "function"
-    ) {
-      WarehouseCheckerService.stopAllChecks();
+    WarehouseCheckerService.stopAllChecks();
+    if (httpServer) {
+      await new Promise((resolve) => httpServer.close(resolve));
+      console.log("HTTP server closed");
     }
-
-    // Close the Express server
-    if (app && typeof app.close === "function") {
-      app.close(() => {
-        console.log("Server closed");
-        process.exit(exitCode);
-      });
-    } else {
-      console.log("Server already closed or not initialized");
-      process.exit(exitCode);
-    }
-
-    // If server hasn't closed in 10 seconds, force shutdown
-    setTimeout(() => {
-      console.error(
-        "Could not close connections in time, forcefully shutting down"
-      );
-      process.exit(exitCode);
-    }, 10000);
+    await db.mongoose.disconnect();
+    console.log("MongoDB connection closed");
   } catch (error) {
     console.error("Error during shutdown:", error);
+  } finally {
     process.exit(exitCode);
   }
 }
 
-const MONGO_URI = config.mongoUri;
-const PORT = config.port;
-
-const client = mongodb.MongoClient;
-
-client.connect(MONGO_URI, function (err, db) {
-  if (err) {
-    console.log("database is not connected");
-    console.error(err);
-  } else {
-    console.log("connected!!");
-  }
+process.on("uncaughtException", async (error) => {
+  console.error("Uncaught Exception:", error);
+  await notifyAdminAboutCrash(
+    "Uncaught Exception in Server",
+    `An uncaught exception occurred: ${error.stack}`
+  );
+  gracefulShutdown(1);
 });
 
+process.on("unhandledRejection", async (reason) => {
+  console.error("Unhandled Rejection:", reason);
+  await notifyAdminAboutCrash(
+    "Unhandled Rejection in Server",
+    `An unhandled rejection occurred: ${reason}`
+  );
+  gracefulShutdown(1);
+});
+
+process.on("SIGTERM", () => gracefulShutdown(0));
+process.on("SIGINT", () => gracefulShutdown(0));
+
 db.mongoose
-  .connect(MONGO_URI, {
+  .connect(config.mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Successfully connect to MongoDB. ");
-    // Запускаем сервер только после успешного подключения к БД
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}.`);
-      // Инициализируем сервис только один раз здесь
+    console.log("Successfully connected to MongoDB");
+    // Start accepting requests only after the database is reachable
+    httpServer = app.listen(config.port, () => {
+      console.log(`Server is running on port ${config.port}`);
       WarehouseCheckerService.initialize();
     });
   })
   .catch((err) => {
-    console.error("Connection error", err);
-    process.exit();
+    console.error("MongoDB connection error", err);
+    process.exit(1);
   });
 
 verifyMailTransport();
-
-process.on("SIGTERM", () => gracefulShutdown(0));
-process.on("SIGINT", () => gracefulShutdown(0));
