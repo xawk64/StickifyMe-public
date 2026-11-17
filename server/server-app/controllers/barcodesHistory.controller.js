@@ -31,7 +31,7 @@ exports.addBarcodes = async (req, res) => {
     await sendEmail(
       config.adminEmail,
       "История этикеток",
-      `Пользователь ${user.username} подготовил историю этикеток для ${orders.length} товаров`
+      `Пользователь ${user.username} подготовил историю этикеток для ${orders.length} товаров`,
     );
 
     return res.status(200).json({ id });

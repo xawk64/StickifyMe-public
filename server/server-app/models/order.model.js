@@ -16,8 +16,8 @@ const Order = mongoose.model(
       barcodeFile: String,
       product: Product.schema,
     },
-    { timestamps: true }
-  )
+    { timestamps: true },
+  ),
 );
 
 module.exports = Order;

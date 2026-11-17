@@ -18,8 +18,8 @@ const Product = mongoose.model(
       createdAtMarket: String,
       updatedAtMarket: String,
     },
-    { timestamps: true }
-  )
+    { timestamps: true },
+  ),
 );
 
 module.exports = Product;

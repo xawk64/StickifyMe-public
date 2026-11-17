@@ -17,8 +17,8 @@ const Feedback = mongoose.model(
         default: "new",
       },
     },
-    { timestamps: true }
-  )
+    { timestamps: true },
+  ),
 );
 
-module.exports = Feedback; 
+module.exports = Feedback;

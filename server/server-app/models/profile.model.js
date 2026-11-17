@@ -9,8 +9,8 @@ const Profile = mongoose.model(
       chatId: Number,
       wbApiKey: String,
     },
-    { timestamps: true }
-  )
+    { timestamps: true },
+  ),
 );
 
 module.exports = Profile;

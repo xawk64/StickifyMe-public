@@ -9,7 +9,7 @@ const db = require("../models");
 const BarcodesHistory = db.barcodesHistory;
 
 PDFDocument.prototype.addSVG = function (svg, x, y, options) {
-  return SVGtoPDF(this, svg, x, y, options), this;
+  return (SVGtoPDF(this, svg, x, y, options), this);
 };
 
 const eacIcon = `<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns1="http://sozi.baierouge.fr" xmlns:cc="http://web.resource.org/cc/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" viewBox="0 0 500 500">
@@ -19,8 +19,7 @@ const eacIcon = `<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscap
 </g>
 </svg>`;
 
-const fontURL =
-  "server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf";
+const fontURL = "server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf";
 
 const truncateText = (text, count = 60) => {
   return text.substring(0, count) + (text.length < count ? "" : "...");
@@ -47,8 +46,7 @@ exports.generateBarcode = async (req, res) => {
 
     //Create a new PDF canvas context.
     const ctx = new canvas2pdf.PdfContext(file, {
-      size:
-        mode === "thermo" ? [stickerWidth * coff, stickerHeight * coff] : "A4",
+      size: mode === "thermo" ? [stickerWidth * coff, stickerHeight * coff] : "A4",
       margin: 0,
     });
 
@@ -56,13 +54,10 @@ exports.generateBarcode = async (req, res) => {
     const document = new DOMImplementation().createDocument(
       "http://www.w3.org/1999/xhtml",
       "html",
-      null
+      null,
     );
 
-    const svgNode = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "svg"
-    );
+    const svgNode = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
     const drawProductSticker = (order, coff = 1, offsetX = 0, offsetY = 0) => {
       JsBarcode(svgNode, order.product.barcode, {
@@ -88,11 +83,7 @@ exports.generateBarcode = async (req, res) => {
       ctx.doc.fontSize(6 * coff);
       ctx.doc
         .font(fontURL)
-        .text(
-          order.product.barcode[0],
-          15 * coff + offsetX,
-          70 * coff + offsetY
-        );
+        .text(order.product.barcode[0], 15 * coff + offsetX, 70 * coff + offsetY);
 
       ctx.doc
         .font(fontURL)
@@ -102,7 +93,7 @@ exports.generateBarcode = async (req, res) => {
           70 * coff + offsetY,
           {
             characterSpacing: 3 * coff,
-          }
+          },
         );
 
       ctx.doc
@@ -113,7 +104,7 @@ exports.generateBarcode = async (req, res) => {
           70 * coff + offsetY,
           {
             characterSpacing: 3 * coff,
-          }
+          },
         );
       ctx.doc.fontSize(5 * coff);
       //наименование товара
@@ -123,19 +114,16 @@ exports.generateBarcode = async (req, res) => {
           truncateText(order.product.title, 80),
           5 * coff + offsetX,
           5 * coff + offsetY,
-          { width: 100 * coff }
+          { width: 100 * coff },
         );
       ctx.doc.fontSize(4 * coff);
       if (order.product.characteristics["Цвет"]) {
         ctx.doc
           .font(fontURL)
           .text(
-            truncateText(
-              `Цвет: ${order.product.characteristics["Цвет"]?.[0] || ""}`,
-              40
-            ),
+            truncateText(`Цвет: ${order.product.characteristics["Цвет"]?.[0] || ""}`, 40),
             5 * coff + offsetX,
-            17 * coff + offsetY
+            17 * coff + offsetY,
           );
       }
 
@@ -144,18 +132,15 @@ exports.generateBarcode = async (req, res) => {
         .text(
           truncateText(`Артикул WB: ${order.nmId || ""}`, 40),
           5 * coff + offsetX,
-          21 * coff + offsetY
+          21 * coff + offsetY,
         );
 
       ctx.doc
         .font(fontURL)
         .text(
-          truncateText(
-            `Артикул продавца: ${order.product.vendorCode || ""}`,
-            100
-          ),
+          truncateText(`Артикул продавца: ${order.product.vendorCode || ""}`, 100),
           5 * coff + offsetX,
-          25 * coff + offsetY
+          25 * coff + offsetY,
         );
 
       if (order.product.characteristics["Страна производства"]) {
@@ -164,10 +149,10 @@ exports.generateBarcode = async (req, res) => {
           .text(
             truncateText(
               `Страна: ${order.product.characteristics["Страна производства"]?.[0]}`,
-              40
+              40,
             ),
             5 * coff + offsetX,
-            33 * coff + offsetY
+            33 * coff + offsetY,
           );
       }
 
@@ -177,7 +162,7 @@ exports.generateBarcode = async (req, res) => {
           .text(
             truncateText(`Производитель: ${order.product.brand || ""}`, 40),
             5 * coff + offsetX,
-            37 * coff + offsetY
+            37 * coff + offsetY,
           );
       }
 
@@ -191,11 +176,7 @@ exports.generateBarcode = async (req, res) => {
       //шк низ
       ctx.doc
         .font(fontURL)
-        .text(
-          `${order.bcDown || ""}`,
-          65 * coff + offsetX,
-          41 * coff + offsetY
-        );
+        .text(`${order.bcDown || ""}`, 65 * coff + offsetX, 41 * coff + offsetY);
 
       if (withEac) {
         ctx.doc.addSVG(eacIcon, 100 * coff + offsetX, 61 * coff + offsetY, {
@@ -240,10 +221,8 @@ exports.generateBarcode = async (req, res) => {
 
           const order = orders[orderCounter];
 
-          const offsetX =
-            pageOffsetX * coff + y * stickerWidth * coff + y * gapX * coff;
-          const offsetY =
-            pageOffsetY * coff + x * stickerHeight * coff + x * gapY * coff;
+          const offsetX = pageOffsetX * coff + y * stickerWidth * coff + y * gapX * coff;
+          const offsetY = pageOffsetY * coff + x * stickerHeight * coff + x * gapY * coff;
 
           pageInfo.push({
             offsetX,
@@ -297,10 +276,7 @@ exports.generateBarcode = async (req, res) => {
         if (wbSticker) {
           drawWbSticker(wbSticker);
           ctx.doc.addPage({
-            size:
-              mode === "thermo"
-                ? [stickerWidth * coff, stickerHeight * coff]
-                : "A4",
+            size: mode === "thermo" ? [stickerWidth * coff, stickerHeight * coff] : "A4",
             margin: 0,
           });
         }
@@ -326,9 +302,7 @@ exports.generateBarcode = async (req, res) => {
     ctx.end();
   } catch (error) {
     console.error("Error generating barcodes:", error);
-    res
-      .status(500)
-      .send({ message: "Произошла ошибка при генерации этикеток" });
+    res.status(500).send({ message: "Произошла ошибка при генерации этикеток" });
   }
 };
 

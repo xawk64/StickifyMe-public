@@ -16,8 +16,8 @@ const Warehouse = mongoose.model(
       ],
       userProfileId: String,
     },
-    { timestamps: true }
-  )
+    { timestamps: true },
+  ),
 );
 
 module.exports = Warehouse;

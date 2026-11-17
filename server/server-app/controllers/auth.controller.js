@@ -73,13 +73,13 @@ exports.signup = (req, res) => {
         `Зарегистрирован новый пользователь:<br/>
          Email: ${req.body.email}<br/>
          Username: ${req.body.username}<br/>
-         Дата: ${new Date().toLocaleString()}`
+         Дата: ${new Date().toLocaleString()}`,
       );
 
       sendEmail(
         req.body.email,
         "Потверждение учетной записи",
-        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для дальнейшей работы вам необходимо ввести ключ API WB. <br />Для этого перейдите по ссылке: ${config.appUrl}/settings`
+        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для дальнейшей работы вам необходимо ввести ключ API WB. <br />Для этого перейдите по ссылке: ${config.appUrl}/settings`,
         //`Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке: ${config.appUrl}/verify/?hash=${emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение. `,
       );
 
@@ -191,7 +191,7 @@ exports.verify = (req, res) => {
         if (err) {
           res.status(500).send({ message: err });
         }
-      }
+      },
     );
 
     res.status(200).send({
@@ -207,16 +207,12 @@ exports.resetPassword = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(404)
-        .send({ message: "Пользователь с таким email не найден." });
+      return res.status(404).send({ message: "Пользователь с таким email не найден." });
     }
 
     const profile = await Profile.findOne({ _id: user.profileId });
     if (!user) {
-      return res
-        .status(404)
-        .send({ message: "Пользователь с таким email не найден." });
+      return res.status(404).send({ message: "Пользователь с таким email не найден." });
     }
 
     const resetToken = uuidv4();
@@ -228,7 +224,7 @@ exports.resetPassword = async (req, res) => {
     await sendEmail(
       email,
       "Сброс пароля",
-      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке:  ${config.appUrl}/reset-password?token=${resetToken}`
+      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке:  ${config.appUrl}/reset-password?token=${resetToken}`,
     );
 
     res.status(200).send({
@@ -236,9 +232,7 @@ exports.resetPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("Ошибка при сбросе пароля:", error);
-    res
-      .status(500)
-      .send({ message: "Произошла ошибка при обработке запроса." });
+    res.status(500).send({ message: "Произошла ошибка при обработке запроса." });
   }
 };
 
@@ -265,9 +259,7 @@ exports.confirmResetPassword = async (req, res) => {
     res.status(200).send({ message: "Пароль успешно изменен." });
   } catch (error) {
     console.error("Ошибка при подтверждении сброса пароля:", error);
-    res
-      .status(500)
-      .send({ message: "Произошла ошибка при обработке запроса." });
+    res.status(500).send({ message: "Произошла ошибка при обработке запроса." });
   }
 };
 
@@ -288,7 +280,7 @@ exports.resendVerification = async (req, res) => {
     await sendEmail(
       user.email,
       "Подтверждение учетной записи",
-      `Добрый день, ${user.username}! <br />Вы запросили повторное подтверждение почты на сервисе StickifyMe. Для подтверждения перейдите по ссылке: ${config.appUrl}/verify/?hash=${user.emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение.`
+      `Добрый день, ${user.username}! <br />Вы запросили повторное подтверждение почты на сервисе StickifyMe. Для подтверждения перейдите по ссылке: ${config.appUrl}/verify/?hash=${user.emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение.`,
     );
 
     res.status(200).send({

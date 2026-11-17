@@ -50,7 +50,7 @@ process.on("uncaughtException", async (error) => {
   console.error("Uncaught Exception:", error);
   await notifyAdminAboutCrash(
     "Uncaught Exception in Server",
-    `An uncaught exception occurred: ${error.stack}`
+    `An uncaught exception occurred: ${error.stack}`,
   );
   gracefulShutdown(1);
 });
@@ -59,7 +59,7 @@ process.on("unhandledRejection", async (reason) => {
   console.error("Unhandled Rejection:", reason);
   await notifyAdminAboutCrash(
     "Unhandled Rejection in Server",
-    `An unhandled rejection occurred: ${reason}`
+    `An unhandled rejection occurred: ${reason}`,
   );
   gracefulShutdown(1);
 });

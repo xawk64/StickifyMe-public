@@ -5,7 +5,7 @@ module.exports = function (app) {
   app.use(function (req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
-      "x-access-token, Origin, Content-Type, Accept"
+      "x-access-token, Origin, Content-Type, Accept",
     );
     next();
   });
@@ -13,11 +13,11 @@ module.exports = function (app) {
   app.post(
     "/api/warehouses/settings",
     [authJwt.authAPIverifyToken],
-    controller.setSettings
+    controller.setSettings,
   );
   app.get(
     "/api/warehouses/settings/get",
     [authJwt.authAPIverifyToken],
-    controller.getSettings
+    controller.getSettings,
   );
 };

@@ -8,7 +8,7 @@ const WarehouseSettings = db.warehouseSettings;
 const Warehouses = db.warehouse;
 
 exports.setSettings = async (req, res) => {
-   try {
+  try {
     const user = await User.findById(req.userId);
     if (!user || !user.profileId) {
       throw new Error("User or profile not found");
@@ -27,7 +27,7 @@ exports.setSettings = async (req, res) => {
       Warehouses.updateOne(
         { userProfileId: user.profileId },
         { items: [], userProfileId: user.profileId },
-        { upsert: true }
+        { upsert: true },
       ),
     ]);
 
@@ -48,7 +48,7 @@ exports.setSettings = async (req, res) => {
        Email: ${user.email}<br/>
        Username: ${user.username}<br/>
        Настройки: ${JSON.stringify(settings, null, 2)}<br/>
-       Дата: ${new Date().toLocaleString()}`
+       Дата: ${new Date().toLocaleString()}`,
     );
   } catch (error) {
     console.error("Ошибка при сохранении настроек:", error);
@@ -58,7 +58,7 @@ exports.setSettings = async (req, res) => {
       "Обновление настроек мониторинга",
       `Произошла ошибка при обработке запроса:<br/>
       UserId: ${req.userId}<br/>
-       Дата: ${new Date().toLocaleString()}`
+       Дата: ${new Date().toLocaleString()}`,
     );
   }
 };
@@ -74,17 +74,14 @@ exports.getSettings = (req, res) => {
         res.status(500).send({ message: err });
       }
 
-      WarehouseSettings.find(
-        { userProfileId: user.profileId },
-        (err, settings) => {
-          if (err) {
-            res.status(500).send({ message: err });
-          }
-
-          settings = settings[0];
-          res.status(200).json(settings);
+      WarehouseSettings.find({ userProfileId: user.profileId }, (err, settings) => {
+        if (err) {
+          res.status(500).send({ message: err });
         }
-      );
+
+        settings = settings[0];
+        res.status(200).json(settings);
+      });
     });
   });
 };

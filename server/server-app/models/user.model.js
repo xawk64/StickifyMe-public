@@ -13,8 +13,8 @@ const User = mongoose.model(
       resetPasswordToken: String,
       resetPasswordExpires: Date,
     },
-    { timestamps: true }
-  )
+    { timestamps: true },
+  ),
 );
 
 module.exports = User;

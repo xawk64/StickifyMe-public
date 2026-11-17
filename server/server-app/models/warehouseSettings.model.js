@@ -8,7 +8,7 @@ const ItemSchema = new mongoose.Schema(
     dateStart: { type: Date, required: true },
     dateEnd: { type: Date, required: true },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const WarehouseSettings = mongoose.model(
@@ -19,8 +19,8 @@ const WarehouseSettings = mongoose.model(
       enabled: Boolean,
       userProfileId: String,
     },
-    { timestamps: true }
-  )
+    { timestamps: true },
+  ),
 );
 
 module.exports = WarehouseSettings;

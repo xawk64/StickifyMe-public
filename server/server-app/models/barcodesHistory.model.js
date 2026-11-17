@@ -10,8 +10,8 @@ const BarcodesHistory = mongoose.model(
       ordersCount: Number,
       userId: String,
     },
-    { timestamps: true }
-  )
+    { timestamps: true },
+  ),
 );
 
 module.exports = BarcodesHistory;

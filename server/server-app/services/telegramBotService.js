@@ -54,18 +54,18 @@ class TelegramBotService {
          Email: ${user.email}<br/>
          Username: ${user.username}<br/>
          ChatId: ${chatId}<br/>
-         Дата: ${new Date().toLocaleString()}`
+         Дата: ${new Date().toLocaleString()}`,
       );
 
       await this.sendMessage(
         chatId,
-        "Чат настроен на получение данных об коэффициентах на складах в соответствии с вашими настройками"
+        "Чат настроен на получение данных об коэффициентах на складах в соответствии с вашими настройками",
       );
     } catch (error) {
       console.error("Error handling start command:", error);
       await this.sendMessage(
         chatId,
-        "Произошла ошибка при настройке чата. Пожалуйста, попробуйте снова."
+        "Произошла ошибка при настройке чата. Пожалуйста, попробуйте снова.",
       );
     }
   }
@@ -74,7 +74,7 @@ class TelegramBotService {
     try {
       await this.sendMessage(
         chatId,
-        "Вы перешли на бота не по ссылке из личного кабинета. Просьба нажать на кнопку 'Подключить telegram бота' в личном кабинете в разделе настройки"
+        "Вы перешли на бота не по ссылке из личного кабинета. Просьба нажать на кнопку 'Подключить telegram бота' в личном кабинете в разделе настройки",
       );
       await this.resetProfile(chatId);
     } catch (error) {
@@ -94,16 +94,10 @@ class TelegramBotService {
     await this.bot.sendMessage(chatId, message, { parse_mode: "markdown" });
   }
 
-  async sendWarehouseInfo(
-    profileChatId,
-    filteredWarehousesItems,
-    oldCoefficientsByInfo
-  ) {
+  async sendWarehouseInfo(profileChatId, filteredWarehousesItems, oldCoefficientsByInfo) {
     const botMsg = filteredWarehousesItems.reduce((msg, item) => {
       const oldCoeff =
-        oldCoefficientsByInfo[
-          `${item.warehouseID}${item.date}${item.boxTypeName}`
-        ];
+        oldCoefficientsByInfo[`${item.warehouseID}${item.date}${item.boxTypeName}`];
 
       msg += `Склад: ${item.warehouseName}\n🗓: ${item.date
         .split("T")[0]
@@ -113,16 +107,16 @@ class TelegramBotService {
         item.coefficient === 0
           ? "`бесплатно`"
           : item.coefficient === -1
-          ? "нет приёмки"
-          : `x${item.coefficient}`
+            ? "нет приёмки"
+            : `x${item.coefficient}`
       }${
         oldCoeff !== undefined
           ? `\nПрошлый коэффициент: ${
               oldCoeff === 0
                 ? "`бесплатно`"
                 : oldCoeff === -1
-                ? "нет приёмки"
-                : `x${oldCoeff}`
+                  ? "нет приёмки"
+                  : `x${oldCoeff}`
             }`
           : ""
       }\n \n`;

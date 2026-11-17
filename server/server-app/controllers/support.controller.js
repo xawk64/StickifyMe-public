@@ -24,7 +24,7 @@ exports.sendFeedback = async (req, res) => {
     await sendEmail(
       config.adminEmail,
       `Новое обращение: ${req.body.type}`,
-      `От пользователя: ${user.email}\nТип: ${req.body.type}\nСообщение: ${req.body.message}`
+      `От пользователя: ${user.email}\nТип: ${req.body.type}\nСообщение: ${req.body.message}`,
     );
 
     res.status(200).send({ message: "Сообщение успешно отправлено" });
@@ -32,4 +32,4 @@ exports.sendFeedback = async (req, res) => {
     console.error("Ошибка при отправке обращения:", error);
     res.status(500).send({ message: "Произошла ошибка при обработке запроса" });
   }
-}; 
+};

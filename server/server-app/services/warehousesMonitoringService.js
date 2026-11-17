@@ -71,13 +71,10 @@ class WarehouseChecker {
               "Content-Type": "application/json",
               Authorization: this.profile.wbApiKey,
             },
-          }
+          },
         );
       } catch (fetchError) {
-        console.error(
-          "Ошибка при запросе к API Wildberries:",
-          fetchError.message
-        );
+        console.error("Ошибка при запросе к API Wildberries:", fetchError.message);
         return;
       }
 
@@ -90,9 +87,7 @@ class WarehouseChecker {
       }
 
       if (!Array.isArray(warehousesItems) && warehousesItems?.detail) {
-        console.log(
-          "Ошибка получения данных складов: " + warehousesItems.detail
-        );
+        console.log("Ошибка получения данных складов: " + warehousesItems.detail);
         return;
       }
 
@@ -109,7 +104,7 @@ class WarehouseChecker {
             (warehouse) =>
               warehouse.date === item.date &&
               warehouse.warehouseID === item.warehouseID &&
-              warehouse.boxTypeName === item.boxTypeName
+              warehouse.boxTypeName === item.boxTypeName,
           );
           const condition =
             item.coefficient > -1 &&
@@ -124,9 +119,8 @@ class WarehouseChecker {
             newWarehouses.push(item);
           }
           if (oldInfo && oldInfo.coefficient !== item.coefficient) {
-            oldCoefficientsByInfo[
-              `${item.warehouseID}${item.date}${item.boxTypeName}`
-            ] = oldInfo.coefficient;
+            oldCoefficientsByInfo[`${item.warehouseID}${item.date}${item.boxTypeName}`] =
+              oldInfo.coefficient;
             oldInfo.coefficient = item.coefficient;
             isItemInOldWarehouseInfoChanged = true;
           }
@@ -160,19 +154,15 @@ class WarehouseChecker {
           await TelegramBotService.sendWarehouseInfo(
             this.profile.chatId,
             filteredWarehousesItems,
-            oldCoefficientsByInfo
+            oldCoefficientsByInfo,
           );
         }
 
         if (warehouseInfo.items.length) {
           this.warehouses = warehouseInfo;
-          await Warehouses.updateOne(
-            { userProfileId: this.profile._id },
-            warehouseInfo,
-            {
-              upsert: true,
-            }
-          );
+          await Warehouses.updateOne({ userProfileId: this.profile._id }, warehouseInfo, {
+            upsert: true,
+          });
         }
 
         return {
@@ -244,7 +234,7 @@ class WarehouseCheckerService {
         } catch (userError) {
           console.error(
             `Ошибка при инициализации checker для пользователя ${user.profileId}:`,
-            userError.message
+            userError.message,
           );
         }
       }

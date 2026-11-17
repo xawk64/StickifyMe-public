@@ -23,7 +23,7 @@ exports.setProfile = async (req, res) => {
           if (err) {
             res.status(500).send({ message: err });
           }
-        }
+        },
       );
 
       res.status(200).send({ message: "was success!" });
@@ -57,7 +57,7 @@ exports.getProfiles = (req, res) => {
           let endIndex = page * limit;
 
           let profilesWithoutAuthProfile = profiles.filter(
-            (profile) => String(profile._id) !== String(userProfile._id)
+            (profile) => String(profile._id) !== String(userProfile._id),
           );
 
           let result = profilesWithoutAuthProfile.slice(startIndex, endIndex);
@@ -107,7 +107,7 @@ exports.uploadAvatar = async (req, res) => {
   const uploadPath = path.join(
     __dirname,
     "../../uploads/avatars",
-    `${userId}_${avatarFile.name}`
+    `${userId}_${avatarFile.name}`,
   );
 
   avatarFile.mv(uploadPath, function (err) {
@@ -131,7 +131,7 @@ exports.uploadAvatar = async (req, res) => {
           if (err) {
             res.status(500).send({ message: err });
           }
-        }
+        },
       );
     });
 

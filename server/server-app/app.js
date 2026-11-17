@@ -17,13 +17,13 @@ function createApp() {
       limits: {
         fileSize: 50 * 1024 * 1024, // 50 МБ максимальный размер файла
       },
-    })
+    }),
   );
 
   app.use(
     bodyParser.json({
       limit: "50mb",
-    })
+    }),
   );
 
   app.use(bodyParser.urlencoded({ extended: true }));
