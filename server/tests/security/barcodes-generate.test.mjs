@@ -46,6 +46,27 @@ describe("label PDF generation isolation", () => {
     expect(countPdfPages(largeRes.body)).toBe(10);
   });
 
+  it.each([
+    [1, 1],
+    [9, 1],
+    [10, 2],
+    [20, 3],
+  ])(
+    "lays out %i orders on %i A4 page(s), two stickers per order",
+    async (count, pages) => {
+      const orders = Array.from({ length: count }, (_, i) => makeOrder(i + 1));
+      const res = await request(app)
+        .post("/api/barcodes/generate")
+        .set(authed(user.token))
+        .send({ mode: "a4", withEAC: true, orders })
+        .buffer(true)
+        .parse(binaryParser);
+
+      expect(res.status).toBe(200);
+      expect(countPdfPages(res.body)).toBe(pages);
+    },
+  );
+
   it("does not write a shared stickers.pdf file to the working directory", async () => {
     const shared = path.resolve("stickers.pdf");
     fs.rmSync(shared, { force: true });
