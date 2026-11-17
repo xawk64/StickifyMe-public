@@ -17,16 +17,4 @@ module.exports = function (app) {
     [authJwt.authAPIverifyToken, validate({ body: schemas.generateLabels })],
     controller.generateBarcode,
   );
-
-  app.get(
-    "/api/barcodes/history",
-    [authJwt.authAPIverifyToken, validate({ query: schemas.historyPage })],
-    controller.getHistory,
-  );
-
-  app.get(
-    "/api/barcodes/history/:historyId",
-    [authJwt.authAPIverifyToken, validate({ params: schemas.historyId })],
-    controller.getHistoryById,
-  );
 };

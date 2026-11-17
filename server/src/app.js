@@ -13,6 +13,7 @@ const { createServices } = require("./container");
 const { requireAuth } = require("./http/middlewares/auth");
 const { createAuthRouter } = require("./http/routes/auth.routes");
 const { createProfileRouter } = require("./http/routes/profile.routes");
+const { createHistoryRouter } = require("./http/routes/history.routes");
 
 const LARGE_PAYLOAD_ROUTES = ["/api/barcodes/generate", "/api/barcodes-history/add"];
 
@@ -67,7 +68,7 @@ function createApp(options = {}) {
 
   app.use(createAuthRouter(services.auth, auth));
   app.use(createProfileRouter(services.profile, auth));
-  require("./routes/barcodesHistory.routes")(app);
+  app.use(createHistoryRouter(services.history, auth));
   require("./routes/barcodes.routes")(app);
   require("./routes/warehouses.routes")(app);
   require("./routes/support.routes")(app);

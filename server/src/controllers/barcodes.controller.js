@@ -7,8 +7,6 @@ const canvas2pdf = require("canvas2pdf");
 const JsBarcode = require("jsbarcode");
 const { DOMImplementation, XMLSerializer } = require("@xmldom/xmldom");
 const SVGtoPDF = require("svg-to-pdfkit");
-const { db } = require("../models");
-const BarcodesHistory = db.barcodesHistory;
 
 PDFDocument.prototype.addSVG = function (svg, x, y, options) {
   return (SVGtoPDF(this, svg, x, y, options), this);
@@ -310,37 +308,5 @@ exports.generateBarcode = async (req, res) => {
   } catch (error) {
     console.error("Error generating barcodes:", error);
     res.status(500).send({ message: "Произошла ошибка при генерации этикеток" });
-  }
-};
-
-exports.getHistory = async (req, res, next) => {
-  try {
-    // page and limit are validated and coerced to numbers by the route schema
-    const { page, limit } = req.query;
-    const filter = { userId: req.userId };
-    const [items, count] = await Promise.all([
-      BarcodesHistory.find(filter, { orders: 0, rows: 0, userId: 0 })
-        .sort({ _id: 1 })
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .lean(),
-      BarcodesHistory.countDocuments(filter),
-    ]);
-    return res.status(200).json({ items, count });
-  } catch (err) {
-    return next(err);
-  }
-};
-
-exports.getHistoryById = async (req, res, next) => {
-  try {
-    const history = await BarcodesHistory.findById(req.params.historyId);
-    // another user's entry looks exactly like a missing one
-    if (!history || history.userId !== req.userId) {
-      return res.status(200).json({});
-    }
-    return res.status(200).json(history);
-  } catch (err) {
-    return next(err);
   }
 };
