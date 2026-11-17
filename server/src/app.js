@@ -13,6 +13,7 @@ const { createServices } = require("./container");
 const { requireAuth } = require("./http/middlewares/auth");
 const { createAuthRouter } = require("./http/routes/auth.routes");
 const { createProfileRouter } = require("./http/routes/profile.routes");
+const { createSupportRouter } = require("./http/routes/support.routes");
 const { createHistoryRouter } = require("./http/routes/history.routes");
 
 const LARGE_PAYLOAD_ROUTES = ["/api/barcodes/generate", "/api/barcodes-history/add"];
@@ -71,7 +72,7 @@ function createApp(options = {}) {
   app.use(createHistoryRouter(services.history, auth));
   require("./routes/barcodes.routes")(app);
   require("./routes/warehouses.routes")(app);
-  require("./routes/support.routes")(app);
+  app.use(createSupportRouter(services.support, auth));
   require("./routes/telegram.routes")(app);
   app.get("/", (req, res) => {
     res.json({ message: "StickifyMe API" });
