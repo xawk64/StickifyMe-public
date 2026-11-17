@@ -1,14 +1,34 @@
+const { randomUUID } = require("crypto");
+const jwt = require("jsonwebtoken");
 const config = require("../config");
 const db = require("../models");
+const { sendEmail } = require("../utils/sendEmail");
+const { hashPassword, verifyPassword } = require("../utils/password");
+const { hashToken } = require("../utils/tokens");
+const { NotFoundError, UnauthorizedError } = require("../errors");
+
 const User = db.user;
 const Profile = db.profile;
 const WarehouseSettings = db.warehouseSettings;
 const Warehouses = db.warehouse;
 
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const { sendEmail } = require("../utils/sendEmail");
-const { v4: uuidv4 } = require("uuid");
+const TOKEN_TTL_SECONDS = 30 * 24 * 60 * 60;
+const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
+const INVALID_CREDENTIALS = "Неверный логин или пароль";
+const RESET_PASSWORD_SENT =
+  "Если такой email зарегистрирован, мы отправили на него инструкции по сбросу пароля.";
+
+const toUserResponse = (user, profile) => ({
+  id: user._id,
+  username: user.username,
+  email: user.email,
+  profileId: user.profileId,
+  fullName: profile?.fullName,
+  avatarUrl: profile?.avatarUrl,
+  wbApiKey: profile?.wbApiKey,
+  chatId: profile?.chatId,
+  emailVerification: user.emailVerification,
+});
 
 exports.signup = async (req, res) => {
   const createdDocuments = [];
@@ -28,9 +48,9 @@ exports.signup = async (req, res) => {
     await User.create({
       username: req.body.username,
       email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 8),
+      password: await hashPassword(req.body.password),
       emailVerification: true,
-      emailVerificationHash: uuidv4(),
+      emailVerificationHash: randomUUID(),
       profileId: profile._id,
     });
   } catch (err) {
@@ -60,182 +80,107 @@ exports.signup = async (req, res) => {
   });
 };
 
-exports.signin = (req, res) => {
-  User.findOne({
-    $or: [{ username: req.body.username }, { email: req.body.username }],
-  }).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-
-    if (!user) {
-      return res.status(404).send({ message: "Пользователь не найден." });
-    }
-
-    const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
-
-    if (!passwordIsValid) {
-      return res.status(401).send({
-        accessToken: null,
-        message: "Неправильный пароль!",
-      });
-    }
-
-    const token = jwt.sign({ id: user.id }, config.jwtSecret, {
-      expiresIn: 2592000, // 30 days
-    });
-
-    Profile.findOne({ _id: user.profileId }).exec((err, profile) => {
-      if (err) {
-        return res.status(500).send({ message: err });
-      }
-      res.status(200).send({
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        profileId: user.profileId,
-        fullName: profile.fullName,
-        accessToken: token,
-        avatarUrl: profile.avatarUrl,
-        wbApiKey: profile.wbApiKey,
-        chatId: profile.chatId,
-        emailVerification: user.emailVerification,
-      });
-    });
-  });
-};
-
-exports.authMe = (req, res) => {
-  User.findById(req.userId, (err, user) => {
-    if (err) {
-      res.status(200).send({ message: err });
-    }
-
-    if (!user) {
-      return res.status(404).send({ message: "Пользователь не найден." });
-    }
-
-    Profile.findOne({ _id: user.profileId }).exec((err, profile) => {
-      if (err) {
-        return res.status(500).send({ message: err });
-      }
-      res.status(200).send({
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        profileId: user.profileId,
-        fullName: profile.fullName,
-        avatarUrl: profile.avatarUrl,
-        wbApiKey: profile.wbApiKey,
-        chatId: profile.chatId,
-        emailVerification: user.emailVerification,
-      });
-    });
-  });
-};
-
-exports.verify = (req, res) => {
-  User.findOne({ emailVerificationHash: req.body.hash }, (err, user) => {
-    if (err) {
-      res.status(200).send({ emailVerification: false });
-    }
-    if (!user) {
-      return res
-        .status(404)
-        .send({ message: "Пользователь для подтверждения пароля не найден." });
-    }
-
-    User.updateOne(
-      { _id: user._id },
-      { emailVerification: true },
-      { upsert: false },
-      (err) => {
-        if (err) {
-          res.status(500).send({ message: err });
-        }
-      },
-    );
-
-    res.status(200).send({
-      emailVerification: true,
-    });
-  });
-};
-
-exports.resetPassword = async (req, res) => {
-  const { email } = req.body;
-
+exports.signin = async (req, res, next) => {
   try {
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).send({ message: "Пользователь с таким email не найден." });
-    }
-
-    const profile = await Profile.findOne({ _id: user.profileId });
-    if (!user) {
-      return res.status(404).send({ message: "Пользователь с таким email не найден." });
-    }
-
-    const resetToken = uuidv4();
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 час
-    await user.save();
-
-    // Отправка email с инструкциями по сбросу пароля
-    await sendEmail(
-      email,
-      "Сброс пароля",
-      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке:  ${config.appUrl}/reset-password?token=${resetToken}`,
-    );
-
-    res.status(200).send({
-      message: "Инструкции по сбросу пароля отправлены на ваш email.",
+    const user = await User.findOne({
+      $or: [{ username: req.body.username }, { email: req.body.username }],
     });
-  } catch (error) {
-    console.error("Ошибка при сбросе пароля:", error);
-    res.status(500).send({ message: "Произошла ошибка при обработке запроса." });
+    // verifyPassword runs bcrypt even without a user to keep the timing uniform
+    const passwordIsValid = await verifyPassword(req.body.password, user?.password);
+    if (!user || !passwordIsValid) {
+      throw new UnauthorizedError(INVALID_CREDENTIALS);
+    }
+
+    const accessToken = jwt.sign({ id: user.id }, config.jwtSecret, {
+      expiresIn: TOKEN_TTL_SECONDS,
+    });
+    const profile = await Profile.findById(user.profileId);
+    return res.status(200).send({ ...toUserResponse(user, profile), accessToken });
+  } catch (err) {
+    return next(err);
   }
 };
 
-exports.confirmResetPassword = async (req, res) => {
-  const { token, password } = req.body;
+exports.authMe = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      throw new NotFoundError("Пользователь не найден.");
+    }
+    const profile = await Profile.findById(user.profileId);
+    return res.status(200).send(toUserResponse(user, profile));
+  } catch (err) {
+    return next(err);
+  }
+};
 
+exports.verify = async (req, res, next) => {
+  try {
+    const result = await User.updateOne(
+      { emailVerificationHash: req.body.hash },
+      { emailVerification: true },
+    );
+    if (result.n === 0) {
+      throw new NotFoundError("Пользователь для подтверждения почты не найден.");
+    }
+    return res.status(200).send({ emailVerification: true });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const resetToken = randomUUID();
+      user.resetPasswordToken = hashToken(resetToken);
+      user.resetPasswordExpires = Date.now() + RESET_TOKEN_TTL_MS;
+      await user.save();
+
+      const profile = await Profile.findById(user.profileId);
+      await sendEmail(
+        user.email,
+        "Сброс пароля",
+        `Добрый день, ${profile?.fullName || user.username}! Для сброса пароля перейдите по ссылке:  ${config.appUrl}/reset-password?token=${resetToken}`,
+      );
+    }
+    // Same answer whether or not the email exists: no account enumeration.
+    return res.status(200).send({ message: RESET_PASSWORD_SENT });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+exports.confirmResetPassword = async (req, res, next) => {
   try {
     const user = await User.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: hashToken(req.body.token),
       resetPasswordExpires: { $gt: Date.now() },
     });
-
     if (!user) {
       return res
         .status(400)
         .send({ message: "Токен для сброса пароля недействителен или истек." });
     }
 
-    user.password = bcrypt.hashSync(password, 8);
+    user.password = await hashPassword(req.body.password);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    res.status(200).send({ message: "Пароль успешно изменен." });
-  } catch (error) {
-    console.error("Ошибка при подтверждении сброса пароля:", error);
-    res.status(500).send({ message: "Произошла ошибка при обработке запроса." });
+    return res.status(200).send({ message: "Пароль успешно изменен." });
+  } catch (err) {
+    return next(err);
   }
 };
 
-exports.resendVerification = async (req, res) => {
-  console.log("resendVerification");
-
+exports.resendVerification = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId);
-
     if (!user) {
-      return res.status(404).send({ message: "Пользователь не найден" });
+      throw new NotFoundError("Пользователь не найден");
     }
-
     if (user.emailVerification) {
       return res.status(400).send({ message: "Email уже подтвержден" });
     }
@@ -246,11 +191,10 @@ exports.resendVerification = async (req, res) => {
       `Добрый день, ${user.username}! <br />Вы запросили повторное подтверждение почты на сервисе StickifyMe. Для подтверждения перейдите по ссылке: ${config.appUrl}/verify/?hash=${user.emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение.`,
     );
 
-    res.status(200).send({
+    return res.status(200).send({
       message: "Письмо для подтверждения отправлено на вашу почту",
     });
-  } catch (error) {
-    console.error("Ошибка при повторной отправке подтверждения:", error);
-    res.status(500).send({ message: "Произошла ошибка при обработке запроса" });
+  } catch (err) {
+    return next(err);
   }
 };
