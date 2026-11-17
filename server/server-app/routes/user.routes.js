@@ -11,12 +11,6 @@ module.exports = function (app) {
     next();
   });
 
-  app.get(
-    "/api/profile/:profileId",
-    [authJwt.authAPIverifyToken],
-    controller.getProfiles,
-  );
-
   app.post("/api/profile/", [authJwt.authAPIverifyToken], controller.setProfile);
 
   app.post("/api/upload-avatar", [authJwt.authAPIverifyToken], uploadAvatar);
