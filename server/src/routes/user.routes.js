@@ -2,7 +2,7 @@ const { authJwt } = require("../middlewares");
 const controller = require("../controllers/user.controller");
 const { uploadAvatar } = require("../controllers/user.controller");
 const { validate } = require("../http/middlewares/validate");
-const schemas = require("../validation/profile.schemas");
+const schemas = require("../http/schemas/profile.schemas");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {

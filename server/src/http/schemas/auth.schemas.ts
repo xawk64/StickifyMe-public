@@ -1,4 +1,4 @@
-const { z } = require("zod");
+import { z } from "zod";
 
 const email = z.email().max(254);
 const password = z.string().min(8).max(128);
@@ -21,4 +21,4 @@ const resetPassword = z.object({ email });
 
 const confirmResetPassword = z.object({ token: z.uuid(), password });
 
-module.exports = { signup, signin, verifyEmail, resetPassword, confirmResetPassword };
+export { signup, signin, verifyEmail, resetPassword, confirmResetPassword };

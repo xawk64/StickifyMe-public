@@ -1,7 +1,7 @@
-const { z } = require("zod");
+import { z } from "zod";
 
-const text = (max) => z.string().max(max);
-const optionalText = (max) => text(max).optional();
+const text = (max: number) => z.string().max(max);
+const optionalText = (max: number) => text(max).optional();
 
 const product = z.object({
   id: z.number().int().nullable().optional(),
@@ -59,4 +59,4 @@ const historyId = z.object({
   historyId: z.string().regex(/^[a-f\d]{24}$/i, "invalid id"),
 });
 
-module.exports = { generateLabels, addHistory, historyPage, historyId };
+export { generateLabels, addHistory, historyPage, historyId };

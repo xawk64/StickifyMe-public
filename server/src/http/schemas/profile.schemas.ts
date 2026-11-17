@@ -1,4 +1,4 @@
-const { z } = require("zod");
+import { z } from "zod";
 
 // Only these fields may be changed by the user; everything else is stripped.
 const updateProfile = z.object({
@@ -6,4 +6,4 @@ const updateProfile = z.object({
   wbApiKey: z.string().trim().max(4096).optional(),
 });
 
-module.exports = { updateProfile };
+export { updateProfile };

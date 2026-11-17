@@ -1,6 +1,6 @@
 const controller = require("../controllers/barcodes.controller");
 const { validate } = require("../http/middlewares/validate");
-const schemas = require("../validation/barcodes.schemas");
+const schemas = require("../http/schemas/barcodes.schemas");
 const { authJwt } = require("../middlewares");
 
 module.exports = function (app) {

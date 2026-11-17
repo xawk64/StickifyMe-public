@@ -1,4 +1,4 @@
-const { z } = require("zod");
+import { z } from "zod";
 
 const settingsItem = z.object({
   ID: z.number().int().positive(),
@@ -15,4 +15,4 @@ const saveSettings = z.object({
   }),
 });
 
-module.exports = { saveSettings };
+export { saveSettings };
