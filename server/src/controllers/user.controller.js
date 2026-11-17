@@ -1,4 +1,4 @@
-const db = require("../models");
+const { db } = require("../models");
 const Profile = db.profile;
 const User = db.user;
 const path = require("path");

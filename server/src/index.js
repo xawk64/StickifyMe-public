@@ -2,7 +2,7 @@ const { config } = require("./config");
 const { createApp } = require("./app");
 const { notifyAdmin, mailer } = require("./mail/mailer");
 const templates = require("./mail/templates");
-const db = require("./models");
+const { db } = require("./models");
 const WarehouseCheckerService = require("./services/warehousesMonitoringService");
 
 const SHUTDOWN_TIMEOUT_MS = 10000;

@@ -1,9 +1,11 @@
 // warehouseChecker.js
 
-const User = require("../models/user.model");
-const Profile = require("../models/profile.model");
-const WarehouseSettings = require("../models/warehouseSettings.model");
-const Warehouses = require("../models/warehouse.model");
+const { UserModel: User } = require("../models/user.model");
+const { ProfileModel: Profile } = require("../models/profile.model");
+const {
+  WarehouseSettingsModel: WarehouseSettings,
+} = require("../models/warehouseSettings.model");
+const { WarehouseModel: Warehouses } = require("../models/warehouse.model");
 const TelegramBotService = require("./telegramBotService");
 
 const { config } = require("../config");

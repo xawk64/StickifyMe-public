@@ -1,7 +1,7 @@
 const { randomUUID } = require("crypto");
 const jwt = require("jsonwebtoken");
 const { config } = require("../config");
-const db = require("../models");
+const { db } = require("../models");
 const { notifyAdmin, sendTemplate } = require("../mail/mailer");
 const templates = require("../mail/templates");
 const { hashPassword, verifyPassword } = require("../utils/password");

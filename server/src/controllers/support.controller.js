@@ -1,4 +1,4 @@
-const db = require("../models");
+const { db } = require("../models");
 const User = db.user;
 const Feedback = db.feedback;
 const { notifyAdmin } = require("../mail/mailer");

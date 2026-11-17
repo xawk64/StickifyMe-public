@@ -1,4 +1,4 @@
-const db = require("../models");
+const { db } = require("../models");
 const WarehouseCheckerService = require("../services/warehousesMonitoringService");
 const { notifyAdmin } = require("../mail/mailer");
 const templates = require("../mail/templates");

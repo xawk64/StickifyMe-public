@@ -7,7 +7,7 @@ const canvas2pdf = require("canvas2pdf");
 const JsBarcode = require("jsbarcode");
 const { DOMImplementation, XMLSerializer } = require("@xmldom/xmldom");
 const SVGtoPDF = require("svg-to-pdfkit");
-const db = require("../models");
+const { db } = require("../models");
 const BarcodesHistory = db.barcodesHistory;
 
 PDFDocument.prototype.addSVG = function (svg, x, y, options) {
