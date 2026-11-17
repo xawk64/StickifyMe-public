@@ -1,14 +1,14 @@
 {
-  "name": "StickifyMe",
+  "name": "stickifyme-web",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint src/**/*.{ts,tsx}"
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit"
   },
-  "license": "MIT",
+  "license": "UNLICENSED",
   "dependencies": {
     "@mobx-devtools/tools": "^0.0.4",
     "@nextui-org/react": "^2.4.8",
@@ -52,5 +52,6 @@
   },
   "engines": {
     "node": ">=22"
-  }
+  },
+  "private": true
 }
