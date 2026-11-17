@@ -13,6 +13,7 @@ const { createServices } = require("./container");
 const { requireAuth } = require("./http/middlewares/auth");
 const { createAuthRouter } = require("./http/routes/auth.routes");
 const { createProfileRouter } = require("./http/routes/profile.routes");
+const { createTelegramRouter } = require("./http/routes/telegram.routes");
 const { createSupportRouter } = require("./http/routes/support.routes");
 const { createHistoryRouter } = require("./http/routes/history.routes");
 
@@ -73,7 +74,7 @@ function createApp(options = {}) {
   require("./routes/barcodes.routes")(app);
   require("./routes/warehouses.routes")(app);
   app.use(createSupportRouter(services.support, auth));
-  require("./routes/telegram.routes")(app);
+  app.use(createTelegramRouter(services.telegramLink, auth));
   app.get("/", (req, res) => {
     res.json({ message: "StickifyMe API" });
   });
