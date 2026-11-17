@@ -8,6 +8,9 @@ const Profile = mongoose.model(
       avatarUrl: String,
       chatId: Number,
       wbApiKey: String,
+      // one-time token for the Telegram deep link, stored as a SHA-256 hash
+      telegramLinkTokenHash: { type: String, index: true },
+      telegramLinkTokenExpires: Date,
     },
     { timestamps: true },
   ),

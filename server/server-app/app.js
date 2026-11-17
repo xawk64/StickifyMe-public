@@ -60,6 +60,7 @@ function createApp(options = {}) {
   require("./routes/barcodes.routes")(app);
   require("./routes/warehouses.routes")(app);
   require("./routes/support.routes")(app);
+  require("./routes/telegram.routes")(app);
   app.get("/", (req, res) => {
     res.json({ message: "StickifyMe API" });
   });

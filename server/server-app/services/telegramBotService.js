@@ -4,6 +4,9 @@ const Profile = require("../models/profile.model");
 const { notifyAdmin } = require("../utils/sendEmail");
 const templates = require("../emails/templates");
 const config = require("../config");
+const { hashToken } = require("../utils/tokens");
+
+const LINK_TOKEN_PATTERN = /^[\w-]{20,64}$/;
 
 class TelegramBotService {
   /**
@@ -36,30 +39,38 @@ class TelegramBotService {
     const messageText = msg.text || "";
 
     if (messageText.startsWith("/start")) {
-      const userId = messageText.split("/start ")[1];
+      const linkToken = messageText.split("/start ")[1];
 
-      if (userId) {
-        await this.handleStartCommand(userId, chatId);
+      if (linkToken && LINK_TOKEN_PATTERN.test(linkToken)) {
+        await this.handleStartCommand(linkToken, chatId);
       } else {
         await this.handleInvalidStartCommand(chatId);
       }
     }
   }
 
-  async handleStartCommand(userId, chatId) {
+  async handleStartCommand(linkToken, chatId) {
     try {
-      const user = await User.findById(userId);
-      if (!user || !user.profileId) {
-        throw new Error("User or profile not found");
+      // Atomically consume the one-time token: it cannot be replayed.
+      const profile = await Profile.findOneAndUpdate(
+        {
+          telegramLinkTokenHash: hashToken(linkToken),
+          telegramLinkTokenExpires: { $gt: new Date() },
+        },
+        {
+          $set: { chatId },
+          $unset: { telegramLinkTokenHash: 1, telegramLinkTokenExpires: 1 },
+        },
+      );
+      if (!profile) {
+        throw new Error("Link token is invalid or expired");
       }
+      const user = await User.findOne({ profileId: String(profile._id) });
 
-      await this.updateProfile(user.profileId, chatId);
-
-      // Добавить в метод handleStartCommand после строки 47
       notifyAdmin(
         templates.adminTelegramConnected({
-          email: user.email,
-          username: user.username,
+          email: user?.email,
+          username: user?.username,
           chatId,
         }),
       );
@@ -99,8 +110,7 @@ class TelegramBotService {
 
   async sendMessage(chatId, message) {
     if (!this.bot) {
-      console.log(`[telegram:dry-run] chat=${chatId}
-${message}`);
+      console.log(`[telegram:dry-run] chat=${chatId}\n${message}`);
       return;
     }
     await this.bot.sendMessage(chatId, message, { parse_mode: "markdown" });

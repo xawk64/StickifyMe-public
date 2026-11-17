@@ -16,4 +16,5 @@ export enum ApiUrlEnum {
   authConfirmResetPassword = "/api/auth/confirm-reset-password",
   updateProfile = "/api/profile/",
   authResendVerification = "/api/auth/resend-verification",
+  telegramLinkToken = "/api/telegram/link-token",
 }
