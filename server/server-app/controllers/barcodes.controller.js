@@ -308,52 +308,34 @@ exports.generateBarcode = async (req, res) => {
   }
 };
 
-exports.getHistory = (req, res) => {
-  if (req.query.page > 0) {
-    BarcodesHistory.find({ userId: req.userId }, (err, history) => {
-      if (err) {
-        res.status(500).send({ message: err });
-      }
-
-      if (history.length) {
-        const limit = req.query.limit;
-        const page = req.query.page;
-
-        const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
-
-        const result = history.slice(startIndex, endIndex).map((item) => {
-          const newItem = { ...item._doc };
-          delete newItem.rows;
-          delete newItem.userId;
-          delete newItem.orders;
-          return newItem;
-        });
-
-        res.status(200).json({ items: result, count: history.length });
-      } else {
-        res.status(200).json({ items: [], count: 0 });
-      }
-    });
-  } else {
-    res.status(200).json({ items: [], count: 0 });
+exports.getHistory = async (req, res, next) => {
+  try {
+    // page and limit are validated and coerced to numbers by the route schema
+    const { page, limit } = req.query;
+    const filter = { userId: req.userId };
+    const [items, count] = await Promise.all([
+      BarcodesHistory.find(filter, { orders: 0, rows: 0, userId: 0 })
+        .sort({ _id: 1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+      BarcodesHistory.countDocuments(filter),
+    ]);
+    return res.status(200).json({ items, count });
+  } catch (err) {
+    return next(err);
   }
 };
 
-exports.getHistoryById = (req, res) => {
-  if (req.params.historyId) {
-    BarcodesHistory.findById(req.params.historyId, (err, history) => {
-      if (err) {
-        res.status(500).send({ message: err });
-      }
-
-      if (history && req.userId === history.userId) {
-        res.status(200).json(history);
-      } else {
-        res.status(200).json({});
-      }
-    });
-  } else {
-    res.status(200).json({});
+exports.getHistoryById = async (req, res, next) => {
+  try {
+    const history = await BarcodesHistory.findById(req.params.historyId);
+    // another user's entry looks exactly like a missing one
+    if (!history || history.userId !== req.userId) {
+      return res.status(200).json({});
+    }
+    return res.status(200).json(history);
+  } catch (err) {
+    return next(err);
   }
 };

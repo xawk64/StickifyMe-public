@@ -1,42 +1,20 @@
 const db = require("../models");
+
 const User = db.user;
 
-const checkDuplicateUsernameOrEmail = (req, res, next) => {
-  User.findOne({
-    username: req.body.username,
-  }).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
+// Friendly early check; uniqueness itself is guaranteed by the unique indexes.
+const checkDuplicateUsernameOrEmail = async (req, res, next) => {
+  try {
+    if (await User.exists({ username: req.body.username })) {
+      return res.status(400).send({ message: "Имя пользователя уже используется!" });
     }
-
-    if (user) {
-      res.status(400).send({ message: "Имя пользователя уже используется!" });
-      return;
+    if (await User.exists({ email: req.body.email })) {
+      return res.status(400).send({ message: "Email уже используется!" });
     }
-
-    // Email
-    User.findOne({
-      email: req.body.email,
-    }).exec((err, user) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
-
-      if (user) {
-        res.status(400).send({ message: "Email уже используется!" });
-
-        return;
-      }
-
-      next();
-    });
-  });
+    return next();
+  } catch (err) {
+    return next(err);
+  }
 };
 
-const verifySignUp = {
-  checkDuplicateUsernameOrEmail,
-};
-
-module.exports = verifySignUp;
+module.exports = { checkDuplicateUsernameOrEmail };
