@@ -9,9 +9,6 @@ const { sendEmail, transporter } = require("./server-app/utils/sendEmail");
 
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
-const {
-  initializeSubscriptionPlans,
-} = require("./server-app/services/subscriptionService");
 
 // Function to log errors
 function logError(message) {
@@ -140,14 +137,12 @@ db.mongoose
   })
   .then(() => {
     console.log("Successfully connect to MongoDB. ");
-    // Initialize subscription plans after successful DB connection
     // Запускаем сервер только после успешного подключения к БД
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}.`);
       // Инициализируем сервис только один раз здесь
       WarehouseCheckerService.initialize();
     });
-    initializeSubscriptionPlans();
   })
   .catch((err) => {
     console.error("Connection error", err);
@@ -171,8 +166,6 @@ require("./server-app/routes/support.routes")(app);
 app.get("/", (req, res) => {
   res.json({ message: "StickifyMe API" });
 });
-//require("./server-app/routes/subscription.routes")(app);
-//require("./server-app/routes/payment.routes")(app);
 
 process.on("SIGTERM", () => gracefulShutdown(0));
 process.on("SIGINT", () => gracefulShutdown(0));

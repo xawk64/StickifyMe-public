@@ -13,7 +13,5 @@ db.product = require("./product.model");
 db.warehouse = require("./warehouse.model");
 db.warehouseSettings = require("./warehouseSettings.model");
 db.feedback = require("./feedback.model");
-db.subscriptionPlan = require("./subscription.model").SubscriptionPlan;
-db.userSubscription = require("./subscription.model").UserSubscription;
 
 module.exports = db;
