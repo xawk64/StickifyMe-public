@@ -1,7 +1,7 @@
 // canvas2pdf looks up PDFDocument on the global object.
 const PDFDocument = require("pdfkit");
 global.PDFDocument = PDFDocument;
-const fs = require("fs");
+const { PassThrough } = require("stream");
 const canvas2pdf = require("canvas2pdf");
 const JsBarcode = require("jsbarcode");
 const { DOMImplementation, XMLSerializer } = require("xmldom");
@@ -28,7 +28,10 @@ const truncateText = (text, count = 60) => {
 
 exports.generateBarcode = async (req, res) => {
   try {
-    const file = fs.createWriteStream("stickers.pdf");
+    // Each request renders into its own in-memory stream: no shared file on disk.
+    const output = new PassThrough();
+    const chunks = [];
+    output.on("data", (chunk) => chunks.push(chunk));
     const mode = req.body.mode;
     const withEac = req.body.withEAC;
 
@@ -46,7 +49,7 @@ exports.generateBarcode = async (req, res) => {
     const gapX = 5;
 
     //Create a new PDF canvas context.
-    const ctx = new canvas2pdf.PdfContext(file, {
+    const ctx = new canvas2pdf.PdfContext(output, {
       size: mode === "thermo" ? [stickerWidth * coff, stickerHeight * coff] : "A4",
       margin: 0,
     });
@@ -293,12 +296,10 @@ exports.generateBarcode = async (req, res) => {
       }
     }
 
-    ctx.stream.on("finish", function () {
-      file.end();
-      res.set("Content-disposition", "attachment; filename=" + "stickers.pdf");
-      res.set("Content-Type", "text/plain");
-
-      res.download("stickers.pdf");
+    output.on("end", () => {
+      res.set("Content-Disposition", 'attachment; filename="stickers.pdf"');
+      res.type("application/pdf");
+      res.send(Buffer.concat(chunks));
     });
     ctx.end();
   } catch (error) {
