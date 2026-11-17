@@ -25,7 +25,22 @@ export async function disconnectTestDb() {
   await db.mongoose.disconnect();
 }
 
-export function createTestApp() {
+/**
+ * Builds the app the same way the composition root does, with a dry-run mailer
+ * and a monitor stub (no polling in tests).
+ */
+export function createTestApp(overrides = {}) {
   const { createApp } = require("../../dist/app");
-  return createApp();
+  const { createServices } = require("../../dist/container");
+  const { config } = require("../../dist/config");
+  const { logger } = require("../../dist/logger");
+  const { createMailer } = require("../../dist/mail/mailer");
+  const monitor = { isInitialized: true, changeSettings: async () => {} };
+  const services = createServices({
+    config,
+    mailer: createMailer(config, logger),
+    monitor,
+    log: logger,
+  });
+  return createApp({ config, services, log: logger, ...overrides });
 }

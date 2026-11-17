@@ -12,6 +12,8 @@ export interface BotClient {
     text: string,
     options?: TelegramBotApi.SendMessageOptions,
   ): Promise<unknown>;
+  startPolling?(): Promise<unknown>;
+  stopPolling?(): Promise<unknown>;
 }
 
 export interface TelegramBotDeps {
@@ -48,6 +50,11 @@ export class TelegramBot {
         this.deps.log.error({ err }, "telegram message handling failed"),
       );
     });
+    void this.deps.client.startPolling?.();
+  }
+
+  async stop(): Promise<void> {
+    await this.deps.client?.stopPolling?.();
   }
 
   async handleMessage(msg: Pick<TelegramBotApi.Message, "chat" | "text">): Promise<void> {
@@ -93,5 +100,6 @@ export class TelegramBot {
 }
 
 export function createBotClient(token: string): BotClient | null {
-  return token ? new TelegramBotApi(token, { polling: true }) : null;
+  // polling starts in TelegramBot.start(), after the HTTP server is up
+  return token ? new TelegramBotApi(token, { polling: false }) : null;
 }

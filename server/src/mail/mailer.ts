@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
-import { config, type Config } from "../config";
-import { logger, type Logger } from "../logger";
+import type { Config } from "../config";
+import type { Logger } from "../logger";
 import type { EmailTemplate } from "./templates";
 
 /** The part of a nodemailer transport the app relies on (easy to fake in tests). */
@@ -68,9 +68,3 @@ export function createMailer(cfg: Config, log: Logger): Mailer {
     : null;
   return new Mailer(transport, { from: cfg.mail.from, adminEmail: cfg.adminEmail }, log);
 }
-
-// Shared instance for modules that are not wired through the composition root yet.
-export const mailer = createMailer(config, logger);
-export const sendTemplate = (to: string, template: EmailTemplate) =>
-  mailer.send(to, template);
-export const notifyAdmin = (template: EmailTemplate) => mailer.notifyAdmin(template);

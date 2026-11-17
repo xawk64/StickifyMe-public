@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/index.js",
-    "dev": "tsx watch --env-file-if-exists=../.env src/index.js",
+    "dev": "tsx watch --env-file-if-exists=../.env src/index.ts",
     "typecheck": "tsc --noEmit",
     "pretest": "yarn build",
     "test": "vitest run",
@@ -65,6 +65,8 @@
   },
   "resolutions": {
     "proxy-addr": "^2.0.8",
-    "crypto-js": "^4.2.0"
+    "crypto-js": "^4.2.0",
+    "@types/express": "^4.17.25",
+    "@types/express-serve-static-core": "^4.19.6"
   }
 }
