@@ -6,34 +6,18 @@ const { randomUUID } = require("crypto");
 const config = require("../config");
 const { detectImageExtension } = require("../utils/imageType");
 
-exports.setProfile = async (req, res) => {
-  User.findById(req.userId, async (err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
+exports.setProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).send({ message: "Пользователь не найден" });
     }
-
-    const profile = {
-      ...req.body,
-    };
-
-    try {
-      await Profile.updateOne(
-        { _id: user.profileId },
-        profile,
-        { upsert: false },
-        (err) => {
-          if (err) {
-            res.status(500).send({ message: err });
-          }
-        },
-      );
-
-      res.status(200).send({ message: "was success!" });
-    } catch (err) {
-      res.status(500).send({ message: err });
-    }
-  });
+    // req.body is already reduced to whitelisted fields by the validation schema
+    await Profile.updateOne({ _id: user.profileId }, req.body);
+    return res.status(200).send({ message: "was success!" });
+  } catch (err) {
+    return next(err);
+  }
 };
 
 const AVATAR_MAX_BYTES = 2 * 1024 * 1024;

@@ -1,6 +1,8 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/user.controller");
 const { uploadAvatar } = require("../controllers/user.controller");
+const { validate } = require("../middlewares/validate");
+const schemas = require("../validation/profile.schemas");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -11,7 +13,11 @@ module.exports = function (app) {
     next();
   });
 
-  app.post("/api/profile/", [authJwt.authAPIverifyToken], controller.setProfile);
+  app.post(
+    "/api/profile/",
+    [authJwt.authAPIverifyToken, validate({ body: schemas.updateProfile })],
+    controller.setProfile,
+  );
 
   app.post("/api/upload-avatar", [authJwt.authAPIverifyToken], uploadAvatar);
 };

@@ -35,3 +35,30 @@ describe("profile access control", () => {
     expect(JSON.stringify(listing.body)).not.toContain("victim-wb-key");
   });
 });
+
+describe("profile update", () => {
+  let app;
+
+  beforeAll(async () => {
+    await connectTestDb();
+    app = createTestApp();
+  });
+  afterEach(clearTestDb);
+  afterAll(disconnectTestDb);
+
+  it("updates only whitelisted fields", async () => {
+    const user = await registerUser(app);
+
+    const res = await request(app).post("/api/profile/").set(authed(user.token)).send({
+      fullName: "Shop LLC",
+      chatId: 424242,
+      avatarUrl: "https://evil.example/x.svg",
+    });
+
+    expect(res.status).toBe(200);
+    const profile = await db.profile.findById(user.profileId);
+    expect(profile.fullName).toBe("Shop LLC");
+    expect(profile.chatId).toBeUndefined();
+    expect(profile.avatarUrl).toBeUndefined();
+  });
+});
