@@ -12,8 +12,6 @@ export async function connectTestDb() {
   const uri = inject("mongoUri");
   await db.mongoose.connect(uri, {
     dbName: `test_${randomUUID()}`,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
   });
 }
 

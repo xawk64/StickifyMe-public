@@ -69,10 +69,7 @@ process.on("SIGTERM", () => gracefulShutdown(0));
 process.on("SIGINT", () => gracefulShutdown(0));
 
 db.mongoose
-  .connect(config.mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(config.mongoUri)
   .then(() => {
     console.log("Successfully connected to MongoDB");
     // Start accepting requests only after the database is reachable

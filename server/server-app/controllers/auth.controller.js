@@ -120,7 +120,7 @@ exports.verify = async (req, res, next) => {
       { emailVerificationHash: req.body.hash },
       { emailVerification: true },
     );
-    if (result.n === 0) {
+    if (result.matchedCount === 0) {
       throw new NotFoundError("Пользователь для подтверждения почты не найден.");
     }
     return res.status(200).send({ emailVerification: true });
