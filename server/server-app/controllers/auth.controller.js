@@ -10,84 +10,53 @@ const bcrypt = require("bcryptjs");
 const { sendEmail } = require("../utils/sendEmail");
 const { v4: uuidv4 } = require("uuid");
 
-exports.signup = (req, res) => {
-  const emailVerificationHash = uuidv4();
-  const user = new User({
-    username: req.body.username,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8),
-    emailVerification: true,
-    emailVerificationHash,
-  });
-
-  user.save((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-
-    const profile = new Profile({
-      fullName: req.body.username,
+exports.signup = async (req, res) => {
+  const createdDocuments = [];
+  try {
+    const profile = await Profile.create({ fullName: req.body.username });
+    createdDocuments.push(profile);
+    createdDocuments.push(
+      ...(await Promise.all([
+        Warehouses.create({ items: [], userProfileId: profile._id }),
+        WarehouseSettings.create({
+          items: [],
+          userProfileId: profile._id,
+          enabled: true,
+        }),
+      ])),
+    );
+    await User.create({
+      username: req.body.username,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8),
+      emailVerification: true,
+      emailVerificationHash: uuidv4(),
+      profileId: profile._id,
     });
+  } catch (err) {
+    // MongoDB standalone has no multi-document transactions: compensate manually.
+    await Promise.allSettled(createdDocuments.map((doc) => doc.deleteOne()));
+    console.error("Signup failed:", err);
+    return res.status(500).send({ message: "Не удалось зарегистрировать пользователя" });
+  }
 
-    profile.save((err) => {
-      if (err) {
-        res.status(500).send({ message: err });
-      }
-    });
+  sendEmail(
+    config.adminEmail,
+    "Новая регистрация в StickifyMe",
+    `Зарегистрирован новый пользователь:<br/>
+     Email: ${req.body.email}<br/>
+     Username: ${req.body.username}<br/>
+     Дата: ${new Date().toLocaleString()}`,
+  );
 
-    user.profileId = profile._id;
+  sendEmail(
+    req.body.email,
+    "Потверждение учетной записи",
+    `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для дальнейшей работы вам необходимо ввести ключ API WB. <br />Для этого перейдите по ссылке: ${config.appUrl}/settings`,
+  );
 
-    const warehouse = new Warehouses({
-      items: [],
-      userProfileId: user.profileId,
-    });
-
-    warehouse.save((err) => {
-      if (err) {
-        res.status(500).send({ message: err });
-      }
-    });
-
-    const warehouseSettings = new WarehouseSettings({
-      items: [],
-      userProfileId: user.profileId,
-      enabled: true,
-    });
-
-    warehouseSettings.save((err) => {
-      if (err) {
-        res.status(500).send({ message: err });
-      }
-    });
-
-    user.save((err) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
-
-      sendEmail(
-        config.adminEmail,
-        "Новая регистрация в StickifyMe",
-        `Зарегистрирован новый пользователь:<br/>
-         Email: ${req.body.email}<br/>
-         Username: ${req.body.username}<br/>
-         Дата: ${new Date().toLocaleString()}`,
-      );
-
-      sendEmail(
-        req.body.email,
-        "Потверждение учетной записи",
-        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для дальнейшей работы вам необходимо ввести ключ API WB. <br />Для этого перейдите по ссылке: ${config.appUrl}/settings`,
-        //`Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке: ${config.appUrl}/verify/?hash=${emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение. `,
-      );
-
-      res.status(200).send({
-        message: "Пользователь успешно зарегистрирован!",
-        //"Пользователь успешно зарегистрирован! Информация для подтверждения отправлена на ваш email!",
-      });
-    });
+  return res.status(200).send({
+    message: "Пользователь успешно зарегистрирован!",
   });
 };
 
