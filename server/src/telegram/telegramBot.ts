@@ -21,6 +21,8 @@ export interface TelegramBotDeps {
   telegramLink: Pick<TelegramLinkService, "linkChat" | "unlinkChat">;
   mailer: Pick<MailSender, "notifyAdmin">;
   log: Logger;
+  /** e.g. start monitoring right away instead of waiting for a settings change */
+  onChatLinked?: (profileId: string) => Promise<void>;
 }
 
 const MESSAGES = {
@@ -88,6 +90,7 @@ export class TelegramBot {
       }),
     );
     await this.sendMessage(chatId, MESSAGES.linked);
+    await this.deps.onChatLinked?.(String(linked.profile._id));
   }
 
   async sendMessage(chatId: number, text: string): Promise<void> {

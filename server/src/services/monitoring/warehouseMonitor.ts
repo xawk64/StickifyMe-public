@@ -7,7 +7,8 @@ import {
   formatCoefficientsMessage,
   type WarehouseCoefficient,
 } from "./coefficients";
-import type { FetchCoefficients } from "./wbCoefficients";
+import { WbAuthError } from "../../integrations/wb/errors";
+import type { WbClient } from "../../integrations/wb/wbClient";
 
 export interface Notifier {
   sendMessage(chatId: number, text: string): Promise<void>;
@@ -20,7 +21,7 @@ export interface MonitoringSettings {
 
 export interface WarehouseMonitorDeps {
   repositories: Pick<Repositories, "users" | "profiles" | "monitoring">;
-  fetchCoefficients: FetchCoefficients;
+  wbClient: Pick<WbClient, "getAcceptanceCoefficients">;
   notifier: Notifier;
   intervalMs: number;
   secretBox: SecretBox;
@@ -33,15 +34,22 @@ interface WatchedProfile {
   wbApiKey: string;
 }
 
+export const INVALID_KEY_MESSAGE =
+  "Ключ API Wildberries больше не действует, мониторинг коэффициентов остановлен. " +
+  "Обновите ключ в настройках личного кабинета, и мониторинг включится снова.";
+
 /** Polls WB for one profile and notifies its Telegram chat about matching coefficients. */
 export class WarehouseChecker {
   private timer: NodeJS.Timeout | null = null;
+  private running = false;
 
   constructor(
     private readonly profile: WatchedProfile,
     private settings: MonitoringSettings,
     private snapshot: WarehouseCoefficient[],
     private readonly deps: WarehouseMonitorDeps,
+    /** called when WB rejects the key: the monitor drops this checker */
+    private readonly onKeyRejected: () => void = () => {},
   ) {}
 
   get isChecking(): boolean {
@@ -70,8 +78,14 @@ export class WarehouseChecker {
 
   async performCheck(): Promise<void> {
     const log = this.deps.log.child({ profileId: this.profile.id });
+    // A slow WB response must not lead to overlapping checks for the same profile.
+    if (this.running) {
+      log.debug("previous check is still running, skipping this tick");
+      return;
+    }
+    this.running = true;
     try {
-      const incoming = await this.deps.fetchCoefficients(
+      const incoming = await this.deps.wbClient.getAcceptanceCoefficients(
         this.profile.wbApiKey,
         this.settings.items.map((item) => item.ID),
       );
@@ -95,7 +109,21 @@ export class WarehouseChecker {
         await this.deps.repositories.monitoring.saveSnapshot(stored);
       }
     } catch (err) {
+      if (err instanceof WbAuthError) {
+        // Polling with a dead key would fail forever: stop and tell the seller once.
+        log.warn("WB rejected the API key, monitoring stopped");
+        this.stop();
+        this.onKeyRejected();
+        await this.deps.notifier
+          .sendMessage(this.profile.chatId, INVALID_KEY_MESSAGE)
+          .catch((notifyErr: unknown) =>
+            log.error({ err: notifyErr }, "notification failed"),
+          );
+        return;
+      }
       log.warn({ err }, "warehouse check failed");
+    } finally {
+      this.running = false;
     }
   }
 }
@@ -166,6 +194,7 @@ export class WarehouseMonitor {
       { enabled: settings.enabled, items: settings.items },
       snapshot?.items ?? [],
       this.deps,
+      () => this.checkers.delete(profileId),
     );
     checker.start();
     this.checkers.set(profileId, checker);

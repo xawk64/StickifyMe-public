@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import request from "supertest";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import {
   clearTestDb,
   connectTestDb,
@@ -55,5 +55,20 @@ describe("telegram account linking", () => {
   it("requires authentication to issue a link token", async () => {
     const res = await request(app).post("/api/telegram/link-token");
     expect(res.status).toBe(403);
+  });
+
+  it("starts monitoring as soon as a chat is linked", async () => {
+    const user = await registerUser(app);
+    const { body } = await request(app)
+      .post("/api/telegram/link-token")
+      .set(authed(user.token));
+    const onChatLinked = vi.fn(async (_profileId: string) => {});
+
+    await createTestBot({ onChatLinked }).bot.handleMessage({
+      chat: { id: 9 },
+      text: `/start ${body.token}`,
+    });
+
+    expect(onChatLinked).toHaveBeenCalledWith(user.profileId);
   });
 });

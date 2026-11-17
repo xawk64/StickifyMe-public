@@ -7,7 +7,9 @@ import {
   testSecretBox,
 } from "./helpers/app";
 
+import { WbAuthError } from "../src/integrations/wb/errors";
 import {
+  INVALID_KEY_MESSAGE,
   WarehouseMonitor,
   type WarehouseMonitorDeps,
 } from "../src/services/monitoring/warehouseMonitor";
@@ -25,7 +27,7 @@ const settingsItem = {
 function createMonitor(overrides: Partial<WarehouseMonitorDeps> = {}) {
   return new WarehouseMonitor({
     repositories: createRepositories(),
-    fetchCoefficients: vi.fn().mockResolvedValue([]),
+    wbClient: { getAcceptanceCoefficients: vi.fn().mockResolvedValue([]) },
     notifier: { sendMessage: vi.fn().mockResolvedValue(undefined) },
     intervalMs: 60_000,
     secretBox: testSecretBox,
@@ -95,7 +97,7 @@ describe("WarehouseMonitor lifecycle", () => {
     const notifier = { sendMessage: vi.fn().mockResolvedValue(undefined) };
     monitor = createMonitor({
       notifier,
-      fetchCoefficients: vi.fn().mockResolvedValue([coefficient]),
+      wbClient: { getAcceptanceCoefficients: vi.fn().mockResolvedValue([coefficient]) },
     });
     const profile = await db.profile.create({
       fullName: "x",
@@ -118,5 +120,57 @@ describe("WarehouseMonitor lifecycle", () => {
     );
     const snapshot = (await db.warehouse.findOne({ userProfileId: profileId }))!;
     expect(snapshot.items).toHaveLength(1);
+  });
+
+  async function watchedProfile() {
+    const profile = await db.profile.create({
+      fullName: "x",
+      chatId: 42,
+      wbApiKeyEncrypted: testSecretBox.encrypt("key"),
+    });
+    const profileId = String(profile._id);
+    await db.warehouseSettings.create({
+      userProfileId: profileId,
+      enabled: true,
+      items: [settingsItem],
+    });
+    return profileId;
+  }
+
+  it("never runs two checks for one profile at the same time", async () => {
+    let release!: () => void;
+    const getAcceptanceCoefficients = vi.fn(
+      () => new Promise<never[]>((resolve) => (release = () => resolve([]))),
+    );
+    monitor = createMonitor({ wbClient: { getAcceptanceCoefficients } });
+    const profileId = await watchedProfile();
+    await monitor.addChecker(profileId);
+    const checker = monitor.getChecker(profileId)!;
+
+    const first = checker.performCheck();
+    await checker.performCheck(); // a tick while WB is still answering
+    release();
+    await first;
+
+    expect(getAcceptanceCoefficients).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops monitoring and tells the seller when WB rejects the key", async () => {
+    const notifier = { sendMessage: vi.fn().mockResolvedValue(undefined) };
+    monitor = createMonitor({
+      notifier,
+      wbClient: {
+        getAcceptanceCoefficients: vi
+          .fn()
+          .mockRejectedValue(new WbAuthError("unauthorized", 401)),
+      },
+    });
+    const profileId = await watchedProfile();
+    await monitor.addChecker(profileId);
+
+    await monitor.getChecker(profileId)!.performCheck();
+
+    expect(monitor.getChecker(profileId)).toBeUndefined();
+    expect(notifier.sendMessage).toHaveBeenCalledWith(42, INVALID_KEY_MESSAGE);
   });
 });

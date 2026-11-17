@@ -26,7 +26,7 @@ export interface Services {
 export interface ServiceDeps {
   config: Config;
   mailer: MailSender;
-  monitor: Pick<WarehouseMonitor, "isInitialized" | "changeSettings">;
+  monitor: Pick<WarehouseMonitor, "isInitialized" | "changeSettings" | "addChecker">;
   log: Logger;
   wbClient: WbClient;
   secretBox: SecretBox;
@@ -55,6 +55,7 @@ export function createServices({
       uploadsDir: config.uploadsDir,
       wbClient,
       secretBox,
+      onWbApiKeyChanged: (profileId) => monitor.addChecker(profileId),
     }),
     telegramLink: new TelegramLinkService(repositories),
     support: new SupportService({ repositories, mailer }),

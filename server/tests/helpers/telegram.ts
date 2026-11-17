@@ -11,12 +11,17 @@ export function createFakeBotClient() {
 /** A TelegramBot wired to the real repositories and a fake Bot API client. */
 export function createTestBot({
   client = createFakeBotClient(),
-}: { client?: (BotClient & ReturnType<typeof createFakeBotClient>) | null } = {}) {
+  onChatLinked,
+}: {
+  client?: (BotClient & ReturnType<typeof createFakeBotClient>) | null;
+  onChatLinked?: (profileId: string) => Promise<void>;
+} = {}) {
   const bot = new TelegramBot({
     client,
     telegramLink: new TelegramLinkService(createRepositories()),
     mailer: { notifyAdmin: vi.fn().mockResolvedValue(undefined) },
     log: logger,
+    onChatLinked,
   });
   return { bot, client };
 }

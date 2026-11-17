@@ -21,6 +21,8 @@ export interface ProfileServiceDeps {
   uploadsDir: string;
   wbClient: Pick<WbClient, "ping">;
   secretBox: SecretBox;
+  /** e.g. restart monitoring that was stopped because the old key was rejected */
+  onWbApiKeyChanged?: (profileId: string) => Promise<void>;
 }
 
 export class ProfileService {
@@ -56,6 +58,7 @@ export class ProfileService {
     await this.deps.repositories.profiles.update(profileId, {
       wbApiKeyEncrypted: this.deps.secretBox.encrypt(apiKey),
     });
+    await this.deps.onWbApiKeyChanged?.(profileId);
   }
 
   /** Stores an avatar under a server-generated name and returns its public URL. */

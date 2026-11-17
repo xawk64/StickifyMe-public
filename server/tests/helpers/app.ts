@@ -48,7 +48,11 @@ export function createTestApp(
   const services = createServices({
     config,
     mailer: createMailer(config, logger),
-    monitor: { isInitialized: true, changeSettings: async () => {} },
+    monitor: {
+      isInitialized: true,
+      changeSettings: async () => {},
+      addChecker: async () => {},
+    },
     log: logger,
     wbClient,
     secretBox: testSecretBox,

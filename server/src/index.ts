@@ -14,7 +14,6 @@ import { createRepositories } from "./repositories";
 import { WbClient } from "./integrations/wb/wbClient";
 import { SecretBox } from "./utils/secretBox";
 import { WarehouseMonitor } from "./services/monitoring/warehouseMonitor";
-import { fetchCoefficients } from "./services/monitoring/wbCoefficients";
 import { TelegramLinkService } from "./services/telegramLink.service";
 import { TelegramBot, createBotClient } from "./telegram/telegramBot";
 
@@ -25,15 +24,17 @@ const secretBox = new SecretBox(config.wb.keyEncryptionKey);
 const wbClient = new WbClient({ ...config.wb, log: logger.child({ module: "wb" }) });
 const mailer = createMailer(config, logger.child({ module: "mail" }));
 const botClient = createBotClient(config.telegramBotToken);
-const bot = new TelegramBot({
+const bot: TelegramBot = new TelegramBot({
   client: botClient,
   telegramLink: new TelegramLinkService(repositories),
   mailer,
   log: logger.child({ module: "telegram" }),
+  // `monitor` is created below; the callback runs only after startup
+  onChatLinked: (profileId: string): Promise<void> => monitor.addChecker(profileId),
 });
-const monitor = new WarehouseMonitor({
+const monitor: WarehouseMonitor = new WarehouseMonitor({
   repositories,
-  fetchCoefficients,
+  wbClient,
   notifier: bot,
   intervalMs: config.monitoringIntervalMs,
   secretBox,
