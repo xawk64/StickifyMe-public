@@ -4,8 +4,9 @@ const User = mongoose.model(
   "User",
   new mongoose.Schema(
     {
-      username: String,
-      email: String,
+      // unique indexes close the race window of the "check then insert" signup flow
+      username: { type: String, required: true, unique: true },
+      email: { type: String, required: true, unique: true },
       password: String,
       profileId: String,
       emailVerification: Boolean,

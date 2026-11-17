@@ -38,3 +38,34 @@ describe("auth", () => {
     expect(settings.enabled).toBe(true);
   });
 });
+
+describe("account uniqueness", () => {
+  let app;
+
+  beforeAll(async () => {
+    await connectTestDb();
+    app = createTestApp();
+    await db.user.init(); // wait until indexes are built
+  });
+  afterEach(clearTestDb);
+  afterAll(disconnectTestDb);
+
+  it("creates exactly one account under concurrent signups with the same email", async () => {
+    const signup = (i) =>
+      request(app)
+        .post("/api/auth/signup")
+        .send({
+          username: `same${i}`,
+          email: "same@example.com",
+          password: "password123",
+        });
+
+    const responses = await Promise.all([0, 1, 2, 3, 4].map(signup));
+
+    expect(await db.user.countDocuments({ email: "same@example.com" })).toBe(1);
+    expect(responses.filter((r) => r.status === 200)).toHaveLength(1);
+    responses.filter((r) => r.status !== 200).forEach((r) => expect(r.status).toBe(400));
+    // no orphaned profiles from the rejected attempts
+    expect(await db.profile.countDocuments()).toBe(1);
+  });
+});

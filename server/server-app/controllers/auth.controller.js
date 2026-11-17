@@ -13,6 +13,7 @@ const Profile = db.profile;
 const WarehouseSettings = db.warehouseSettings;
 const Warehouses = db.warehouse;
 
+const DUPLICATE_KEY_ERROR = 11000;
 const TOKEN_TTL_SECONDS = 30 * 24 * 60 * 60;
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
 const INVALID_CREDENTIALS = "Неверный логин или пароль";
@@ -57,6 +58,11 @@ exports.signup = async (req, res) => {
   } catch (err) {
     // MongoDB standalone has no multi-document transactions: compensate manually.
     await Promise.allSettled(createdDocuments.map((doc) => doc.deleteOne()));
+    if (err.code === DUPLICATE_KEY_ERROR) {
+      return res
+        .status(400)
+        .send({ message: "Имя пользователя или email уже используется!" });
+    }
     console.error("Signup failed:", err);
     return res.status(500).send({ message: "Не удалось зарегистрировать пользователя" });
   }
