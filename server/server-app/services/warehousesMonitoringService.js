@@ -6,7 +6,9 @@ const WarehouseSettings = require("../models/warehouseSettings.model");
 const Warehouses = require("../models/warehouse.model");
 const TelegramBotService = require("./telegramBotService");
 
-const timeoutInterval = 17000; //17 секунд
+const config = require("../config");
+
+const timeoutInterval = config.monitoringIntervalMs;
 
 class WarehouseChecker {
   constructor(profile, settings, warehouses) {

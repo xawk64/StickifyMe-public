@@ -2,16 +2,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
+const config = require("./config");
 
 function createApp() {
   const app = express();
 
-  var corsOptions = {
-    origin: ["http://localhost:3000", "https://example.com:403"],
-    credentials: true,
-  };
-
-  app.use(cors(corsOptions));
+  app.use(cors({ origin: config.corsOrigins, credentials: true }));
 
   app.use("/uploads", express.static("./uploads"));
 

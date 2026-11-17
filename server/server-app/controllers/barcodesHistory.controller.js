@@ -3,6 +3,7 @@ const User = db.user;
 const BarcodesHistory = db.barcodesHistory;
 const { v4: uuidv4 } = require("uuid");
 const { sendEmail } = require("../utils/sendEmail");
+const config = require("../config");
 
 exports.addBarcodes = async (req, res) => {
   try {
@@ -28,7 +29,7 @@ exports.addBarcodes = async (req, res) => {
     });
 
     await sendEmail(
-      "admin@example.com",
+      config.adminEmail,
       "История этикеток",
       `Пользователь ${user.username} подготовил историю этикеток для ${orders.length} товаров`
     );

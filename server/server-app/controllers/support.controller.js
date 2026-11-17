@@ -2,6 +2,7 @@ const db = require("../models");
 const User = db.user;
 const Feedback = db.feedback;
 const { sendEmail } = require("../utils/sendEmail");
+const config = require("../config");
 
 exports.sendFeedback = async (req, res) => {
   try {
@@ -21,7 +22,7 @@ exports.sendFeedback = async (req, res) => {
 
     // Отправляем уведомление администратору
     await sendEmail(
-      "support@example.com",
+      config.adminEmail,
       `Новое обращение: ${req.body.type}`,
       `От пользователя: ${user.email}\nТип: ${req.body.type}\nСообщение: ${req.body.message}`
     );

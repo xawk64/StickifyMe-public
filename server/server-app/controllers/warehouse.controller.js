@@ -1,6 +1,7 @@
 const db = require("../models");
 const WarehouseCheckerService = require("../services/warehousesMonitoringService");
 const { sendEmail } = require("../utils/sendEmail");
+const config = require("../config");
 const User = db.user;
 const Profile = db.profile;
 const WarehouseSettings = db.warehouseSettings;
@@ -41,7 +42,7 @@ exports.setSettings = async (req, res) => {
 
     // Добавить в метод handleStartCommand после строки 47
     sendEmail(
-      "admin@example.com",
+      config.adminEmail,
       "Обновление настроек мониторинга",
       `Пользователь обновил настройки мониторинга:<br/>
        Email: ${user.email}<br/>
@@ -53,7 +54,7 @@ exports.setSettings = async (req, res) => {
     console.error("Ошибка при сохранении настроек:", error);
     res.status(500).send({ message: "Произошла ошибка при обработке запроса" });
     sendEmail(
-      "admin@example.com",
+      config.adminEmail,
       "Обновление настроек мониторинга",
       `Произошла ошибка при обработке запроса:<br/>
       UserId: ${req.userId}<br/>

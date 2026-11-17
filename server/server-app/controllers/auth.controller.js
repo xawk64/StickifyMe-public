@@ -1,3 +1,4 @@
+const config = require("../config");
 const db = require("../models");
 const User = db.user;
 const Profile = db.profile;
@@ -67,8 +68,8 @@ exports.signup = (req, res) => {
       }
 
       sendEmail(
-        "admin@example.com",
-        "Новая регистрация на example.com",
+        config.adminEmail,
+        "Новая регистрация в StickifyMe",
         `Зарегистрирован новый пользователь:<br/>
          Email: ${req.body.email}<br/>
          Username: ${req.body.username}<br/>
@@ -78,8 +79,8 @@ exports.signup = (req, res) => {
       sendEmail(
         req.body.email,
         "Потверждение учетной записи",
-        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе example.com. Для дальнейшей работы вам необходимо ввести ключ API WB. <br />Для этого перейдите по ссылке: https://example.com/settings`
-        //`Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе example.com. Для подтверждения почты перейдите по ссылке: https:/example.com/verify/?hash=${emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение. `,
+        `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для дальнейшей работы вам необходимо ввести ключ API WB. <br />Для этого перейдите по ссылке: ${config.appUrl}/settings`
+        //`Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для подтверждения почты перейдите по ссылке: ${config.appUrl}/verify/?hash=${emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение. `,
       );
 
       res.status(200).send({
@@ -112,7 +113,7 @@ exports.signin = (req, res) => {
       });
     }
 
-    let token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+    let token = jwt.sign({ id: user.id }, config.jwtSecret, {
       expiresIn: 2592000, // 30 days
     });
 
@@ -227,7 +228,7 @@ exports.resetPassword = async (req, res) => {
     await sendEmail(
       email,
       "Сброс пароля",
-      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке:  https://example.com/reset-password?token=${resetToken}`
+      `Добрый день, ${profile.fullName}! Для сброса пароля перейдите по ссылке:  ${config.appUrl}/reset-password?token=${resetToken}`
     );
 
     res.status(200).send({
@@ -287,7 +288,7 @@ exports.resendVerification = async (req, res) => {
     await sendEmail(
       user.email,
       "Подтверждение учетной записи",
-      `Добрый день, ${user.username}! <br />Вы запросили повторное подтверждение почты на сервисе example.com. Для подтверждения перейдите по ссылке: https://example.com/verify/?hash=${user.emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение.`
+      `Добрый день, ${user.username}! <br />Вы запросили повторное подтверждение почты на сервисе StickifyMe. Для подтверждения перейдите по ссылке: ${config.appUrl}/verify/?hash=${user.emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение.`
     );
 
     res.status(200).send({

@@ -2,6 +2,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const User = require("../models/user.model");
 const Profile = require("../models/profile.model");
 const { sendEmail } = require("../utils/sendEmail");
+const config = require("../config");
 
 class TelegramBotService {
   constructor(token) {
@@ -47,7 +48,7 @@ class TelegramBotService {
 
       // Добавить в метод handleStartCommand после строки 47
       sendEmail(
-        "admin@example.com",
+        config.adminEmail,
         "Подключение Telegram бота",
         `Пользователь подключил Telegram бота:<br/>
          Email: ${user.email}<br/>
@@ -132,4 +133,4 @@ class TelegramBotService {
   }
 }
 
-module.exports = new TelegramBotService(process.env.TELEGRAM_BOT_TOKEN);
+module.exports = new TelegramBotService(config.telegramBotToken);

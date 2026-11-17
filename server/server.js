@@ -1,3 +1,4 @@
+const config = require("./server-app/config");
 const { createApp } = require("./server-app/app");
 const app = createApp();
 const mongodb = require("mongodb");
@@ -13,15 +14,14 @@ function logError(message) {
   fs.appendFileSync("/tmp/server_error.log", message + "\n");
 }
 
-const PORT = 4000;
 
 // Error handling for uncaught exceptions
 process.on("uncaughtException", async (error) => {
-  if (process.env.NODE_ENV === "production") {
+  if (config.nodeEnv === "production") {
     logError(`Uncaught Exception: ${error.stack}`);
     try {
       await sendEmail(
-        "admin@example.com",
+        config.adminEmail,
         "Uncaught Exception in Server",
         `An uncaught exception occurred: ${error.stack}`
       );
@@ -34,11 +34,11 @@ process.on("uncaughtException", async (error) => {
 
 // Error handling for unhandled promise rejections
 process.on("unhandledRejection", async (reason, promise) => {
-  if (process.env.NODE_ENV === "production") {
+  if (config.nodeEnv === "production") {
     logError(`Unhandled Rejection at: ${reason}`);
     try {
       await sendEmail(
-        "admin@example.com",
+        config.adminEmail,
         "Unhandled Rejection in Server",
         `An unhandled rejection occurred: ${reason}`
       );
@@ -85,10 +85,8 @@ function gracefulShutdown(exitCode) {
   }
 }
 
-const MONGO_USERNAME = process.env.MONGO_USERNAME;
-const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
-
-const MONGO_URI = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${process.env.MONGO_URI}:27017/stickifyme?authSource=admin`;
+const MONGO_URI = config.mongoUri;
+const PORT = config.port;
 
 const client = mongodb.MongoClient;
 
