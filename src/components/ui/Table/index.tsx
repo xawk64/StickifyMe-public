@@ -114,7 +114,7 @@ const Table: React.FC<IComponentProps> = ({
         }
         return row;
       });
-      setRows && setRows(newRows);
+      setRows?.(newRows);
     }
   };
 
@@ -214,7 +214,7 @@ const Table: React.FC<IComponentProps> = ({
                           index: i,
                           indexInRow: rowIndex,
                         });
-                        onRowClick && onRowClick(indexOfFirstItem + rowIndex);
+                        onRowClick?.(indexOfFirstItem + rowIndex);
                       }}
                       onMouseMove={() => setCurrentRowHover(rowIndex)}
                       onMouseLeave={() => setCurrentRowHover(null)}

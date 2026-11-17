@@ -67,7 +67,9 @@ const Select: React.FC<IComponentProps> = ({
       onChange={handleChange}
       className={className}
       onOpenChange={(open: boolean) => {
-        open !== isOpen && setIsOpen(open);
+        if (open !== isOpen) {
+          setIsOpen(open);
+        }
       }}
     >
       {items.map((item) => (

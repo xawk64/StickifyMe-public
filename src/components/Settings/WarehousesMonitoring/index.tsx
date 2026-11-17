@@ -333,6 +333,7 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = observer(
               {warehouses.map(({ coordinates, name, address, ID, selected }) =>
                 coordinates ? (
                   <Marker
+                    key={ID}
                     position={coordinates}
                     eventHandlers={{
                       click: handleClickByMarker,

@@ -278,10 +278,11 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const printJS = require("print-js");
+      // print-js touches window on import, so it is loaded only in the browser
+      const printJSPromise = import("print-js").then((module) => module.default);
 
-      printDocument.current = (blob: Blob) => {
+      printDocument.current = async (blob: Blob) => {
+        const printJS = await printJSPromise;
         const pdfUrl = URL.createObjectURL(blob);
         printJS({
           printable: pdfUrl,
