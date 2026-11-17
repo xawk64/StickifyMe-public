@@ -8,6 +8,10 @@ const {
   notFoundHandler,
 } = require("./http/middlewares/errorHandler");
 const { logger } = require("./logger");
+const { mailer } = require("./mail/mailer");
+const { createServices } = require("./container");
+const { requireAuth } = require("./http/middlewares/auth");
+const { createAuthRouter } = require("./http/routes/auth.routes");
 
 const LARGE_PAYLOAD_ROUTES = ["/api/barcodes/generate", "/api/barcodes-history/add"];
 
@@ -57,7 +61,10 @@ function createApp(options = {}) {
     }),
   );
 
-  require("./routes/auth.routes")(app);
+  const services = options.services ?? createServices({ config, mailer });
+  const auth = requireAuth(config.jwtSecret);
+
+  app.use(createAuthRouter(services.auth, auth));
   require("./routes/user.routes")(app);
   require("./routes/barcodesHistory.routes")(app);
   require("./routes/barcodes.routes")(app);
