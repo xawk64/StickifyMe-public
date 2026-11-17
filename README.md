@@ -183,13 +183,13 @@ API Wildberries регулярно отвечает 429 и 5xx и иногда �
 
 ## Скриншоты
 
-Разметка под скриншоты лежит в [docs/screenshots](docs/screenshots/README.md).
+Снято на локальном стенде с демо-аккаунтом и моком WB ([как переснять](docs/screenshots/README.md)).
 
 | | |
 |---|---|
 | ![Вход](docs/screenshots/auth.png) | ![Импорт заказов](docs/screenshots/imports.png) |
 | ![Этикетки в PDF](docs/screenshots/labels-pdf.png) | ![Настройки мониторинга](docs/screenshots/monitoring.png) |
-| ![Уведомление в Telegram](docs/screenshots/telegram.png) | ![Логи: retry при 429](docs/screenshots/retry-logs.png) |
+| ![Профиль: ключ WB только для записи](docs/screenshots/settings.png) | ![Логи: retry при 429/5xx и уведомления мониторинга](docs/screenshots/retry-logs.png) |
 
 ## Стек
 

@@ -8,6 +8,6 @@
 | `auth.png` | Экран входа |
 | `imports.png` | «Скачать этикетки» → «Импорт заказов из Wildberries»: таблица заказов после импорта |
 | `labels-pdf.png` | Сгенерированный PDF (термопринтер или A4) рядом со стикером WB |
-| `monitoring.png` | «Настройки» → мониторинг: карта складов, коэффициенты, даты |
-| `telegram.png` | Уведомление бота о бесплатной приёмке (с настоящим `TELEGRAM_BOT_TOKEN`) |
-| `retry-logs.png` | `docker compose logs -f api wb-mock`: внедрённые 429/500 и строки `retrying WB request` |
+| `monitoring.png` | «Телеграм бот»: мониторинг, карта складов, коэффициенты, даты |
+| `settings.png` | «Настройки»: профиль и write-only поле ключа WB |
+| `retry-logs.png` | `docker compose logs -f api wb-mock`: внедрённые сбои, `retrying WB request` и `telegram dry-run` |
