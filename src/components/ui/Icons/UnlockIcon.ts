@@ -11,11 +11,11 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 
 export const UnLockIcon: React.FC<IconProps> = ({
   fill,
-  filled,
+  filled: _filled,
   size,
   height,
   width,
-  label,
+  label: _label,
   ...props
 }) => {
   return React.createElement(

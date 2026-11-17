@@ -33,7 +33,7 @@ const Support: React.FC = () => {
       toast.success(response.message);
       setMessage("");
       setType(feedbackTypes[0]);
-    } catch (error) {
+    } catch {
       toast.error("Произошла ошибка при отправке сообщения");
     } finally {
       setIsLoading(false);

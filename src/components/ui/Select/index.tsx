@@ -30,7 +30,7 @@ const Select: React.FC<IComponentProps> = ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const value = e.target.value;
 
     setValue(e.target.value);

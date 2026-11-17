@@ -244,7 +244,7 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = observer(
         });
         toast.success("Настройки успешно сохранены");
         setIsToSave(false);
-      } catch (error) {
+      } catch {
         toast.error("Ошибка при сохранении настроек");
       }
     };

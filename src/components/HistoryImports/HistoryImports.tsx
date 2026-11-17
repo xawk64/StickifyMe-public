@@ -19,7 +19,7 @@ const HistoryImports: React.FC = observer(() => {
 
   const router = useRouter();
 
-  const [columns, setColumns] = useState([
+  const [columns] = useState([
     "№",
     "Количество заказов",
     "Тип импорта",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Input from "../Input";
 import styles from "./Table.module.scss";
-import { Pagination, Card, Skeleton } from "@nextui-org/react";
+import { Pagination } from "@nextui-org/react";
 import Loader from "../Loader";
 
 interface IComponentProps {
@@ -119,26 +119,6 @@ const Table: React.FC<IComponentProps> = ({
   };
 
   const tableRef = useRef<HTMLDivElement>(null);
-  const [tableHeight, setTableHeight] = useState("auto");
-
-  useEffect(() => {
-    const updateTableHeight = () => {
-      if (tableRef.current) {
-        const windowHeight = window.innerHeight;
-        const tableTop = tableRef.current.getBoundingClientRect().top;
-        const paginationHeight = 60; // Примерная высота пагинации
-        const newHeight = windowHeight - tableTop - paginationHeight;
-        setTableHeight(`${newHeight}px`);
-      }
-    };
-
-    updateTableHeight();
-    window.addEventListener("resize", updateTableHeight);
-
-    return () => {
-      window.removeEventListener("resize", updateTableHeight);
-    };
-  }, []);
 
   const totalPages = Math.ceil((rows?.length || 0) / itemsPerPage);
 
@@ -167,7 +147,7 @@ const Table: React.FC<IComponentProps> = ({
         ref={tableRef}
         className={`${styles.table} ${isCard ? styles.cardView : ""}`}
         style={{
-          ["--grid-template-columns" as any]: isCard
+          ["--grid-template-columns" as string]: isCard
             ? "1fr"
             : gridTemplateColumns,
           ...cardStyles,

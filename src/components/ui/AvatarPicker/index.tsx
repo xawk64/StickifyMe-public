@@ -39,7 +39,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
         onAvatarChange(response.avatarUrl);
         setIsOpen(false);
         toast.success("Аватар успешно загружен");
-      } catch (error) {
+      } catch {
         toast.error("Ошибка при загрузке аватара");
       }
     }

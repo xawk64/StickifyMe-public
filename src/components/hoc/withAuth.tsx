@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { useStore } from "../../store";
 import { PAGES } from "../../config/pages";
 
-export const WithAuth = (WrappedComponent: React.ComponentType) => {
-  const WithAuthComponent = (props: any) => {
+export const WithAuth = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
+  const WithAuthComponent = (props: P) => {
     const router = useRouter();
     const { authStore } = useStore();
 
@@ -15,7 +15,7 @@ export const WithAuth = (WrappedComponent: React.ComponentType) => {
     }, [authStore.state.profileId]);
 
     if (!authStore.state.profileId) {
-      return null; // или компонент загрузки
+      return null;
     }
 
     return <WrappedComponent {...props} />;

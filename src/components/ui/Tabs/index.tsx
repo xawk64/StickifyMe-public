@@ -28,7 +28,7 @@ const Tabs: React.FC<IComponentProps> = ({ items, setValue, value }) => {
         setSelected(key);
       }}
     >
-      {items.map((item, i) => (
+      {items.map((item) => (
         <Tab
           key={item.href}
           title={item.label}

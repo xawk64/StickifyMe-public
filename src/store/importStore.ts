@@ -1,6 +1,5 @@
 import { makeAutoObservable } from "mobx";
 import { Store } from ".";
-import { SigninResponseType } from "../api/models/SigninResponseType";
 import { RequestStatus } from "./enums";
 
 export interface ImportStoreState {

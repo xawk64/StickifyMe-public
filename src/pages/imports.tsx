@@ -14,7 +14,7 @@ import Tabs from "../components/ui/Tabs";
 import HistoryImports from "../components/HistoryImports/HistoryImports";
 import importAPI, { ImportProgress } from "../api/importAPI";
 import { getErrorMessage } from "../api";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { IOrder } from "../api/models/OrderType";
 import Layout from "../components/Layout/Layout";
 import { useStore } from "../store";
@@ -60,7 +60,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
     },
   } = useStore();
 
-  const [columns, setColumns] = useState([
+  const [columns] = useState([
     "№",
     "id заказа",
     "ШК низ",
@@ -160,8 +160,8 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
       setImportInProgress(false);
       toast.success("Заказы успешно импортированы из Wildberries!");
     } catch (error) {
-      console.error("Error importing from WB:", error);
-      toast.error("Произошла ошибка при импорте заказов");
+      setIsLoadingModalOpen(false);
+      toast.error(getErrorMessage(error, "Произошла ошибка при импорте заказов"));
     } finally {
       setImportInProgress(false);
     }

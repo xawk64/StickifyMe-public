@@ -1,3 +1,4 @@
+import type { StaticImageData } from "next/image";
 import React from "react";
 import Image from "next/image";
 import image1 from "../../../assets/1.png";
@@ -14,7 +15,7 @@ import ourAdvantagesBackground from "../../../assets/our_advantages_background.p
 import ourAdvantagesRightImage from "../../../assets/our_advantages_right.png";
 import styles from "./styles.module.scss";
 
-const images: { [key: number]: any } = {
+const images: Record<number, StaticImageData> = {
   1: image1,
   2: image2,
   3: image3,
