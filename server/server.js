@@ -3,7 +3,7 @@ const { createApp } = require("./server-app/app");
 const app = createApp();
 const mongodb = require("mongodb");
 const fs = require("fs");
-const { sendEmail, transporter } = require("./server-app/utils/sendEmail");
+const { sendEmail, verifyMailTransport } = require("./server-app/utils/sendEmail");
 
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
@@ -118,13 +118,7 @@ db.mongoose
     process.exit();
   });
 
-transporter.verify(function (error, success) {
-  if (error) {
-    console.error("SMTP connection error:", error);
-  } else {
-    console.log("SMTP server is ready to send messages");
-  }
-});
+verifyMailTransport();
 
 process.on("SIGTERM", () => gracefulShutdown(0));
 process.on("SIGINT", () => gracefulShutdown(0));
