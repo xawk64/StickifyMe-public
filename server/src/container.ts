@@ -5,6 +5,8 @@ import type { Logger } from "./logger";
 import { createRepositories, type Repositories } from "./repositories";
 import { AuthService, type MailSender } from "./services/auth.service";
 import { HistoryService } from "./services/history.service";
+import { ImportService } from "./services/import.service";
+import { defaultSleep } from "./integrations/wb/http";
 import type { WarehouseMonitor } from "./services/monitoring/warehouseMonitor";
 import { MonitoringSettingsService } from "./services/monitoringSettings.service";
 import { ProfileService } from "./services/profile.service";
@@ -18,6 +20,7 @@ export interface Services {
   support: SupportService;
   history: HistoryService;
   monitoringSettings: MonitoringSettingsService;
+  imports: ImportService;
 }
 
 export interface ServiceDeps {
@@ -56,6 +59,15 @@ export function createServices({
     telegramLink: new TelegramLinkService(repositories),
     support: new SupportService({ repositories, mailer }),
     history: new HistoryService({ repositories, mailer }),
+    imports: new ImportService({
+      repositories,
+      wbClient,
+      secretBox,
+      stickersBatchSize: config.wb.stickersBatchSize,
+      batchDelayMs: config.wb.batchDelayMs,
+      sleep: defaultSleep,
+      log: log.child({ module: "import" }),
+    }),
     monitoringSettings: new MonitoringSettingsService({
       repositories,
       monitor,

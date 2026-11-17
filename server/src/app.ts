@@ -9,6 +9,7 @@ import { requireAuth } from "./http/middlewares/auth";
 import { createErrorHandler, notFoundHandler } from "./http/middlewares/errorHandler";
 import { createAuthRouter } from "./http/routes/auth.routes";
 import { createHistoryRouter } from "./http/routes/history.routes";
+import { createImportsRouter } from "./http/routes/imports.routes";
 import { createLabelsRouter } from "./http/routes/labels.routes";
 import { createMonitoringRouter } from "./http/routes/monitoring.routes";
 import { createProfileRouter } from "./http/routes/profile.routes";
@@ -69,6 +70,7 @@ export function createApp({ config, services, log, authRateLimit }: AppDeps): Ex
   app.use(createProfileRouter(services.profile, auth));
   app.use(createHistoryRouter(services.history, auth));
   app.use(createLabelsRouter(auth));
+  app.use(createImportsRouter(services.imports, auth, log));
   app.use(createMonitoringRouter(services.monitoringSettings, auth));
   app.use(createSupportRouter(services.support, auth));
   app.use(createTelegramRouter(services.telegramLink, auth));
