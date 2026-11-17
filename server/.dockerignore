@@ -1,0 +1,12 @@
+node_modules
+coverage
+tests
+*.log
+.env
+.env.*
+uploads/avatars/*
+!uploads/avatars/default_avatar.jpg
+Dockerfile
+vitest.config.*
+eslint.config.*
+.prettier*
