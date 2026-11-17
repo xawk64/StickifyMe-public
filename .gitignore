@@ -1,5 +1,24 @@
-node_modules
-.next
-db
-.server/stickers.pdf
+# dependencies
+node_modules/
+
+# build output
+.next/
+out/
+dist/
+*.tsbuildinfo
+coverage/
+
+# env
 .env
+.env.*
+!.env.example
+
+# local data
+data/
+db/
+
+# logs
+*.log
+
+# generated stickers
+*.pdf

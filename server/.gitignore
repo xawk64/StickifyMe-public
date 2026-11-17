@@ -1,6 +1,5 @@
-/node_modules
-/test.js
-./stickers.pdf
-.env.local
+node_modules/
+dist/
+coverage/
 uploads/avatars/*
 !uploads/avatars/default_avatar.jpg
