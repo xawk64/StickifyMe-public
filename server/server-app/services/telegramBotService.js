@@ -1,7 +1,8 @@
 const TelegramBot = require("node-telegram-bot-api");
 const User = require("../models/user.model");
 const Profile = require("../models/profile.model");
-const { sendEmail } = require("../utils/sendEmail");
+const { notifyAdmin } = require("../utils/sendEmail");
+const templates = require("../emails/templates");
 const config = require("../config");
 
 class TelegramBotService {
@@ -47,14 +48,12 @@ class TelegramBotService {
       await this.updateProfile(user.profileId, chatId);
 
       // Добавить в метод handleStartCommand после строки 47
-      sendEmail(
-        config.adminEmail,
-        "Подключение Telegram бота",
-        `Пользователь подключил Telegram бота:<br/>
-         Email: ${user.email}<br/>
-         Username: ${user.username}<br/>
-         ChatId: ${chatId}<br/>
-         Дата: ${new Date().toLocaleString()}`,
+      notifyAdmin(
+        templates.adminTelegramConnected({
+          email: user.email,
+          username: user.username,
+          chatId,
+        }),
       );
 
       await this.sendMessage(

@@ -1,8 +1,8 @@
 const db = require("../models");
 const User = db.user;
 const Feedback = db.feedback;
-const { sendEmail } = require("../utils/sendEmail");
-const config = require("../config");
+const { notifyAdmin } = require("../utils/sendEmail");
+const templates = require("../emails/templates");
 
 exports.sendFeedback = async (req, res) => {
   try {
@@ -21,10 +21,12 @@ exports.sendFeedback = async (req, res) => {
     await feedback.save();
 
     // Отправляем уведомление администратору
-    await sendEmail(
-      config.adminEmail,
-      `Новое обращение: ${req.body.type}`,
-      `От пользователя: ${user.email}\nТип: ${req.body.type}\nСообщение: ${req.body.message}`,
+    await notifyAdmin(
+      templates.adminSupportRequest({
+        email: user.email,
+        type: req.body.type,
+        message: req.body.message,
+      }),
     );
 
     res.status(200).send({ message: "Сообщение успешно отправлено" });

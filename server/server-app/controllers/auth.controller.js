@@ -2,7 +2,8 @@ const { randomUUID } = require("crypto");
 const jwt = require("jsonwebtoken");
 const config = require("../config");
 const db = require("../models");
-const { sendEmail } = require("../utils/sendEmail");
+const { notifyAdmin, sendTemplate } = require("../utils/sendEmail");
+const templates = require("../emails/templates");
 const { hashPassword, verifyPassword } = require("../utils/password");
 const { hashToken } = require("../utils/tokens");
 const { NotFoundError, UnauthorizedError } = require("../errors");
@@ -60,19 +61,12 @@ exports.signup = async (req, res) => {
     return res.status(500).send({ message: "Не удалось зарегистрировать пользователя" });
   }
 
-  sendEmail(
-    config.adminEmail,
-    "Новая регистрация в StickifyMe",
-    `Зарегистрирован новый пользователь:<br/>
-     Email: ${req.body.email}<br/>
-     Username: ${req.body.username}<br/>
-     Дата: ${new Date().toLocaleString()}`,
+  notifyAdmin(
+    templates.adminNewSignup({ email: req.body.email, username: req.body.username }),
   );
-
-  sendEmail(
+  sendTemplate(
     req.body.email,
-    "Потверждение учетной записи",
-    `Добрый день, ${req.body.username}! <br />Вы зарегистрировались на сервисе StickifyMe. Для дальнейшей работы вам необходимо ввести ключ API WB. <br />Для этого перейдите по ссылке: ${config.appUrl}/settings`,
+    templates.welcome({ username: req.body.username, appUrl: config.appUrl }),
   );
 
   return res.status(200).send({
@@ -139,10 +133,12 @@ exports.resetPassword = async (req, res, next) => {
       await user.save();
 
       const profile = await Profile.findById(user.profileId);
-      await sendEmail(
+      await sendTemplate(
         user.email,
-        "Сброс пароля",
-        `Добрый день, ${profile?.fullName || user.username}! Для сброса пароля перейдите по ссылке:  ${config.appUrl}/reset-password?token=${resetToken}`,
+        templates.passwordReset({
+          name: profile?.fullName || user.username,
+          link: `${config.appUrl}/reset-password?token=${resetToken}`,
+        }),
       );
     }
     // Same answer whether or not the email exists: no account enumeration.
@@ -185,10 +181,12 @@ exports.resendVerification = async (req, res, next) => {
       return res.status(400).send({ message: "Email уже подтвержден" });
     }
 
-    await sendEmail(
+    await sendTemplate(
       user.email,
-      "Подтверждение учетной записи",
-      `Добрый день, ${user.username}! <br />Вы запросили повторное подтверждение почты на сервисе StickifyMe. Для подтверждения перейдите по ссылке: ${config.appUrl}/verify/?hash=${user.emailVerificationHash} <br />Если это делали не Вы, просьба закрыть данное сообщение.`,
+      templates.verificationReminder({
+        username: user.username,
+        link: `${config.appUrl}/verify/?hash=${user.emailVerificationHash}`,
+      }),
     );
 
     return res.status(200).send({

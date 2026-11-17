@@ -2,8 +2,8 @@ const db = require("../models");
 const User = db.user;
 const BarcodesHistory = db.barcodesHistory;
 const { v4: uuidv4 } = require("uuid");
-const { sendEmail } = require("../utils/sendEmail");
-const config = require("../config");
+const { notifyAdmin } = require("../utils/sendEmail");
+const templates = require("../emails/templates");
 
 exports.addBarcodes = async (req, res) => {
   try {
@@ -28,10 +28,11 @@ exports.addBarcodes = async (req, res) => {
       ordersCount: orders.length,
     });
 
-    await sendEmail(
-      config.adminEmail,
-      "История этикеток",
-      `Пользователь ${user.username} подготовил историю этикеток для ${orders.length} товаров`,
+    await notifyAdmin(
+      templates.adminLabelsHistory({
+        username: user.username,
+        ordersCount: orders.length,
+      }),
     );
 
     return res.status(200).json({ id });

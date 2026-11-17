@@ -1,6 +1,7 @@
 const config = require("./server-app/config");
 const { createApp } = require("./server-app/app");
-const { sendEmail, verifyMailTransport } = require("./server-app/utils/sendEmail");
+const { notifyAdmin, verifyMailTransport } = require("./server-app/utils/sendEmail");
+const templates = require("./server-app/emails/templates");
 const db = require("./server-app/models");
 const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
 
@@ -12,7 +13,7 @@ let isShuttingDown = false;
 
 async function notifyAdminAboutCrash(subject, details) {
   try {
-    await sendEmail(config.adminEmail, subject, details);
+    await notifyAdmin(templates.adminCrash({ title: subject, details }));
   } catch (emailError) {
     console.error("Failed to send error email:", emailError);
   }

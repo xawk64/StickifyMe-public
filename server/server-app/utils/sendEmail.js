@@ -47,4 +47,10 @@ const verifyMailTransport = async () => {
   }
 };
 
-module.exports = { sendEmail, verifyMailTransport };
+/** Sends a rendered template ({ subject, html }) to a recipient. */
+const sendTemplate = (email, { subject, html }) => sendEmail(email, subject, html);
+
+/** Sends a rendered template to ADMIN_EMAIL; a no-op when it is not configured. */
+const notifyAdmin = (template) => sendTemplate(config.adminEmail, template);
+
+module.exports = { sendEmail, sendTemplate, notifyAdmin, verifyMailTransport };
