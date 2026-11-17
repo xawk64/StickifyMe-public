@@ -13,4 +13,4 @@ COPY --chown=node:node . .
 RUN mkdir -p uploads/avatars && chown -R node:node uploads
 USER node
 EXPOSE 4000
-CMD ["node", "server.js"]
+CMD ["node", "src/index.js"]

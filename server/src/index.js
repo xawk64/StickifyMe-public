@@ -1,9 +1,9 @@
-const config = require("./server-app/config");
-const { createApp } = require("./server-app/app");
-const { notifyAdmin, verifyMailTransport } = require("./server-app/utils/sendEmail");
-const templates = require("./server-app/emails/templates");
-const db = require("./server-app/models");
-const WarehouseCheckerService = require("./server-app/services/warehousesMonitoringService");
+const config = require("./config");
+const { createApp } = require("./app");
+const { notifyAdmin, verifyMailTransport } = require("./utils/sendEmail");
+const templates = require("./emails/templates");
+const db = require("./models");
+const WarehouseCheckerService = require("./services/warehousesMonitoringService");
 
 const SHUTDOWN_TIMEOUT_MS = 10000;
 

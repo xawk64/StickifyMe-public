@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { clearTestDb, connectTestDb, disconnectTestDb, require } from "./helpers/app.mjs";
 
-const { TelegramBotService } = require("../../server-app/services/telegramBotService");
+const { TelegramBotService } = require("../../src/services/telegramBotService");
 
 function createFakeBot() {
   return { on: vi.fn(), sendMessage: vi.fn().mockResolvedValue(undefined) };

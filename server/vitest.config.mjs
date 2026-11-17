@@ -9,7 +9,7 @@ export default defineConfig({
     hookTimeout: 60000,
     coverage: {
       provider: "v8",
-      include: ["server-app/**"],
+      include: ["src/**"],
       reporter: ["text-summary", "html"],
     },
   },

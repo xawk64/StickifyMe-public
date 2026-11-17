@@ -7,7 +7,7 @@ describe("auth rate limiting", () => {
 
   beforeAll(async () => {
     await connectTestDb();
-    const { createApp } = require("../../server-app/app");
+    const { createApp } = require("../../src/app");
     app = createApp({ authRateLimit: { windowMs: 60_000, limit: 3 } });
   });
   afterAll(disconnectTestDb);

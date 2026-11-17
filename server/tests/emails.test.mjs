@@ -2,8 +2,8 @@ import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
 
 const require = createRequire(import.meta.url);
-const templates = require("../server-app/emails/templates");
-const { escapeHtml } = require("../server-app/utils/html");
+const templates = require("../src/emails/templates");
+const { escapeHtml } = require("../src/utils/html");
 
 const payload = `<img src=x onerror="alert('x')">`;
 

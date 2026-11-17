@@ -1,6 +1,7 @@
 // canvas2pdf looks up PDFDocument on the global object.
 const PDFDocument = require("pdfkit");
 global.PDFDocument = PDFDocument;
+const path = require("path");
 const { PassThrough } = require("stream");
 const canvas2pdf = require("canvas2pdf");
 const JsBarcode = require("jsbarcode");
@@ -20,7 +21,11 @@ const eacIcon = `<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscap
 </g>
 </svg>`;
 
-const fontURL = "server-app/assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf";
+// resolved from the file location, not from the process working directory
+const fontURL = path.join(
+  __dirname,
+  "../../assets/fonts/PT-Astra-Sans/PT-Astra-Sans_Regular.ttf",
+);
 
 const truncateText = (text, count = 60) => {
   return text.substring(0, count) + (text.length < count ? "" : "...");

@@ -4,8 +4,8 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 const { z } = require("zod");
-const { validate } = require("../server-app/middlewares/validate");
-const { ValidationError } = require("../server-app/errors");
+const { validate } = require("../src/middlewares/validate");
+const { ValidationError } = require("../src/errors");
 
 describe("validate middleware", () => {
   const schema = { body: z.object({ name: z.string().min(1) }) };
