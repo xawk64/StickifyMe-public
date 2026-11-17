@@ -1,4 +1,5 @@
 import type { WarehouseCoefficient, WarehouseSettingsItem } from "../../models";
+import { escapeHtml } from "../../utils/html";
 
 export type { WarehouseCoefficient };
 
@@ -75,22 +76,25 @@ export function diffCoefficients(
 }
 
 const formatCoefficient = (value: number) =>
-  value === 0 ? "`бесплатно`" : value === -1 ? "нет приёмки" : `x${value}`;
+  value === 0 ? "<b>бесплатно</b>" : value === -1 ? "нет приёмки" : `x${value}`;
 
-/** Telegram message listing the slots to notify about. */
-export function formatCoefficientsMessage(
+/**
+ * One HTML block per slot for a Telegram message (parse_mode HTML).
+ * Warehouse and box names come from WB and are escaped.
+ */
+export function formatCoefficientBlocks(
   items: readonly WarehouseCoefficient[],
   previous: Record<string, number>,
-): string {
-  return items.reduce((text, item) => {
+): string[] {
+  return items.map((item) => {
     const old = previous[keyOf(item)];
     const date = item.date.split("T")[0]?.split("-").reverse().join(".");
     return (
-      text +
-      `Склад: ${item.warehouseName}\n🗓: ${date}\nТип упаковки: ${item.boxTypeName}\n` +
+      `Склад: ${escapeHtml(item.warehouseName)}\n🗓: ${escapeHtml(date)}\n` +
+      `Тип упаковки: ${escapeHtml(item.boxTypeName)}\n` +
       `Коэффициент: ${formatCoefficient(item.coefficient)}` +
       (old !== undefined ? `\nПрошлый коэффициент: ${formatCoefficient(old)}` : "") +
-      "\n \n"
+      "\n\n"
     );
-  }, "");
+  });
 }

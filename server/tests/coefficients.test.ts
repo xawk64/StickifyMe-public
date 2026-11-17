@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import {
   diffCoefficients,
-  formatCoefficientsMessage,
+  formatCoefficientBlocks,
   type WarehouseCoefficient,
 } from "../src/services/monitoring/coefficients";
+import { TELEGRAM_MESSAGE_LIMIT, splitMessage } from "../src/telegram/message";
 
 const settings = [
   {
@@ -68,14 +69,35 @@ describe("diffCoefficients", () => {
   });
 });
 
-describe("formatCoefficientsMessage", () => {
+describe("formatCoefficientBlocks", () => {
   it("renders free acceptance and the previous coefficient", () => {
-    const text = formatCoefficientsMessage([slot({ coefficient: 0 })], {
+    const [text] = formatCoefficientBlocks([slot({ coefficient: 0 })], {
       "12024-10-05T00:00:00ZКороба": 2,
     });
     expect(text).toContain("Склад: Коледино");
     expect(text).toContain("🗓: 05.10.2024");
-    expect(text).toContain("Коэффициент: `бесплатно`");
+    expect(text).toContain("Коэффициент: <b>бесплатно</b>");
     expect(text).toContain("Прошлый коэффициент: x2");
+  });
+
+  it("escapes names coming from WB for Telegram HTML", () => {
+    const [text] = formatCoefficientBlocks([slot({ warehouseName: "Склад <A&B>" })], {});
+    expect(text).toContain("Склад &lt;A&amp;B&gt;");
+  });
+});
+
+describe("splitMessage", () => {
+  it("keeps every message within the Telegram limit without cutting a block", () => {
+    const blocks = Array.from({ length: 300 }, (_, i) =>
+      formatCoefficientBlocks([slot({ warehouseName: `Склад ${i}` })], {}).join(""),
+    );
+    const messages = splitMessage(blocks);
+    expect(messages.length).toBeGreaterThan(1);
+    expect(messages.every((m) => m.length <= TELEGRAM_MESSAGE_LIMIT)).toBe(true);
+    expect(messages.join("")).toBe(blocks.join(""));
+  });
+
+  it("cuts a single oversized block", () => {
+    expect(splitMessage(["x".repeat(5000)]).map((m) => m.length)).toEqual([4096, 904]);
   });
 });

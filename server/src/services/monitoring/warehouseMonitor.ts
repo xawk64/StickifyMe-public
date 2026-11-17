@@ -2,9 +2,10 @@ import type { Logger } from "../../logger";
 import type { WarehouseSettingsItem, WarehouseSnapshot } from "../../models";
 import type { Repositories } from "../../repositories";
 import type { SecretBox } from "../../utils/secretBox";
+import { splitMessage } from "../../telegram/message";
 import {
   diffCoefficients,
-  formatCoefficientsMessage,
+  formatCoefficientBlocks,
   type WarehouseCoefficient,
 } from "./coefficients";
 import { WbAuthError } from "../../integrations/wb/errors";
@@ -94,11 +95,9 @@ export class WarehouseChecker {
         incoming,
         this.settings.items,
       );
-      if (toNotify.length) {
-        await this.deps.notifier.sendMessage(
-          this.profile.chatId,
-          formatCoefficientsMessage(toNotify, previous),
-        );
+      // many matching slots do not fit into one Telegram message
+      for (const message of splitMessage(formatCoefficientBlocks(toNotify, previous))) {
+        await this.deps.notifier.sendMessage(this.profile.chatId, message);
       }
       if (nextSnapshot) {
         this.snapshot = nextSnapshot;

@@ -98,7 +98,7 @@ export class TelegramBot {
       this.deps.log.info({ chatId, text }, "telegram dry-run: message not sent");
       return;
     }
-    await this.deps.client.sendMessage(chatId, text, { parse_mode: "Markdown" });
+    await this.deps.client.sendMessage(chatId, text, { parse_mode: "HTML" });
   }
 }
 
