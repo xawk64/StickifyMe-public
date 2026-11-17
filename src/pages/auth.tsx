@@ -112,13 +112,6 @@ const Auth: React.FC = observer(() => {
         localStorage.setItem("accessToken", signInData.accessToken);
         setAuthState(signInData);
         toast.success(signUpData.message);
-
-        (window as any)._tmr.push({
-          type: "reachGoal",
-          id: 3576395,
-          value: 20,
-          goal: "UserSignup",
-        });
       } catch (e) {
         toast.error(
           "Ошибка регистрации: " + (e as IServerMessageResponse).message
