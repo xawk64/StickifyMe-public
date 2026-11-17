@@ -11,9 +11,6 @@ export default {
     const formData = new FormData();
     formData.append("avatar", file);
 
-    return post(ApiUrlEnum.uploadAvatar, {
-      headers: null,
-      body: formData,
-    });
+    return post<UploadAvatarResponse>(ApiUrlEnum.uploadAvatar, formData);
   },
 };

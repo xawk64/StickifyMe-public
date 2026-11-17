@@ -8,6 +8,7 @@ export interface SigninResponseType {
   fullName: string;
   emailVerification: boolean;
   avatarUrl?: string;
-  wbApiKey?: string;
+  /** The WB key itself never leaves the server. */
+  hasWbApiKey: boolean;
   chatId?: string;
 }

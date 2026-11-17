@@ -6,9 +6,6 @@ export enum ApiUrlEnum {
   generateBarcode = "/api/barcodes/generate",
   getBarcodesHistory = "/api/barcodes/history",
   addBarcodesHistory = "/api/barcodes-history/add",
-  wbGetProduct = "https://content-api.wildberries.ru/content/v2/get/cards/list?locale=ru",
-  wbGetOrders = "https://marketplace-api.wildberries.ru/api/v3/orders?limit=1000&next=0&dateFrom=1726837284&dateTo=",
-  wbGetOrdersStatuses = "https://marketplace-api.wildberries.ru/api/v3/orders/status",
   setWarehousesSettings = "/api/warehouses/settings",
   getWarehousesSettings = "/api/warehouses/settings/get",
   uploadAvatar = "/api/upload-avatar",
@@ -17,4 +14,7 @@ export enum ApiUrlEnum {
   updateProfile = "/api/profile/",
   authResendVerification = "/api/auth/resend-verification",
   telegramLinkToken = "/api/telegram/link-token",
+  setWbApiKey = "/api/profile/wb-api-key",
+  importFromWb = "/api/imports/wb",
+  importFromExcel = "/api/imports/excel",
 }

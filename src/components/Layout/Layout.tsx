@@ -39,7 +39,7 @@ const Layout: React.FC<LayoutProps> = observer(
     const {
       authStore: {
         status,
-        state: { fullName, id: userId, avatarUrl, wbApiKey, emailVerification },
+        state: { fullName, id: userId, avatarUrl, hasWbApiKey, emailVerification },
       },
     } = useStore();
 
@@ -56,7 +56,7 @@ const Layout: React.FC<LayoutProps> = observer(
       if (
         status === RequestStatus.success &&
         userId &&
-        (!wbApiKey || !emailVerification) &&
+        (!hasWbApiKey || !emailVerification) &&
         PROTECTED_PAGES_WB.includes(router.pathname)
       ) {
         router.push("/settings");
@@ -64,7 +64,7 @@ const Layout: React.FC<LayoutProps> = observer(
     }, [userId, status, router.pathname]);
 
     menuItems = userId
-      ? !wbApiKey || !emailVerification
+      ? !hasWbApiKey || !emailVerification
         ? menuItems || [
             { label: "Настройки", href: "/settings" },
             { label: "Поддержка", href: "/support" },

@@ -28,7 +28,7 @@ const VerifyEmail: React.FC = observer(() => {
           setAuthState({ ...state, emailVerification });
           toast.success(
             `Вы успешно подтвердили email. ${
-              !state.wbApiKey
+              !state.hasWbApiKey
                 ? "Не забудьте добавить ключ WB для полного доступа к сервису!"
                 : "Теперь вы можете использовать все возможности сервиса!"
             }`

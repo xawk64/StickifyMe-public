@@ -39,7 +39,7 @@ const Auth: React.FC = observer(() => {
 
   useEffect(() => {
     if (state.accessToken) {
-      if (state.wbApiKey) {
+      if (state.hasWbApiKey) {
         router.push("/imports");
       } else {
         router.push("/settings");

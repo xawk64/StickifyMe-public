@@ -225,17 +225,14 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = observer(
           (warehouse) => warehouse.selected
         );
 
-        // Проверяем все обязательные поля
-        const hasInvalidFields = selectedWarehouses.some(
-          (warehouse) =>
-            !warehouse.dateStart ||
-            !warehouse.dateEnd ||
-            !warehouse.boxTypes?.length ||
-            warehouse.coeff === undefined ||
-            warehouse.coeff === null
+        // Every selected warehouse needs dates, box types and a coefficient
+        const items = selectedWarehouses.flatMap(({ ID, dateStart, dateEnd, coeff, boxTypes }) =>
+          dateStart && dateEnd && boxTypes?.length && coeff !== undefined && coeff !== null
+            ? [{ ID, dateStart, dateEnd, coeff, boxTypes }]
+            : []
         );
 
-        if (hasInvalidFields) {
+        if (items.length !== selectedWarehouses.length) {
           toast.error(
             "Необходимо заполнить все поля (даты, тип коробки и коэффициент) для выбранных складов"
           );
@@ -243,16 +240,7 @@ const WarehousesMonitoring: React.FC<IWarehousesMonitoring> = observer(
         }
 
         await warehousesAPI.setWarehousesSettings({
-          settings: {
-            items: selectedWarehouses.map((warehouse) => ({
-              ID: warehouse.ID,
-              dateStart: warehouse.dateStart,
-              dateEnd: warehouse.dateEnd,
-              coeff: warehouse.coeff,
-              boxTypes: warehouse.boxTypes,
-            })),
-            enabled,
-          },
+          settings: { items, enabled },
         });
         toast.success("Настройки успешно сохранены");
         setIsToSave(false);

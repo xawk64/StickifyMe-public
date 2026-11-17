@@ -13,7 +13,8 @@ import RadioGroup from "../components/ui/RadioGroup";
 import Checkbox from "../components/ui/Checkbox";
 import Tabs from "../components/ui/Tabs";
 import HistoryImports from "../components/HistoryImports/HistoryImports";
-import wbAPI from "../api/wbAPI";
+import importAPI, { ExcelOrder, ImportProgress } from "../api/importAPI";
+import { getErrorMessage } from "../api";
 import { format, set } from "date-fns";
 import { IOrder } from "../api/models/OrderType";
 import Layout from "../components/Layout/Layout";
@@ -56,7 +57,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
 
   const {
     authStore: {
-      state: { wbApiKey: token },
+      state: { hasWbApiKey },
     },
   } = useStore();
 
@@ -101,65 +102,50 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [importInProgress, setImportInProgress] = useState(false);
 
+  const onImportProgress = ({ done, total, remainingMs }: ImportProgress) => {
+    setLoadingProgress(total ? (done / total) * 100 : 0);
+    setRemainingTime(Math.round(remainingMs / 1000));
+  };
+
   const readExcel = async (file: File) => {
     const fileReader = new FileReader();
 
     setImportType(ImportBarcodeMode.excel);
     fileReader.readAsArrayBuffer(file);
 
-    fileReader.onload = async (e: any) => {
-      if (!token) {
+    fileReader.onload = async (e: ProgressEvent<FileReader>) => {
+      if (!hasWbApiKey) {
         toast.error("Не найден ключ API для Wildberries");
         return;
       }
-      const bufferArray = e?.target.result;
+      const bufferArray = e.target?.result;
       const wb = XLSX.read(bufferArray, { type: "buffer" });
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
 
       const data: { [key: string]: string }[] = XLSX.utils.sheet_to_json(ws);
 
-      let orders = data.map((item) => {
-        const order: IOrder = {
+      // The export only identifies orders; stickers and product cards come from WB via the API.
+      const excelOrders: ExcelOrder[] = data
+        .map((item) => ({
           id: parseInt(item["№ задания"]),
           nmId: parseInt(item["Артикул Wildberries"]),
           createdAtMarket: item["Дата создания"],
-          deliveryType: "",
-          stickersCount: 1,
-          barcodeFile: "",
-          bcUp: "ШК верх",
-          bcDown: "ШК низ",
-          barcode: "Баркод заказа",
-          product: {
-            title: item["Наименование"],
-            barcode: item["Стикер"],
-            vendorCode: item["Артикул продавца"],
-            id: 0,
-            subjectName: "Категория",
-            brand: "Производитель",
-            description: "",
-            createdAtMarket: "",
-            updatedAtMarket: "",
-            characteristics: {
-              Цвет: [item["Цвет"]],
-              Размер: [item["Размер"] === "0" ? "" : item["Размер"]],
-              "Страна производства": [item["Страна"]],
-            },
-          },
-        };
-        return order;
-      });
+        }))
+        .filter((order) => Number.isInteger(order.id) && Number.isInteger(order.nmId));
 
       setImportInProgress(true);
       setIsLoadingModalOpen(true);
 
-      orders = await wbAPI.loadProductsInfo(
-        orders,
-        true,
-        token,
-        setLoadingProgress,
-        setRemainingTime
-      );
+      let orders: IOrder[];
+      try {
+        orders = await importAPI.importFromExcel(excelOrders, onImportProgress);
+      } catch (error) {
+        setImportInProgress(false);
+        setIsLoadingModalOpen(false);
+        toast.error(getErrorMessage(error, "Не удалось загрузить данные из Wildberries"));
+        return;
+      }
 
       if (orders.length === 0) {
         setImportInProgress(false);
@@ -205,7 +191,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
 
   const onImportFromWBClick = async () => {
     try {
-      if (!token) {
+      if (!hasWbApiKey) {
         toast.error("Не найден ключ API для Wildberries");
         return;
       }
@@ -213,12 +199,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
       setImportInProgress(true);
       setIsLoadingModalOpen(true);
 
-      let orders = await wbAPI.loadOrders(
-        token,
-        setLoadingProgress,
-        setRemainingTime,
-        daysCountForOrders
-      );
+      let orders = await importAPI.importFromWb(daysCountForOrders, onImportProgress);
 
       if (!orders || orders.length === 0) {
         toast.error("Не найдено ни одного заказа со статусом 'В сборке'");
@@ -351,7 +332,7 @@ const Imports: FC<IComponentProps> = observer(({ tabHref, viewHistoryId }) => {
         true
       );
 
-      if (printDocument.current) printDocument.current(blob);
+      if (blob && printDocument.current) printDocument.current(blob);
     } catch (error) {
       console.error("Error printing barcodes:", error);
       toast.error("Произошла ошибка при печати этикеток");

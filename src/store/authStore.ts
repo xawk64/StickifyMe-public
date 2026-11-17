@@ -13,7 +13,7 @@ export class AuthStore {
     fullName: "",
     accessToken: "",
     emailVerification: false,
-    wbApiKey: "",
+    hasWbApiKey: false,
     chatId: "",
   };
   status: RequestStatus = RequestStatus.idle;
@@ -41,7 +41,7 @@ export class AuthStore {
       fullName: "",
       accessToken: "",
       emailVerification: false,
-      wbApiKey: "",
+      hasWbApiKey: false,
       chatId: "",
     };
   };

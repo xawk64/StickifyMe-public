@@ -1,8 +1,13 @@
-import { post } from ".";
+import { post, put } from ".";
 import { ApiUrlEnum } from "../utils/enums";
+import { IServerMessageResponse } from "./models/ServerMessageResponseType";
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
-  updateProfile: (params: { fullName: string; wbApiKey: string }) =>
-    post(ApiUrlEnum.updateProfile, params),
+const profileAPI = {
+  updateProfile: (params: { fullName: string }) =>
+    post<IServerMessageResponse>(ApiUrlEnum.updateProfile, params),
+  /** The API checks the key against WB and stores it encrypted. */
+  setWbApiKey: (apiKey: string) =>
+    put<{ hasWbApiKey: boolean }>(ApiUrlEnum.setWbApiKey, { apiKey }),
 };
+
+export default profileAPI;
