@@ -2,8 +2,8 @@ const db = require("../models");
 const WarehouseCheckerService = require("../services/warehousesMonitoringService");
 const { notifyAdmin } = require("../utils/sendEmail");
 const templates = require("../emails/templates");
+const { NotFoundError } = require("../errors");
 const User = db.user;
-const Profile = db.profile;
 const WarehouseSettings = db.warehouseSettings;
 const Warehouses = db.warehouse;
 
@@ -55,25 +55,15 @@ exports.setSettings = async (req, res) => {
   }
 };
 
-exports.getSettings = (req, res) => {
-  User.findById(req.userId, (err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
+exports.getSettings = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      throw new NotFoundError("Пользователь не найден");
     }
-
-    Profile.findById(user.profileId, (err, _userProfile) => {
-      if (err) {
-        res.status(500).send({ message: err });
-      }
-
-      WarehouseSettings.find({ userProfileId: user.profileId }, (err, settings) => {
-        if (err) {
-          res.status(500).send({ message: err });
-        }
-
-        settings = settings[0];
-        res.status(200).json(settings);
-      });
-    });
-  });
+    const settings = await WarehouseSettings.findOne({ userProfileId: user.profileId });
+    return res.status(200).json(settings);
+  } catch (err) {
+    return next(err);
+  }
 };
