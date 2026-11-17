@@ -1,0 +1,10 @@
+{
+  "name": "stickifyme-wb-mock",
+  "private": true,
+  "type": "module",
+  "description": "Mock of the Wildberries seller API for local runs and demos",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "start": "node src/server.ts"
+  }
+}
