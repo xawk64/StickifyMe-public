@@ -9,7 +9,12 @@ function createApp() {
 
   app.use(cors({ origin: config.corsOrigins, credentials: true }));
 
-  app.use("/uploads", express.static(config.uploadsDir));
+  app.use(
+    "/uploads",
+    express.static(config.uploadsDir, {
+      setHeaders: (res) => res.set("X-Content-Type-Options", "nosniff"),
+    }),
+  );
 
   app.use(
     fileUpload({

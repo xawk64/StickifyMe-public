@@ -2,7 +2,9 @@ const db = require("../models");
 const Profile = db.profile;
 const User = db.user;
 const path = require("path");
+const { randomUUID } = require("crypto");
 const config = require("../config");
+const { detectImageExtension } = require("../utils/imageType");
 
 exports.setProfile = async (req, res) => {
   User.findById(req.userId, async (err, user) => {
@@ -34,46 +36,37 @@ exports.setProfile = async (req, res) => {
   });
 };
 
+const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
+
 exports.uploadAvatar = async (req, res) => {
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send("No files were uploaded.");
+  const avatarFile = req.files?.avatar;
+  if (!avatarFile || Array.isArray(avatarFile)) {
+    return res.status(400).send({ message: "Файл не загружен" });
+  }
+  if (avatarFile.size > AVATAR_MAX_BYTES) {
+    return res.status(413).send({ message: "Файл слишком большой (максимум 2 МБ)" });
+  }
+  const extension = detectImageExtension(avatarFile.data);
+  if (!extension) {
+    return res
+      .status(400)
+      .send({ message: "Допустимы только изображения PNG, JPEG или WebP" });
   }
 
-  const avatarFile = req.files.avatar;
-  const userId = req.userId; // Предполагается, что у вас есть middleware для аутентификации
+  // The file name is generated on the server: the client name is never used in the path.
+  const fileName = `${req.userId}-${randomUUID()}.${extension}`;
+  const avatarUrl = `/uploads/avatars/${fileName}`;
 
-  const uploadPath = path.join(
-    __dirname,
-    config.uploadsDir,
-    "avatars",
-    `${userId}_${avatarFile.name}`,
-  );
-
-  avatarFile.mv(uploadPath, function (err) {
-    if (err) {
-      return res.status(500).send(err);
+  try {
+    await avatarFile.mv(path.join(config.uploadsDir, "avatars", fileName));
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).send({ message: "Пользователь не найден" });
     }
-
-    const avatarUrl = `/uploads/avatars/${userId}_${avatarFile.name}`;
-
-    User.findById(req.userId, (err, user) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
-
-      Profile.updateOne(
-        { _id: user.profileId },
-        { avatarUrl },
-        { upsert: false },
-        (err) => {
-          if (err) {
-            res.status(500).send({ message: err });
-          }
-        },
-      );
-    });
-
-    res.send({ avatarUrl });
-  });
+    await Profile.updateOne({ _id: user.profileId }, { avatarUrl });
+    return res.send({ avatarUrl });
+  } catch (err) {
+    console.error("Avatar upload failed:", err);
+    return res.status(500).send({ message: "Не удалось сохранить аватар" });
+  }
 };
