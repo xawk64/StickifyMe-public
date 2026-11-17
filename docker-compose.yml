@@ -1,5 +1,23 @@
-# Local environment: `cp .env.example .env && docker compose up --build`
+# Local stack: `docker compose up --build`, then open http://localhost:3000 (demo / demo12345).
+# Works without a .env file; see .env.example for every setting.
 name: stickifyme
+
+x-api-environment: &api-environment
+  MONGO_URI: mongodb://mongo:27017/stickifyme
+  JWT_SECRET: ${JWT_SECRET:-local-dev-jwt-secret-change-me}
+  # Demo-only key: set your own WB_KEY_ENCRYPTION_KEY outside local runs.
+  WB_KEY_ENCRYPTION_KEY: ${WB_KEY_ENCRYPTION_KEY:-ZGVtby1vbmx5LWtleS1kby1ub3QtdXNlLWluLXByb2Q=}
+  CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:${WEB_PORT:-3000}}
+  APP_URL: ${APP_URL:-http://localhost:${WEB_PORT:-3000}}
+  # The real Wildberries API is replaced by the local mock unless overridden.
+  WB_MARKETPLACE_API_URL: ${WB_MARKETPLACE_API_URL:-http://wb-mock:4010}
+  WB_CONTENT_API_URL: ${WB_CONTENT_API_URL:-http://wb-mock:4010}
+  WB_SUPPLIES_API_URL: ${WB_SUPPLIES_API_URL:-http://wb-mock:4010}
+  WB_TIMEOUT_MS: ${WB_TIMEOUT_MS:-5000}
+  WB_RETRY_BASE_DELAY_MS: ${WB_RETRY_BASE_DELAY_MS:-300}
+  WB_RETRY_MAX_DELAY_MS: ${WB_RETRY_MAX_DELAY_MS:-10000}
+  WB_BATCH_DELAY_MS: ${WB_BATCH_DELAY_MS:-2000}
+  MONITORING_INTERVAL_MS: ${MONITORING_INTERVAL_MS:-30000}
 
 services:
   mongo:
@@ -15,6 +33,31 @@ services:
       retries: 10
       start_period: 20s
 
+  wb-mock:
+    build:
+      context: ./wb-mock
+    restart: unless-stopped
+    environment:
+      # Share of WB requests that fail, to show retries with backoff in the logs.
+      WB_MOCK_FAILURE_RATE: ${WB_MOCK_FAILURE_RATE:-0.15}
+      WB_MOCK_FAILURE_MODES: ${WB_MOCK_FAILURE_MODES:-429,500,503}
+      WB_MOCK_TIMEOUT_MS: ${WB_MOCK_TIMEOUT_MS:-8000}
+    ports:
+      - "${WB_MOCK_PORT:-4010}:4010"
+
+  seed:
+    build:
+      context: ./server
+    command: ["node", "dist/scripts/seed.js"]
+    restart: "no"
+    env_file:
+      - path: .env
+        required: false
+    environment: *api-environment
+    depends_on:
+      mongo:
+        condition: service_healthy
+
   api:
     build:
       context: ./server
@@ -22,11 +65,7 @@ services:
     env_file:
       - path: .env
         required: false
-    environment:
-      MONGO_URI: mongodb://mongo:27017/stickifyme
-      JWT_SECRET: ${JWT_SECRET:-local-dev-jwt-secret-change-me}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:${WEB_PORT:-3000}}
-      APP_URL: ${APP_URL:-http://localhost:${WEB_PORT:-3000}}
+    environment: *api-environment
     ports:
       - "${API_PORT:-4000}:4000"
     volumes:
@@ -34,6 +73,10 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
+      wb-mock:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4000/"]
       interval: 10s
