@@ -1,5 +1,11 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { clearTestDb, connectTestDb, db, disconnectTestDb } from "./helpers/app";
+import {
+  clearTestDb,
+  connectTestDb,
+  db,
+  disconnectTestDb,
+  testSecretBox,
+} from "./helpers/app";
 
 import {
   WarehouseMonitor,
@@ -22,6 +28,7 @@ function createMonitor(overrides: Partial<WarehouseMonitorDeps> = {}) {
     fetchCoefficients: vi.fn().mockResolvedValue([]),
     notifier: { sendMessage: vi.fn().mockResolvedValue(undefined) },
     intervalMs: 60_000,
+    secretBox: testSecretBox,
     log: logger,
     ...overrides,
   });
@@ -58,7 +65,11 @@ describe("WarehouseMonitor lifecycle", () => {
 
   it("starts a checker when enabled and stops it when disabled", async () => {
     monitor = createMonitor();
-    const profile = await db.profile.create({ fullName: "x", chatId: 1 });
+    const profile = await db.profile.create({
+      fullName: "x",
+      chatId: 1,
+      wbApiKeyEncrypted: testSecretBox.encrypt("key"),
+    });
     const profileId = String(profile._id);
     await db.warehouseSettings.create({
       userProfileId: profileId,
@@ -89,7 +100,7 @@ describe("WarehouseMonitor lifecycle", () => {
     const profile = await db.profile.create({
       fullName: "x",
       chatId: 42,
-      wbApiKey: "key",
+      wbApiKeyEncrypted: testSecretBox.encrypt("key"),
     });
     const profileId = String(profile._id);
     await db.warehouseSettings.create({

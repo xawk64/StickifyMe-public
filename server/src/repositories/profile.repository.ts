@@ -3,7 +3,9 @@ import { ProfileModel, type Profile } from "../models";
 
 export type ProfileDocument = HydratedDocument<Profile>;
 
-export type ProfileUpdate = Partial<Pick<Profile, "fullName" | "wbApiKey" | "avatarUrl">>;
+export type ProfileUpdate = Partial<
+  Pick<Profile, "fullName" | "wbApiKeyEncrypted" | "avatarUrl">
+>;
 
 export class ProfileRepository {
   findById(id: string): Promise<ProfileDocument | null> {

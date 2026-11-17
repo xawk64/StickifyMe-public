@@ -22,7 +22,10 @@ describe("profile access control", () => {
 
   it("does not expose another user's profile or WB API key", async () => {
     const victim = await registerUser(app);
-    await db.profile.updateOne({ _id: victim.profileId }, { wbApiKey: "victim-wb-key" });
+    await db.profile.updateOne(
+      { _id: victim.profileId },
+      { wbApiKeyEncrypted: "victim-wb-key" },
+    );
     const attacker = await registerUser(app);
 
     const byId = await request(app)

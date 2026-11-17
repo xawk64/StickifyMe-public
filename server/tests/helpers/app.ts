@@ -6,7 +6,9 @@ import { createApp, type AppDeps } from "../../src/app";
 import { config } from "../../src/config";
 import { createServices } from "../../src/container";
 import { logger } from "../../src/logger";
+import type { WbClient } from "../../src/integrations/wb/wbClient";
 import { createMailer } from "../../src/mail/mailer";
+import { SecretBox } from "../../src/utils/secretBox";
 
 export { db } from "../../src/models";
 
@@ -34,12 +36,22 @@ export async function disconnectTestDb(): Promise<void> {
  * Builds the app the same way the composition root does, with a dry-run mailer
  * and a monitor stub (no polling in tests).
  */
-export function createTestApp(overrides: Partial<AppDeps> = {}): Express {
+export const testSecretBox = new SecretBox(config.wb.keyEncryptionKey);
+
+/** WB client stub: every key is valid unless a test overrides it. */
+export const fakeWbClient = () => ({ ping: async () => {} }) as unknown as WbClient;
+
+export function createTestApp(
+  overrides: Partial<AppDeps> & { wbClient?: WbClient } = {},
+): Express {
+  const { wbClient = fakeWbClient(), ...appOverrides } = overrides;
   const services = createServices({
     config,
     mailer: createMailer(config, logger),
     monitor: { isInitialized: true, changeSettings: async () => {} },
     log: logger,
+    wbClient,
+    secretBox: testSecretBox,
   });
-  return createApp({ config, services, log: logger, ...overrides });
+  return createApp({ config, services, log: logger, ...appOverrides });
 }

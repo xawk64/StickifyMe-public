@@ -10,6 +10,11 @@ export function createProfileController(profiles: ProfileService) {
       res.status(200).send({ message: "was success!" });
     }),
 
+    setWbApiKey: asyncHandler(async (req, res) => {
+      await profiles.setWbApiKey(currentUserId(req), req.body.apiKey);
+      res.status(200).send({ hasWbApiKey: true });
+    }),
+
     uploadAvatar: asyncHandler(async (req, res) => {
       const file = req.files?.avatar;
       if (!file || Array.isArray(file)) {

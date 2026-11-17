@@ -11,6 +11,8 @@ import { logger } from "./logger";
 import { createMailer } from "./mail/mailer";
 import * as templates from "./mail/templates";
 import { createRepositories } from "./repositories";
+import { WbClient } from "./integrations/wb/wbClient";
+import { SecretBox } from "./utils/secretBox";
 import { WarehouseMonitor } from "./services/monitoring/warehouseMonitor";
 import { fetchCoefficients } from "./services/monitoring/wbCoefficients";
 import { TelegramLinkService } from "./services/telegramLink.service";
@@ -19,6 +21,8 @@ import { TelegramBot, createBotClient } from "./telegram/telegramBot";
 const SHUTDOWN_TIMEOUT_MS = 10_000;
 
 const repositories = createRepositories();
+const secretBox = new SecretBox(config.wb.keyEncryptionKey);
+const wbClient = new WbClient({ ...config.wb, log: logger.child({ module: "wb" }) });
 const mailer = createMailer(config, logger.child({ module: "mail" }));
 const botClient = createBotClient(config.telegramBotToken);
 const bot = new TelegramBot({
@@ -32,9 +36,18 @@ const monitor = new WarehouseMonitor({
   fetchCoefficients,
   notifier: bot,
   intervalMs: config.monitoringIntervalMs,
+  secretBox,
   log: logger.child({ module: "monitoring" }),
 });
-const services = createServices({ config, mailer, monitor, log: logger, repositories });
+const services = createServices({
+  config,
+  mailer,
+  monitor,
+  log: logger,
+  wbClient,
+  secretBox,
+  repositories,
+});
 const app = createApp({ config, services, log: logger });
 
 let httpServer: Server | null = null;

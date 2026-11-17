@@ -17,6 +17,12 @@ export function createProfileRouter(
     validate({ body: schemas.updateProfile }),
     c.update,
   );
+  router.put(
+    "/api/profile/wb-api-key",
+    requireAuth,
+    validate({ body: schemas.setWbApiKey }),
+    c.setWbApiKey,
+  );
   router.post("/api/upload-avatar", requireAuth, c.uploadAvatar);
 
   return router;

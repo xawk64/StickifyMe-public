@@ -1,6 +1,7 @@
 import type { Logger } from "../../logger";
 import type { WarehouseSettingsItem, WarehouseSnapshot } from "../../models";
 import type { Repositories } from "../../repositories";
+import type { SecretBox } from "../../utils/secretBox";
 import {
   diffCoefficients,
   formatCoefficientsMessage,
@@ -22,6 +23,7 @@ export interface WarehouseMonitorDeps {
   fetchCoefficients: FetchCoefficients;
   notifier: Notifier;
   intervalMs: number;
+  secretBox: SecretBox;
   log: Logger;
 }
 
@@ -143,14 +145,24 @@ export class WarehouseMonitor {
       monitoring.getSnapshot(profileId),
     ]);
     // Nothing to monitor: no profile, no settings, monitoring off or no chat linked
-    if (!profile || !settings || !settings.enabled || !profile.chatId) {
+    if (
+      !profile ||
+      !settings ||
+      !settings.enabled ||
+      !profile.chatId ||
+      !profile.wbApiKeyEncrypted
+    ) {
       return;
     }
     // Never keep two interval loops for the same profile
     this.removeChecker(profileId);
 
     const checker = new WarehouseChecker(
-      { id: profileId, chatId: profile.chatId, wbApiKey: profile.wbApiKey ?? "" },
+      {
+        id: profileId,
+        chatId: profile.chatId,
+        wbApiKey: this.deps.secretBox.decrypt(profile.wbApiKeyEncrypted),
+      },
       { enabled: settings.enabled, items: settings.items },
       snapshot?.items ?? [],
       this.deps,

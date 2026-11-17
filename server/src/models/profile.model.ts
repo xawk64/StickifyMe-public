@@ -4,7 +4,8 @@ export interface Profile {
   fullName?: string;
   avatarUrl?: string;
   chatId?: number | null;
-  wbApiKey?: string;
+  /** Seller's WB API key encrypted with SecretBox (AES-256-GCM); never sent to clients. */
+  wbApiKeyEncrypted?: string;
   // one-time token for the Telegram deep link, stored as a SHA-256 hash
   telegramLinkTokenHash?: string;
   telegramLinkTokenExpires?: Date;
@@ -17,7 +18,7 @@ const profileSchema = new Schema<Profile>(
     fullName: String,
     avatarUrl: String,
     chatId: Number,
-    wbApiKey: String,
+    wbApiKeyEncrypted: String,
     telegramLinkTokenHash: { type: String, index: true },
     telegramLinkTokenExpires: Date,
   },

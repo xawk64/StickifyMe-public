@@ -1,6 +1,9 @@
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { AppError, NotFoundError } from "../errors";
+import { WbAuthError } from "../integrations/wb/errors";
+import type { WbClient } from "../integrations/wb/wbClient";
+import type { SecretBox } from "../utils/secretBox";
 import type { ProfileUpdate, Repositories } from "../repositories";
 import { detectImageExtension } from "../utils/imageType";
 
@@ -16,6 +19,8 @@ export interface UploadedFile {
 export interface ProfileServiceDeps {
   repositories: Pick<Repositories, "users" | "profiles">;
   uploadsDir: string;
+  wbClient: Pick<WbClient, "ping">;
+  secretBox: SecretBox;
 }
 
 export class ProfileService {
@@ -30,8 +35,27 @@ export class ProfileService {
   }
 
   /** `fields` is already reduced to user-editable fields by the request schema. */
-  async update(userId: string, fields: Pick<ProfileUpdate, "fullName" | "wbApiKey">) {
+  async update(userId: string, fields: Pick<ProfileUpdate, "fullName">) {
     await this.deps.repositories.profiles.update(await this.profileIdOf(userId), fields);
+  }
+
+  /**
+   * Checks the key against WB (the browser no longer talks to WB) and stores it
+   * encrypted. The plain key is never persisted or returned.
+   */
+  async setWbApiKey(userId: string, apiKey: string): Promise<void> {
+    const profileId = await this.profileIdOf(userId);
+    try {
+      await this.deps.wbClient.ping(apiKey);
+    } catch (err) {
+      if (err instanceof WbAuthError) {
+        throw new AppError(400, "Ключ API Wildberries недействителен");
+      }
+      throw err;
+    }
+    await this.deps.repositories.profiles.update(profileId, {
+      wbApiKeyEncrypted: this.deps.secretBox.encrypt(apiKey),
+    });
   }
 
   /** Stores an avatar under a server-generated name and returns its public URL. */

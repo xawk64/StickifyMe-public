@@ -10,7 +10,8 @@ export const toUserResponse = ({ user, profile }: UserWithProfile) => ({
   profileId: user.profileId,
   fullName: profile?.fullName,
   avatarUrl: profile?.avatarUrl,
-  wbApiKey: profile?.wbApiKey,
+  // the key itself never leaves the server
+  hasWbApiKey: Boolean(profile?.wbApiKeyEncrypted),
   chatId: profile?.chatId,
   emailVerification: user.emailVerification,
 });

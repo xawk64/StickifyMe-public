@@ -1,4 +1,6 @@
 import type { Config } from "./config";
+import type { WbClient } from "./integrations/wb/wbClient";
+import type { SecretBox } from "./utils/secretBox";
 import type { Logger } from "./logger";
 import { createRepositories, type Repositories } from "./repositories";
 import { AuthService, type MailSender } from "./services/auth.service";
@@ -23,6 +25,8 @@ export interface ServiceDeps {
   mailer: MailSender;
   monitor: Pick<WarehouseMonitor, "isInitialized" | "changeSettings">;
   log: Logger;
+  wbClient: WbClient;
+  secretBox: SecretBox;
   repositories?: Repositories;
 }
 
@@ -32,6 +36,8 @@ export function createServices({
   mailer,
   monitor,
   log,
+  wbClient,
+  secretBox,
   repositories = createRepositories(),
 }: ServiceDeps): Services {
   return {
@@ -41,7 +47,12 @@ export function createServices({
       jwtSecret: config.jwtSecret,
       appUrl: config.appUrl,
     }),
-    profile: new ProfileService({ repositories, uploadsDir: config.uploadsDir }),
+    profile: new ProfileService({
+      repositories,
+      uploadsDir: config.uploadsDir,
+      wbClient,
+      secretBox,
+    }),
     telegramLink: new TelegramLinkService(repositories),
     support: new SupportService({ repositories, mailer }),
     history: new HistoryService({ repositories, mailer }),
