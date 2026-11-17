@@ -1,20 +1,17 @@
 import request from "supertest";
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
   clearTestDb,
   connectTestDb,
   createTestApp,
   db,
   disconnectTestDb,
-  require,
 } from "../helpers/app.mjs";
+import { createTestBot } from "../helpers/telegram.mjs";
 import { authed, registerUser } from "../helpers/users.mjs";
-
-const { TelegramBotService } = require("../../dist/services/telegramBotService");
 
 describe("telegram account linking", () => {
   let app;
-  let bot;
 
   beforeAll(async () => {
     await connectTestDb();
@@ -23,11 +20,11 @@ describe("telegram account linking", () => {
   afterEach(clearTestDb);
   afterAll(disconnectTestDb);
 
-  const startCommand = (payload, chatId) => {
-    bot = { on: vi.fn(), sendMessage: vi.fn().mockResolvedValue(undefined) };
-    const service = new TelegramBotService("", { bot });
-    return service.handleMessage({ chat: { id: chatId }, text: `/start ${payload}` });
-  };
+  const startCommand = (payload, chatId) =>
+    createTestBot().bot.handleMessage({
+      chat: { id: chatId },
+      text: `/start ${payload}`,
+    });
 
   it("does not link a chat to an account by its user id", async () => {
     const victim = await registerUser(app);

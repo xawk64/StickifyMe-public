@@ -6,7 +6,7 @@ const {
   WarehouseSettingsModel: WarehouseSettings,
 } = require("../models/warehouseSettings.model");
 const { WarehouseModel: Warehouses } = require("../models/warehouse.model");
-const TelegramBotService = require("./telegramBotService");
+const { telegramBot: TelegramBotService } = require("../telegram/legacyInstance");
 
 const { config } = require("../config");
 

@@ -1,24 +1,29 @@
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { clearTestDb, connectTestDb, disconnectTestDb, require } from "./helpers/app.mjs";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { clearTestDb, connectTestDb, disconnectTestDb } from "./helpers/app.mjs";
+import { createTestBot } from "./helpers/telegram.mjs";
 
-const { TelegramBotService } = require("../../dist/services/telegramBotService");
-
-function createFakeBot() {
-  return { on: vi.fn(), sendMessage: vi.fn().mockResolvedValue(undefined) };
-}
-
-describe("TelegramBotService", () => {
+describe("TelegramBot", () => {
   beforeAll(connectTestDb);
   afterEach(clearTestDb);
   afterAll(disconnectTestDb);
 
   it("ignores messages without text instead of crashing", async () => {
-    const service = new TelegramBotService("", { bot: createFakeBot() });
-    await expect(service.handleMessage({ chat: { id: 1 } })).resolves.toBeUndefined();
+    const { bot } = createTestBot();
+    await expect(bot.handleMessage({ chat: { id: 1 } })).resolves.toBeUndefined();
   });
 
   it("logs instead of sending when no bot token is configured", async () => {
-    const service = new TelegramBotService("");
-    await expect(service.sendMessage(1, "hello")).resolves.toBeUndefined();
+    const { bot } = createTestBot({ client: null });
+    await expect(bot.sendMessage(1, "hello")).resolves.toBeUndefined();
+  });
+
+  it("asks to use the link from the web app for a bare /start", async () => {
+    const { bot, client } = createTestBot();
+    await bot.handleMessage({ chat: { id: 7 }, text: "/start" });
+    expect(client.sendMessage).toHaveBeenCalledWith(
+      7,
+      expect.stringContaining("не по ссылке"),
+      expect.anything(),
+    );
   });
 });
